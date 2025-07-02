@@ -1,18 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import{ BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './Navbar';
+import Services from './Services';
+import Gallery from './Gallery';
+import About from './About';  
+import ContactUs from './ContactUs';
 
+function Head(){
+  return(
+    <div>
+ <h1 style={{color: "purple", textAlign: "center", }}>Lavish ladies beauty Salon and Spa</h1>
+ </div>
+  )
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+  <Head/>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+
 reportWebVitals();
