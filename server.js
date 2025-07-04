@@ -13,6 +13,7 @@ mongoose.connect('mongodb://localhost:27017/super-eureka', {
   useUnifiedTopology: true,
 });
 
+
 // API route
 app.use('/api/users', usersRouter);
 
