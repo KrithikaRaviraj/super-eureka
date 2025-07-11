@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "./logo.svg";
+import mylogo from "./assets/mylogo.png"; 
 import { auth, provider } from "./firebase";
 import {
   signInWithPopup,
@@ -20,7 +20,7 @@ async function saveUserToBackend(user) {
 function SalonHeader() {
   return (
     <div className="flex flex-col items-center mb-2">
-      <img src={logo} alt="Salon Logo" className="h-12 w-12 mb-1" />
+      <img src={mylogo} alt="Salon Logo" className="h-12 w-12 mb-1" />
       <span className="font-serif italic font-bold text-xl text-pink-600 text-center tracking-wide">
         Lavish Ladies Beauty Salon & Spa
       </span>
