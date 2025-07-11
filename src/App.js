@@ -42,12 +42,6 @@ function SignIn({ onSwitch, onSuccess }) {
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      await saveUserToBackend({
-        uid: result.user.uid,
-        name: result.user.displayName || "",
-        email: result.user.email || "",
-        photoURL: result.user.photoURL || "",
-      });
       setLoginSuccess(true);
       setTimeout(() => {
         setLoginSuccess(false);
@@ -70,12 +64,6 @@ function SignIn({ onSwitch, onSuccess }) {
     setError("");
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
-      await saveUserToBackend({
-        uid: result.user.uid,
-        name: result.user.displayName || "",
-        email: result.user.email || "",
-        photoURL: result.user.photoURL || "",
-      });
       setLoginSuccess(true);
       setTimeout(() => {
         setLoginSuccess(false);

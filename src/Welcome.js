@@ -6,6 +6,7 @@ export default function Welcome() {
   const location = useLocation();
   const [name] = useState(location.state?.name || "");
   const [email] = useState(location.state?.email || "");
+  const [uid, setUid] = useState("");
   const [phone, setPhone] = useState("");
   const [photo, setPhoto] = useState(""); // base64 or URL
   const [saved, setSaved] = useState(false);
@@ -23,6 +24,7 @@ export default function Welcome() {
           if (data.user) {
             setPhone(data.user.phone || "");
             setPhoto(data.user.photoURL || "");
+            setUid(data.user.uid || "");
           }
         }
       } catch {}
@@ -52,7 +54,7 @@ export default function Welcome() {
       await fetch("http://localhost:5000/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, photoURL: photo }),
+        body: JSON.stringify({ uid, name, email, phone, photoURL: photo }),
       });
       setSaved(true);
       setShowAppointments(true);
