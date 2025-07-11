@@ -8,7 +8,7 @@ router.post('/', async (req, res) => {
     const { uid, name, email, phone, photoURL } = req.body;
     // Upsert user by email or uid
     const user = await User.findOneAndUpdate(
-      { email }, // or { uid } if you want to use uid
+      { email }, 
       { uid, name, email, phone, photoURL },
       { upsert: true, new: true }
     );
@@ -18,4 +18,10 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  const { email } = req.query;
+  if (!email) return res.status(400).json({ error: "Email required" });
+  const user = await User.findOne({ email });
+  res.json({ user });
+});
 module.exports = router;

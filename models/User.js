@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  uid: String,           // Firebase UID or your own unique ID
+  uid: String,           
   name: String,
   email: { type: String, required: true },
-  phone: String,         // You can save phone number here
+  phone: String,         
   photoURL: String,
 });
 
