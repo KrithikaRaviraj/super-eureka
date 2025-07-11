@@ -1,3 +1,5 @@
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import Welcome from "./Welcome";
 import React, { useState } from "react";
 import mylogo from "./assets/mylogo.png"; 
 import { auth, provider } from "./firebase";
@@ -29,6 +31,7 @@ function SalonHeader() {
 }
 
 function SignIn({ onSwitch, onSuccess }) {
+  const navigate = useNavigate(); // <-- Correct usage
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [resetSent, setResetSent] = useState(false);
@@ -49,6 +52,12 @@ function SignIn({ onSwitch, onSuccess }) {
       setTimeout(() => {
         setLoginSuccess(false);
         if (onSuccess) onSuccess();
+        navigate("/welcome", {
+          state: {
+            name: result.user.displayName || "",
+            email: result.user.email || "",
+          },
+        });
       }, 1500);
     } catch (error) {
       setError(error.message);
@@ -71,6 +80,12 @@ function SignIn({ onSwitch, onSuccess }) {
       setTimeout(() => {
         setLoginSuccess(false);
         if (onSuccess) onSuccess();
+        navigate("/welcome", {
+          state: {
+            name: result.user.displayName || "",
+            email: result.user.email || "",
+          },
+        });
       }, 1500);
     } catch (error) {
       setError(error.message);
@@ -240,10 +255,16 @@ function SignUp({ onSwitch, onSuccess }) {
 }
 
 function App() {
-  const [modal, setModal] = useState(null); // null, "signin", or "signup"
+  const [modal, setModal] = useState(null); // 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
+    <Router>
+      <Routes>
+        {/* Main page route */}
+        <Route
+          path="/"
+          element={
     <div className="min-h-screen bg-white text-gray-900 relative">
       {/* Header */}
       <header className="px-8 py-3 shadow bg-white flex items-center justify-between">
@@ -314,6 +335,12 @@ function App() {
         />
       )}
     </div>
+            }
+        />
+        {/* Welcome page route */}
+        <Route path="/welcome" element={<Welcome />} />
+      </Routes>
+    </Router>
   );
 }
 
