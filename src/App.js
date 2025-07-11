@@ -10,7 +10,6 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 
-// Add matching fonts and styles
 const link = document.createElement('link');
 link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap';
 link.rel = 'stylesheet';
@@ -53,7 +52,7 @@ function SalonHeader() {
 }
 
 function SignIn({ onSwitch, onSuccess }) {
-  const navigate = useNavigate(); // <-- Correct usage
+  const navigate = useNavigate(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [resetSent, setResetSent] = useState(false);
@@ -80,7 +79,7 @@ function SignIn({ onSwitch, onSuccess }) {
     }
   };
 
-  // Email/Password Sign-In Handler
+  // Sign-In Handler
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError("");
@@ -286,15 +285,13 @@ function App() {
           path="/"
           element={
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative">
-      {/* Elegant Background Pattern */}
       <div className="absolute inset-0 pointer-events-none opacity-30">
         <div className="absolute top-0 left-0 w-full h-full" style={{
           backgroundImage: `radial-gradient(circle at 25% 25%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), 
                            radial-gradient(circle at 75% 75%, rgba(244, 63, 94, 0.08) 0%, transparent 50%)`
         }}></div>
       </div>
-      
-      {/* Header */}
+     
       <header className="relative z-10 px-4 sm:px-8 py-4 sm:py-6 bg-white/80 backdrop-blur-sm border-b border-stone-200/50 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
         <SalonHeader />
         <button
@@ -305,7 +302,6 @@ function App() {
         </button>
       </header>
 <nav className="relative z-10 flex items-center px-4 sm:px-8 py-4 bg-white/60 backdrop-blur-sm border-b border-stone-200/30 font-sans">
-  {/* Hamburger Icon */}
   <button
     className="mr-6 focus:outline-none lg:hidden"
     onClick={() => setSidebarOpen(true)}
@@ -391,7 +387,6 @@ function App() {
     </div>
             }
         />
-        {/* Welcome page route */}
         <Route path="/welcome" element={<Welcome />} />
       </Routes>
     </Router>
