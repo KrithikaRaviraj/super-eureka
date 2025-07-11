@@ -10,6 +10,20 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 
+// Add matching fonts and styles
+const link = document.createElement('link');
+link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap';
+link.rel = 'stylesheet';
+document.head.appendChild(link);
+
+const style = document.createElement('style');
+style.textContent = `
+  .font-serif { font-family: 'Cormorant Garamond', serif; }
+  .font-sans { font-family: 'Inter', sans-serif; }
+  body { font-family: 'Inter', sans-serif; }
+`;
+document.head.appendChild(style);
+
 // Utility to save user to backend
 async function saveUserToBackend(user) {
   await fetch("http://localhost:5000/api/users", {
@@ -21,11 +35,19 @@ async function saveUserToBackend(user) {
 
 function SalonHeader() {
   return (
-    <div className="flex flex-col items-center mb-2">
-      <img src={mylogo} alt="Salon Logo" className="h-12 w-12 mb-1" />
-      <span className="font-serif italic font-bold text-xl text-pink-600 text-center tracking-wide">
+    <div className="flex flex-col items-center mb-4">
+      <div className="relative mb-3">
+        <img src={mylogo} alt="Salon Logo" className="h-14 w-14 sm:h-16 sm:w-16 drop-shadow-lg" />
+        <div className="absolute -inset-2 bg-gradient-to-r from-rose-200/20 to-pink-200/20 rounded-full blur-lg"></div>
+      </div>
+      <span className="font-serif text-xl sm:text-2xl font-light text-stone-800 text-center tracking-wide">
         Lavish Ladies Beauty Salon & Spa
       </span>
+      <div className="flex items-center justify-center mt-2">
+        <div className="w-12 h-px bg-gradient-to-r from-transparent via-rose-400 to-transparent"></div>
+        <div className="mx-2 w-1 h-1 bg-rose-400 rounded-full"></div>
+        <div className="w-12 h-px bg-gradient-to-r from-transparent via-rose-400 to-transparent"></div>
+      </div>
     </div>
   );
 }
@@ -94,66 +116,70 @@ function SignIn({ onSwitch, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-2xl shadow-2xl p-12 w-full max-w-xl flex flex-col items-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sm:p-12 w-full max-w-lg border border-stone-200/50">
         <SalonHeader />
-        <h2 className="text-2xl font-bold mb-6 text-center text-pink-600 font-serif">Sign In</h2>
+        <h2 className="font-serif text-2xl sm:text-3xl font-light mb-8 text-center text-stone-800">Client Sign In</h2>
         {loginSuccess && (
-          <div className="text-green-600 text-center mb-4 font-bold">Login successful!</div>
+          <div className="text-emerald-600 text-center mb-6 font-sans text-sm bg-emerald-50 py-3 px-4 rounded-xl border border-emerald-200">Login successful!</div>
         )}
-        <form className="mb-4 w-full" onSubmit={handleSignIn}>
-          <label className="block mb-2 font-medium">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="w-full mb-4 px-4 py-3 border border-gray-300 rounded-lg"
-            placeholder="Enter email"
-            required
-          />
-          <label className="block mb-2 font-medium">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="w-full mb-2 px-4 py-3 border border-gray-300 rounded-lg"
-            placeholder="Enter password"
-            required
-          />
-          <div className="flex justify-between items-center mb-4">
+        <form className="mb-6 w-full space-y-6" onSubmit={handleSignIn}>
+          <div>
+            <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Email Address</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <div className="flex justify-between items-center">
             <button
               type="button"
-              className="text-sm text-pink-500 hover:underline"
+              className="font-sans text-xs text-stone-600 hover:text-rose-600 transition-colors duration-200 uppercase tracking-wider"
               onClick={handleForgotPassword}
             >
               Forgot password?
             </button>
-            {resetSent && <span className="text-xs text-green-600 ml-2">Reset email sent!</span>}
+            {resetSent && <span className="font-sans text-xs text-emerald-600">Reset email sent!</span>}
           </div>
-          {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+          {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
           <button
             type="submit"
-            className="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-lg transition text-lg"
+            className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
           >
             Sign In
           </button>
         </form>
-        <div className="flex items-center my-4 w-full">
-          <div className="flex-grow h-px bg-gray-300" />
-          <span className="mx-4 text-gray-400">OR</span>
-          <div className="flex-grow h-px bg-gray-300" />
+        <div className="flex items-center my-6 w-full">
+          <div className="flex-grow h-px bg-stone-300" />
+          <span className="mx-4 font-sans text-xs text-stone-500 uppercase tracking-wider">OR</span>
+          <div className="flex-grow h-px bg-stone-300" />
         </div>
         <button
           type="button"
           onClick={handleGoogleSignIn}
-          className="w-full mb-4 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition text-lg"
+          className="w-full mb-6 flex items-center justify-center bg-white border-2 border-stone-200 hover:border-stone-300 text-stone-700 font-sans font-medium py-4 px-6 rounded-xl transition-all duration-200 text-sm shadow-sm hover:shadow-md"
         >
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="h-6 w-6 mr-3" />
-          Sign in with Google
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="h-5 w-5 mr-3" />
+          Continue with Google
         </button>
-        <div className="text-center mt-4 text-lg">
+        <div className="text-center font-sans text-sm text-stone-600">
           Don't have an account?{" "}
-          <button className="text-pink-500 hover:underline" type="button" onClick={onSwitch}>
+          <button className="text-rose-600 hover:text-rose-700 font-medium transition-colors duration-200" type="button" onClick={onSwitch}>
             Sign Up
           </button>
         </div>
@@ -191,49 +217,55 @@ function SignUp({ onSwitch, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-2xl shadow-2xl p-12 w-full max-w-xl flex flex-col items-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sm:p-12 w-full max-w-lg border border-stone-200/50">
         <SalonHeader />
-        <h2 className="text-2xl font-bold mb-6 text-center text-pink-600 font-serif">Sign Up</h2>
-        <form className="mb-4 w-full" onSubmit={handleEmailSignUp}>
-          <label className="block mb-2 font-medium">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="w-full mb-4 px-4 py-3 border border-gray-300 rounded-lg"
-            placeholder="Enter email"
-            required
-          />
-          <label className="block mb-2 font-medium">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="w-full mb-2 px-4 py-3 border border-gray-300 rounded-lg"
-            placeholder="Create a password"
-            required
-          />
-          <label className="block mb-2 font-medium">Confirm Password</label>
-          <input
-            type="password"
-            value={confirm}
-            onChange={e => setConfirm(e.target.value)}
-            className="w-full mb-4 px-4 py-3 border border-gray-300 rounded-lg"
-            placeholder="Confirm your password"
-            required
-          />
-          {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+        <h2 className="font-serif text-2xl sm:text-3xl font-light mb-8 text-center text-stone-800">Create Account</h2>
+        <form className="mb-6 w-full space-y-6" onSubmit={handleEmailSignUp}>
+          <div>
+            <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Email Address</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
+              placeholder="Create a password"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Confirm Password</label>
+            <input
+              type="password"
+              value={confirm}
+              onChange={e => setConfirm(e.target.value)}
+              className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
+              placeholder="Confirm your password"
+              required
+            />
+          </div>
+          {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
           <button
             type="submit"
-            className="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-lg transition text-lg"
+            className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
           >
-            Sign Up
+            Create Account
           </button>
         </form>
-        <div className="text-center mt-4 text-lg">
+        <div className="text-center font-sans text-sm text-stone-600">
           Already have an account?{" "}
-          <button className="text-pink-500 hover:underline" type="button" onClick={onSwitch}>
+          <button className="text-rose-600 hover:text-rose-700 font-medium transition-colors duration-200" type="button" onClick={onSwitch}>
             Sign In
           </button>
         </div>
@@ -253,58 +285,92 @@ function App() {
         <Route
           path="/"
           element={
-    <div className="min-h-screen bg-white text-gray-900 relative">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative">
+      {/* Elegant Background Pattern */}
+      <div className="absolute inset-0 pointer-events-none opacity-30">
+        <div className="absolute top-0 left-0 w-full h-full" style={{
+          backgroundImage: `radial-gradient(circle at 25% 25%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), 
+                           radial-gradient(circle at 75% 75%, rgba(244, 63, 94, 0.08) 0%, transparent 50%)`
+        }}></div>
+      </div>
+      
       {/* Header */}
-      <header className="px-8 py-3 shadow bg-white flex items-center justify-between">
+      <header className="relative z-10 px-4 sm:px-8 py-4 sm:py-6 bg-white/80 backdrop-blur-sm border-b border-stone-200/50 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
         <SalonHeader />
         <button
-          className="px-5 py-2 rounded-lg bg-pink-500 text-white text-base font-semibold shadow hover:bg-pink-600 transition"
+          className="px-6 py-3 rounded-xl bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-sm uppercase tracking-wider transform hover:scale-105"
           onClick={() => setModal("signin")}
         >
-          Login
+          Client Login
         </button>
       </header>
-<nav className="flex items-center px-8 py-4 bg-gray-100 shadow text-lg font-semibold">
+<nav className="relative z-10 flex items-center px-4 sm:px-8 py-4 bg-white/60 backdrop-blur-sm border-b border-stone-200/30 font-sans">
   {/* Hamburger Icon */}
   <button
-    className="mr-6 focus:outline-none"
+    className="mr-6 focus:outline-none lg:hidden"
     onClick={() => setSidebarOpen(true)}
     aria-label="Open sidebar"
   >
-    <svg className="w-8 h-8 text-pink-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <svg className="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
     </svg>
   </button>
-  <div className="flex-1 flex justify-between max-w-3xl mx-auto w-full">
-    <a href="#" className="hover:text-pink-500 transition">Home</a>
-    <a href="#" className="hover:text-pink-500 transition">Services</a>
-    <a href="#" className="hover:text-pink-500 transition">Gallery</a>
-    <a href="#" className="hover:text-pink-500 transition">About</a>
-    <a href="#" className="hover:text-pink-500 transition">Contact Us</a>
+  <div className="hidden lg:flex flex-1 justify-center space-x-12 max-w-4xl mx-auto">
+    <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Home</a>
+    <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Services</a>
+    <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Gallery</a>
+    <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">About</a>
+    <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Contact</a>
   </div>
 </nav>
+
+      {/* Main Content Area */}
+      <main className="relative z-10 min-h-screen flex items-center justify-center py-12 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-stone-800 mb-6 leading-tight">
+            Welcome to Your Beauty Sanctuary
+          </h1>
+          <p className="font-sans text-lg sm:text-xl text-stone-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+            Experience luxury and elegance at our premier beauty salon and spa. 
+            Book your appointment today and discover the difference.
+          </p>
+          <button
+            onClick={() => setModal("signin")}
+            className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
+            Get Started
+          </button>
+        </div>
+      </main>
       {/* Sidebar */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-40 flex">
+        <div className="fixed inset-0 z-50 flex lg:hidden">
           {/* Overlay */}
           <div
-            className="fixed inset-0 bg-black bg-opacity-30"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)}
           />
           {/* Sidebar */}
-          <nav className="relative z-50 w-64 bg-gray-100 shadow h-full flex flex-col pt-20 text-lg font-semibold">
+          <nav className="relative z-50 w-80 bg-white/95 backdrop-blur-sm shadow-2xl h-full flex flex-col pt-20 border-r border-stone-200">
             <button
-              className="absolute top-4 right-4 text-2xl text-pink-600"
+              className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-stone-600 hover:text-stone-800 transition-colors duration-200"
               onClick={() => setSidebarOpen(false)}
               aria-label="Close sidebar"
             >
-              &times;
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
-            <button className="text-left hover:text-pink-500 transition px-6 py-3 bg-transparent border-0">Home</button>
-            <button className="text-left hover:text-pink-500 transition px-6 py-3 bg-transparent border-0">Services</button>
-            <button className="text-left hover:text-pink-500 transition px-6 py-3 bg-transparent border-0">Gallery</button>
-            <button className="text-left hover:text-pink-500 transition px-6 py-3 bg-transparent border-0">About</button>
-            <button className="text-left hover:text-pink-500 transition px-6 py-3 bg-transparent border-0">Contact Us</button>
+            <div className="px-8 py-6 border-b border-stone-200">
+              <h3 className="font-serif text-xl font-light text-stone-800">Navigation</h3>
+            </div>
+            <div className="flex-1 py-6">
+              <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Home</button>
+              <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Services</button>
+              <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Gallery</button>
+              <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">About</button>
+              <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Contact</button>
+            </div>
           </nav>
         </div>
       )}
