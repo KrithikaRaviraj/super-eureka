@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import mylogo from "./assets/mylogo.png";
 
-// Add luxury fonts
 const link = document.createElement('link');
 link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap';
 link.rel = 'stylesheet';
@@ -28,9 +27,10 @@ export default function Welcome() {
   const location = useLocation();
   const [name] = useState(location.state?.name || "");
   const [email] = useState(location.state?.email || "");
+  const [userPhone] = useState(location.state?.phone || "");
   const [uid, setUid] = useState("");
   const [phone, setPhone] = useState("");
-  const [photo, setPhoto] = useState(""); // base64 or URL
+  const [photo, setPhoto] = useState(""); // URL
   const [saved, setSaved] = useState(false);
   const [showAppointments, setShowAppointments] = useState(false);
   const [showPhotoPrompt, setShowPhotoPrompt] = useState(false);
@@ -40,19 +40,28 @@ export default function Welcome() {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await fetch(`http://localhost:5000/api/users?email=${encodeURIComponent(email)}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.user) {
-            setPhone(data.user.phone || "");
-            setPhoto(data.user.photoURL || "");
-            setUid(data.user.uid || "");
+        let queryParam = '';
+        if (email) {
+          queryParam = `email=${encodeURIComponent(email)}`;
+        } else if (userPhone) {
+          queryParam = `phone=${encodeURIComponent(userPhone)}`;
+        }
+        
+        if (queryParam) {
+          const res = await fetch(`http://localhost:5000/api/users?${queryParam}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.user) {
+              setPhone(data.user.phone || userPhone || "");
+              setPhoto(data.user.photoURL || "");
+              setUid(data.user.uid || "");
+            }
           }
         }
       } catch {}
     }
-    if (email) fetchUser();
-  }, [email]);
+    fetchUser();
+  }, [email, userPhone]);
 
   // Handle photo upload
   const handlePhotoChange = (e) => {
@@ -76,7 +85,13 @@ export default function Welcome() {
       await fetch("http://localhost:5000/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid, name, email, phone, photoURL: photo }),
+        body: JSON.stringify({ 
+          uid, 
+          name, 
+          email: email || null, 
+          phone: phone || null, 
+          photoURL: photo 
+        }),
       });
       setSaved(true);
       setShowAppointments(true);
@@ -91,7 +106,6 @@ export default function Welcome() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative">
-      {/* Elegant Background Pattern */}
       <div className="absolute inset-0 pointer-events-none opacity-40">
         <div className="absolute top-0 left-0 w-full h-full" style={{
           backgroundImage: `radial-gradient(circle at 25% 25%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), 
@@ -114,7 +128,6 @@ export default function Welcome() {
             <div className="mx-4 w-2 h-2 bg-rose-400 rounded-full"></div>
             <div className="w-20 h-px bg-gradient-to-r from-transparent via-rose-400 to-transparent"></div>
           </div>
-          <p className="font-sans text-stone-600 font-light tracking-widest text-xs sm:text-sm uppercase">Luxury • Elegance • Excellence</p>
         </div>
 
         {/* Welcome Message */}
@@ -122,7 +135,6 @@ export default function Welcome() {
           <h2 className="font-serif text-2xl sm:text-3xl font-light text-stone-800 mb-3">
             Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 17 ? 'Afternoon' : 'Evening'}, {name?.split(' ')[0] || 'Valued Client'}
           </h2>
-          <p className="font-sans text-stone-600 font-light tracking-wide text-sm sm:text-base">Your personal beauty sanctuary awaits</p>
         </div>
 
         {/* Profile Card */}
@@ -173,8 +185,7 @@ export default function Welcome() {
                   <h3 className="font-serif text-2xl sm:text-3xl font-light text-stone-800 mb-2">
                     {name || 'Client Profile'}
                   </h3>
-                  <p className="font-sans text-stone-600 text-sm sm:text-base mb-1">{email}</p>
-                  <p className="font-sans text-xs text-stone-500 uppercase tracking-wider">Premium Member</p>
+                  <p className="font-sans text-stone-600 text-sm sm:text-base mb-1">{email || userPhone}</p>
                 </div>
               </div>
             </div>
@@ -196,11 +207,11 @@ export default function Welcome() {
                   
                   <div>
                     <label className="block font-sans text-xs font-semibold text-stone-700 mb-3 uppercase tracking-wider">
-                      Email Address
+                      {email ? 'Email Address' : 'Phone Number'}
                     </label>
                     <input
                       className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl bg-stone-50/50 text-stone-700 focus:outline-none font-sans text-sm transition-all duration-200"
-                      value={email}
+                      value={email || userPhone}
                       readOnly
                     />
                   </div>

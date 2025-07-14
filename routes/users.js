@@ -8,24 +8,39 @@ router.post('/', async (req, res) => {
     console.log(req.body); 
     const { uid, name, email, phone, photoURL } = req.body;
     
-    // Check if user exists
-    let user = await User.findOne({ $or: [{ uid }, { email }] });
+    // Check if user exists by uid
+    let user = await User.findOne({ uid });
     
     if (user) {
       // Only update fields that are provided and not empty
       const updateData = {};
       if (name) updateData.name = name;
+      if (email) updateData.email = email;
       if (phone) updateData.phone = phone;
       if (photoURL && photoURL.trim() !== '') updateData.photoURL = photoURL;
       
       user = await User.findOneAndUpdate(
-        { $or: [{ uid }, { email }] },
+        { uid },
         updateData,
         { new: true }
       );
     } else {
-      // Create new user
-      user = await User.create({ uid, name, email, phone, photoURL });
+      // Create new user - store phone OR email, not both
+      const userData = {
+        uid,
+        name: name || 'Client',
+        photoURL: photoURL || ''
+      };
+      
+      if (phone) {
+        userData.phone = phone;
+        userData.email = null;
+      } else if (email) {
+        userData.email = email;
+        userData.phone = null;
+      }
+      
+      user = await User.create(userData);
     }
     
     res.json({ success: true, user });
@@ -35,9 +50,20 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-  const { email } = req.query;
-  if (!email) return res.status(400).json({ error: "Email required" });
-  const user = await User.findOne({ email });
+  const { email, phone, uid } = req.query;
+  
+  let user = null;
+  
+  if (uid) {
+    user = await User.findOne({ uid });
+  } else if (email) {
+    user = await User.findOne({ email });
+  } else if (phone) {
+    user = await User.findOne({ phone });
+  } else {
+    return res.status(400).json({ error: "Email, phone, or uid required" });
+  }
+  
   res.json({ user });
 });
 module.exports = router;

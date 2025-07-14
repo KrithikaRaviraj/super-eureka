@@ -5,12 +5,13 @@ import mylogo from "./assets/mylogo.png";
 import { auth, provider } from "./firebase";
 import {
   signInWithPopup,
-  sendPasswordResetEmail,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  PhoneAuthProvider,
+  signInWithCredential
 } from "firebase/auth";
 
-// Add matching fonts and styles
+// Add fonts and styles
 const link = document.createElement('link');
 link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap';
 link.rel = 'stylesheet';
@@ -33,12 +34,51 @@ async function saveUserToBackend(user) {
   });
 }
 
+// Custom Salon Logo Component
+function SalonLogo() {
+  return (
+    <div className="relative h-14 w-14 sm:h-16 sm:w-16">
+      <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
+        {/* Background Circle */}
+        <circle cx="50" cy="50" r="48" fill="url(#logoGradient)" stroke="#fff" strokeWidth="2"/>
+        
+        {/* Woman Silhouette */}
+        <path d="M35 25c0-8 6-12 15-12s15 4 15 12c0 6-4 10-8 12l2 8c2 1 4 2 4 4v3c0 2-1 3-3 3h-20c-2 0-3-1-3-3v-3c0-2 2-3 4-4l2-8c-4-2-8-6-8-12z" fill="#fff" opacity="0.9"/>
+        
+        {/* Hair */}
+        <path d="M32 20c2-6 8-10 18-10s16 4 18 10c2 4 0 8-2 10-1-2-3-4-6-4s-5 2-6 4h-8c-1-2-3-4-6-4s-5 2-6 4c-2-2-4-6-2-10z" fill="#8B4513" opacity="0.8"/>
+        
+        {/* Scissors */}
+        <g transform="translate(65,65) rotate(45)">
+          <ellipse cx="0" cy="-8" rx="3" ry="8" fill="#C0C0C0"/>
+          <ellipse cx="0" cy="8" rx="3" ry="8" fill="#C0C0C0"/>
+          <circle cx="0" cy="0" r="2" fill="#666"/>
+          <line x1="0" y1="-12" x2="0" y2="12" stroke="#333" strokeWidth="1"/>
+        </g>
+        
+        {/* Decorative Elements */}
+        <circle cx="20" cy="75" r="2" fill="#FFB6C1" opacity="0.6"/>
+        <circle cx="80" cy="30" r="1.5" fill="#FFB6C1" opacity="0.6"/>
+        <circle cx="25" cy="35" r="1" fill="#DDA0DD" opacity="0.6"/>
+        
+        <defs>
+          <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FFB6C1"/>
+            <stop offset="50%" stopColor="#DDA0DD"/>
+            <stop offset="100%" stopColor="#F8BBD9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div className="absolute -inset-2 bg-gradient-to-r from-rose-200/20 to-pink-200/20 rounded-full blur-lg"></div>
+    </div>
+  );
+}
+
 function SalonHeader() {
   return (
     <div className="flex flex-col items-center mb-4">
       <div className="relative mb-3">
-        <img src={mylogo} alt="Salon Logo" className="h-14 w-14 sm:h-16 sm:w-16 drop-shadow-lg" />
-        <div className="absolute -inset-2 bg-gradient-to-r from-rose-200/20 to-pink-200/20 rounded-full blur-lg"></div>
+        <SalonLogo />
       </div>
       <span className="font-serif text-xl sm:text-2xl font-light text-stone-800 text-center tracking-wide">
         Lavish Ladies Beauty Salon & Spa
@@ -52,11 +92,11 @@ function SalonHeader() {
   );
 }
 
-function SignIn({ onSwitch, onSuccess }) {
-  const navigate = useNavigate(); // <-- Correct usage
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [resetSent, setResetSent] = useState(false);
+function SignIn({ onSuccess }) {
+  const navigate = useNavigate();
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
 
@@ -64,6 +104,16 @@ function SignIn({ onSwitch, onSuccess }) {
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
+      
+      // Save user to backend with email
+      await saveUserToBackend({
+        uid: result.user.uid,
+        name: result.user.displayName || "",
+        email: result.user.email || "",
+        phone: null,
+        photoURL: result.user.photoURL || "",
+      });
+      
       setLoginSuccess(true);
       setTimeout(() => {
         setLoginSuccess(false);
@@ -80,38 +130,79 @@ function SignIn({ onSwitch, onSuccess }) {
     }
   };
 
-  // Email/Password Sign-In Handler
-  const handleSignIn = async (e) => {
+  // Send OTP Handler
+  const handleSendOtp = async (e) => {
     e.preventDefault();
     setError("");
+    
+    if (phone.length < 10) {
+      setError("Please enter a valid phone number");
+      return;
+    }
+    
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
+      // Format phone number with country code
+      const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
+      
+      // Setup reCAPTCHA
+      if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+          size: 'invisible',
+          callback: () => {
+            console.log('reCAPTCHA solved');
+          }
+        });
+      }
+      
+      const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
+      window.confirmationResult = confirmationResult;
+      setOtpSent(true);
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      setError("Failed to send OTP. Please check your phone number.");
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      }
+    }
+  };
+
+  // Verify OTP Handler
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    
+    if (otp.length !== 6) {
+      setError("Please enter a valid 6-digit OTP");
+      return;
+    }
+    
+    try {
+      const result = await window.confirmationResult.confirm(otp);
+      
+      // Save user to backend with phone number
+      await saveUserToBackend({
+        uid: result.user.uid,
+        name: result.user.displayName || "Client",
+        phone: result.user.phoneNumber,
+        email: null,
+        photoURL: result.user.photoURL || "",
+      });
+      
       setLoginSuccess(true);
       setTimeout(() => {
         setLoginSuccess(false);
         if (onSuccess) onSuccess();
         navigate("/welcome", {
           state: {
-            name: result.user.displayName || "",
-            email: result.user.email || "",
+            name: "Client",
+            phone: result.user.phoneNumber,
           },
         });
       }, 1500);
     } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  const handleForgotPassword = async () => {
-    if (!email) {
-      setError("Please enter your email first.");
-      return;
-    }
-    try {
-      await sendPasswordResetEmail(auth, email);
-      setResetSent(true);
-    } catch (error) {
-      setError(error.message);
+      console.error('Error verifying OTP:', error);
+      setError("Invalid OTP. Please try again.");
     }
   };
 
@@ -119,51 +210,63 @@ function SignIn({ onSwitch, onSuccess }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sm:p-12 w-full max-w-lg border border-stone-200/50">
         <SalonHeader />
-        <h2 className="font-serif text-2xl sm:text-3xl font-light mb-8 text-center text-stone-800">Client Sign In</h2>
+        <h2 className="font-serif text-2xl sm:text-3xl font-light mb-8 text-center text-stone-800">Welcome Back</h2>
         {loginSuccess && (
           <div className="text-emerald-600 text-center mb-6 font-sans text-sm bg-emerald-50 py-3 px-4 rounded-xl border border-emerald-200">Login successful!</div>
         )}
-        <form className="mb-6 w-full space-y-6" onSubmit={handleSignIn}>
-          <div>
-            <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Email Address</label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-          <div className="flex justify-between items-center">
+        
+        {!otpSent ? (
+          <form className="mb-6 w-full space-y-6" onSubmit={handleSendOtp}>
+            <div>
+              <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Mobile Number</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
+                placeholder="Enter your mobile number"
+                required
+              />
+            </div>
+            {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+            >
+              Send OTP
+            </button>
+          </form>
+        ) : (
+          <form className="mb-6 w-full space-y-6" onSubmit={handleVerifyOtp}>
+            <div>
+              <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Enter OTP</label>
+              <input
+                type="text"
+                value={otp}
+                onChange={e => setOtp(e.target.value)}
+                className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm text-center tracking-widest"
+                placeholder="000000"
+                maxLength="6"
+                required
+              />
+              <p className="text-xs text-stone-500 mt-2 text-center">OTP sent to {phone}</p>
+            </div>
+            {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+            >
+              Verify OTP
+            </button>
             <button
               type="button"
-              className="font-sans text-xs text-stone-600 hover:text-rose-600 transition-colors duration-200 uppercase tracking-wider"
-              onClick={handleForgotPassword}
+              onClick={() => setOtpSent(false)}
+              className="w-full text-stone-600 hover:text-stone-800 font-sans text-sm transition-colors duration-200"
             >
-              Forgot password?
+              Change Number
             </button>
-            {resetSent && <span className="font-sans text-xs text-emerald-600">Reset email sent!</span>}
-          </div>
-          {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-          >
-            Sign In
-          </button>
-        </form>
+          </form>
+        )}
         <div className="flex items-center my-6 w-full">
           <div className="flex-grow h-px bg-stone-300" />
           <span className="mx-4 font-sans text-xs text-stone-500 uppercase tracking-wider">OR</span>
@@ -177,102 +280,13 @@ function SignIn({ onSwitch, onSuccess }) {
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="h-5 w-5 mr-3" />
           Continue with Google
         </button>
-        <div className="text-center font-sans text-sm text-stone-600">
-          Don't have an account?{" "}
-          <button className="text-rose-600 hover:text-rose-700 font-medium transition-colors duration-200" type="button" onClick={onSwitch}>
-            Sign Up
-          </button>
-        </div>
+        <div id="recaptcha-container"></div>
       </div>
     </div>
   );
 }
 
-function SignUp({ onSwitch, onSuccess }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [error, setError] = useState("");
-
-  // Email sign up
-  const handleEmailSignUp = async (e) => {
-    e.preventDefault();
-    setError("");
-    if (password !== confirm) {
-      setError("Passwords do not match.");
-      return;
-    }
-    try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
-      await saveUserToBackend({
-        uid: result.user.uid,
-        name: result.user.displayName || "",
-        email: result.user.email || "",
-        photoURL: result.user.photoURL || "",
-      });
-      if (onSuccess) onSuccess();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sm:p-12 w-full max-w-lg border border-stone-200/50">
-        <SalonHeader />
-        <h2 className="font-serif text-2xl sm:text-3xl font-light mb-8 text-center text-stone-800">Create Account</h2>
-        <form className="mb-6 w-full space-y-6" onSubmit={handleEmailSignUp}>
-          <div>
-            <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Email Address</label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
-              placeholder="Create a password"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Confirm Password</label>
-            <input
-              type="password"
-              value={confirm}
-              onChange={e => setConfirm(e.target.value)}
-              className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
-              placeholder="Confirm your password"
-              required
-            />
-          </div>
-          {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-          >
-            Create Account
-          </button>
-        </form>
-        <div className="text-center font-sans text-sm text-stone-600">
-          Already have an account?{" "}
-          <button className="text-rose-600 hover:text-rose-700 font-medium transition-colors duration-200" type="button" onClick={onSwitch}>
-            Sign In
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+// Removed SignUp component - using only mobile OTP and Gmail
 
 function App() {
   const [modal, setModal] = useState(null); // 
@@ -281,7 +295,6 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Main page route */}
         <Route
           path="/"
           element={
@@ -305,7 +318,6 @@ function App() {
         </button>
       </header>
 <nav className="relative z-10 flex items-center px-4 sm:px-8 py-4 bg-white/60 backdrop-blur-sm border-b border-stone-200/30 font-sans">
-  {/* Hamburger Icon */}
   <button
     className="mr-6 focus:outline-none lg:hidden"
     onClick={() => setSidebarOpen(true)}
@@ -330,10 +342,6 @@ function App() {
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-stone-800 mb-6 leading-tight">
             Welcome to Your Beauty Sanctuary
           </h1>
-          <p className="font-sans text-lg sm:text-xl text-stone-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Experience luxury and elegance at our premier beauty salon and spa. 
-            Book your appointment today and discover the difference.
-          </p>
           <button
             onClick={() => setModal("signin")}
             className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -375,23 +383,15 @@ function App() {
         </div>
       )}
 
-      {/* Modal for SignIn/SignUp */}
+      {/* Modal for SignIn */}
       {modal === "signin" && (
         <SignIn
-          onSwitch={() => setModal("signup")}
-          onSuccess={() => setModal(null)}
-        />
-      )}
-      {modal === "signup" && (
-        <SignUp
-          onSwitch={() => setModal("signin")}
           onSuccess={() => setModal(null)}
         />
       )}
     </div>
             }
         />
-        {/* Welcome page route */}
         <Route path="/welcome" element={<Welcome />} />
       </Routes>
     </Router>
