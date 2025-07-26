@@ -12,7 +12,6 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/super-eureka');
 
-
 // API routes
 app.use('/api/users', usersRouter);
 app.use('/api', otpRouter);

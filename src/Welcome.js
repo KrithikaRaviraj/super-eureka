@@ -25,18 +25,19 @@ document.head.appendChild(style);
 
 export default function Welcome() {
   const location = useLocation();
-  const [name] = useState(location.state?.name || "");
-  const [email] = useState(location.state?.email || "");
+  const [name, setName] = useState(location.state?.name || "");
+  const [email, setEmail] = useState(location.state?.email || "");
   const [userPhone] = useState(location.state?.phone || "");
   const [uid, setUid] = useState("");
   const [phone, setPhone] = useState("");
-  const [photo, setPhoto] = useState(""); // URL
+  const [photo, setPhoto] = useState("");
   const [saved, setSaved] = useState(false);
-  const [showAppointments, setShowAppointments] = useState(false);
+  const [showAppointments, setShowAppointments] = useState(true);
   const [showPhotoPrompt, setShowPhotoPrompt] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef();
 
-  // Fetch user data (phone, photo) on mount
+  // Fetch user data on mount
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -52,6 +53,8 @@ export default function Welcome() {
           if (res.ok) {
             const data = await res.json();
             if (data.user) {
+              setName(data.user.name || name);
+              setEmail(data.user.email || email);
               setPhone(data.user.phone || userPhone || "");
               setPhoto(data.user.photoURL || "");
               setUid(data.user.uid || "");
@@ -61,7 +64,7 @@ export default function Welcome() {
       } catch {}
     }
     fetchUser();
-  }, [email, userPhone]);
+  }, []);
 
   // Handle photo upload
   const handlePhotoChange = (e) => {
@@ -77,7 +80,7 @@ export default function Welcome() {
     fileInputRef.current.click();
   };
 
-  // Save phone and photo to backend
+  // Save profile data to backend
   const handleSave = async (e) => {
     e.preventDefault();
     setSaved(false);
@@ -93,15 +96,29 @@ export default function Welcome() {
           photoURL: photo 
         }),
       });
+      
+      // Update localStorage session
+      const userSession = localStorage.getItem('userSession');
+      if (userSession) {
+        const session = JSON.parse(userSession);
+        session.name = name;
+        session.email = email;
+        localStorage.setItem('userSession', JSON.stringify(session));
+      }
+      
       setSaved(true);
-      setShowAppointments(true);
-      // Auto-hide success message after 3 seconds
+      setIsEditing(false);
       setTimeout(() => {
         setSaved(false);
       }, 3000);
     } catch (err) {
       alert("Failed to save.");
     }
+  };
+  
+  // Remove profile photo
+  const handleRemovePhoto = () => {
+    setPhoto("");
   };
 
   return (
@@ -199,20 +216,31 @@ export default function Welcome() {
                       Full Name
                     </label>
                     <input
-                      className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl bg-stone-50/50 text-stone-700 focus:outline-none font-sans text-sm transition-all duration-200"
+                      className={`w-full px-5 py-4 border-2 rounded-xl font-sans text-sm transition-all duration-200 ${
+                        isEditing 
+                          ? 'border-stone-200 bg-white text-stone-700 focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 focus:outline-none' 
+                          : 'border-stone-200 bg-stone-50/50 text-stone-700 focus:outline-none'
+                      }`}
                       value={name}
-                      readOnly
+                      onChange={e => setName(e.target.value)}
+                      readOnly={!isEditing}
                     />
                   </div>
                   
                   <div>
                     <label className="block font-sans text-xs font-semibold text-stone-700 mb-3 uppercase tracking-wider">
-                      {email ? 'Email Address' : 'Phone Number'}
+                      Email Address
                     </label>
                     <input
-                      className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl bg-stone-50/50 text-stone-700 focus:outline-none font-sans text-sm transition-all duration-200"
-                      value={email || userPhone}
-                      readOnly
+                      className={`w-full px-5 py-4 border-2 rounded-xl font-sans text-sm transition-all duration-200 ${
+                        isEditing 
+                          ? 'border-stone-200 bg-white text-stone-700 focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 focus:outline-none' 
+                          : 'border-stone-200 bg-stone-50/50 text-stone-700 focus:outline-none'
+                      }`}
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      readOnly={!isEditing}
+                      type="email"
                     />
                   </div>
                 </div>
@@ -222,26 +250,61 @@ export default function Welcome() {
                     Contact Number
                   </label>
                   <input
-                    className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
+                    className={`w-full px-5 py-4 border-2 rounded-xl font-sans text-sm transition-all duration-200 ${
+                      isEditing 
+                        ? 'border-stone-200 bg-white text-stone-700 focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 focus:outline-none' 
+                        : 'border-stone-200 bg-stone-50/50 text-stone-700 focus:outline-none'
+                    }`}
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
                     placeholder="Enter your contact number"
                     type="tel"
-                    required
+                    readOnly={!isEditing}
                   />
                 </div>
                 
-                <div className="pt-6">
-                  <button
-                    type="submit"
-                    className={`w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02] ${saved ? "opacity-60 cursor-not-allowed" : ""}`}
-                    disabled={saved}
-                  >
-                    {saved ? "✓ Profile Saved" : "Update Profile"}
-                  </button>
+                <div className="pt-6 space-y-4">
+                  {!isEditing ? (
+                    <button
+                      type="button"
+                      onClick={() => setIsEditing(true)}
+                      className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                    >
+                      Edit Profile
+                    </button>
+                  ) : (
+                    <div className="flex space-x-4">
+                      <button
+                        type="submit"
+                        className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                      >
+                        Save Changes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsEditing(false);
+                          // Reset to original values if needed
+                        }}
+                        className="flex-1 bg-gradient-to-r from-stone-400 to-stone-500 hover:from-stone-500 hover:to-stone-600 text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  
+                  {photo && (
+                    <button
+                      type="button"
+                      onClick={handleRemovePhoto}
+                      className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-sans font-medium py-3 px-6 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                    >
+                      Remove Profile Photo
+                    </button>
+                  )}
                   
                   {saved && (
-                    <div className="text-center font-sans text-sm text-emerald-700 bg-emerald-50 py-4 px-6 rounded-xl border-2 border-emerald-200 mt-6 animate-fade-in">
+                    <div className="text-center font-sans text-sm text-emerald-700 bg-emerald-50 py-4 px-6 rounded-xl border-2 border-emerald-200 animate-fade-in">
                       ✓ Profile has been updated successfully
                     </div>
                   )}

@@ -97,6 +97,14 @@ function SignIn({ onSuccess }) {
         photoURL: result.user.photoURL || "",
       });
       
+      // Store login state in localStorage
+      localStorage.setItem('userSession', JSON.stringify({
+        uid: result.user.uid,
+        name: result.user.displayName || "",
+        email: result.user.email || "",
+        loginTime: Date.now()
+      }));
+      
       setLoginSuccess(true);
       setTimeout(() => {
         setLoginSuccess(false);
@@ -171,6 +179,14 @@ function SignIn({ onSuccess }) {
           phone: null,
           photoURL: "",
         });
+        
+        // Store login state in localStorage
+        localStorage.setItem('userSession', JSON.stringify({
+          uid: data.user.uid,
+          name: "Client",
+          email: email,
+          loginTime: Date.now()
+        }));
         
         setLoginSuccess(true);
         setTimeout(() => {
@@ -281,100 +297,159 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative">
-              <div className="absolute inset-0 pointer-events-none opacity-30">
-                <div className="absolute top-0 left-0 w-full h-full" style={{
-                  backgroundImage: `radial-gradient(circle at 25% 25%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), 
-                                   radial-gradient(circle at 75% 75%, rgba(244, 63, 94, 0.08) 0%, transparent 50%)`
-                }}></div>
-              </div>
-              
-              <header className="relative z-10 px-4 sm:px-8 py-4 sm:py-6 bg-white/80 backdrop-blur-sm border-b border-stone-200/50 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
-                <SalonHeader />
+      <AppContent modal={modal} setModal={setModal} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+    </Router>
+  );
+}
+
+function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  
+  // Check for existing session on app load
+  React.useEffect(() => {
+    const userSession = localStorage.getItem('userSession');
+    if (userSession) {
+      const session = JSON.parse(userSession);
+      // Auto-login if session exists and is less than 7 days old
+      if (Date.now() - session.loginTime < 7 * 24 * 60 * 60 * 1000) {
+        setIsLoggedIn(true);
+        setUserInfo(session);
+      } else {
+        localStorage.removeItem('userSession');
+        setIsLoggedIn(false);
+        setUserInfo(null);
+      }
+    }
+  }, []);
+  
+  const handleLogout = () => {
+    localStorage.removeItem('userSession');
+    setIsLoggedIn(false);
+    setUserInfo(null);
+    navigate('/');
+  };
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative">
+            <div className="absolute inset-0 pointer-events-none opacity-30">
+              <div className="absolute top-0 left-0 w-full h-full" style={{
+                backgroundImage: `radial-gradient(circle at 25% 25%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), 
+                                 radial-gradient(circle at 75% 75%, rgba(244, 63, 94, 0.08) 0%, transparent 50%)`
+              }}></div>
+            </div>
+            
+            <header className="relative z-10 px-4 sm:px-8 py-4 sm:py-6 bg-white/80 backdrop-blur-sm border-b border-stone-200/50 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+              <SalonHeader />
+              {!isLoggedIn ? (
                 <button
                   className="px-6 py-3 rounded-xl bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-sm uppercase tracking-wider transform hover:scale-105"
                   onClick={() => setModal("signin")}
                 >
                   Login
                 </button>
-              </header>
-
-              <nav className="relative z-10 flex items-center px-4 sm:px-8 py-4 bg-white/60 backdrop-blur-sm border-b border-stone-200/30 font-sans">
-                <button
-                  className="mr-6 focus:outline-none lg:hidden"
-                  onClick={() => setSidebarOpen(true)}
-                  aria-label="Open sidebar"
-                >
-                  <svg className="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-                <div className="hidden lg:flex flex-1 justify-center space-x-12 max-w-4xl mx-auto">
-                  <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Home</a>
-                  <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Services</a>
-                  <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Gallery</a>
-                  <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">About</a>
-                  <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Contact</a>
-                </div>
-              </nav>
-
-              <main className="relative z-10 min-h-screen flex items-center justify-center py-12 px-4">
-                <div className="max-w-4xl mx-auto text-center">
-                  <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-stone-800 mb-6 leading-tight">
-                    Welcome to Your Beauty Sanctuary
-                  </h1>
+              ) : (
+                <div className="flex items-center space-x-4">
                   <button
-                    onClick={() => setModal("signin")}
-                    className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-sans font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-sm uppercase tracking-wider transform hover:scale-105"
+                    onClick={() => navigate('/welcome', { state: userInfo })}
                   >
-                    Get Started
+                    Welcome, {userInfo?.name?.split(' ')[0] || 'Client'}
+                  </button>
+                  <button
+                    className="px-4 py-3 rounded-xl border-2 border-stone-300 hover:border-stone-400 text-stone-700 hover:text-stone-800 font-sans font-medium transition-all duration-300 text-sm uppercase tracking-wider"
+                    onClick={handleLogout}
+                  >
+                    Logout
                   </button>
                 </div>
-              </main>
+              )}
+            </header>
 
-              {sidebarOpen && (
-                <div className="fixed inset-0 z-50 flex lg:hidden">
-                  <div
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            <nav className="relative z-10 flex items-center px-4 sm:px-8 py-4 bg-white/60 backdrop-blur-sm border-b border-stone-200/30 font-sans">
+              <button
+                className="mr-6 focus:outline-none lg:hidden"
+                onClick={() => setSidebarOpen(true)}
+                aria-label="Open sidebar"
+              >
+                <svg className="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <div className="hidden lg:flex flex-1 justify-center space-x-12 max-w-4xl mx-auto">
+                <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Home</a>
+                <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Services</a>
+                <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Gallery</a>
+                <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">About</a>
+                <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Contact</a>
+              </div>
+            </nav>
+
+            <main className="relative z-10 min-h-screen flex items-center justify-center py-12 px-4">
+              <div className="max-w-4xl mx-auto text-center">
+                <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-stone-800 mb-6 leading-tight">
+                  Welcome to Your Beauty Sanctuary
+                </h1>
+                <button
+                  onClick={() => isLoggedIn ? navigate('/welcome', { state: userInfo }) : setModal("signin")}
+                  className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  {isLoggedIn ? 'Go to Dashboard' : 'Get Started'}
+                </button>
+              </div>
+            </main>
+
+            {sidebarOpen && (
+              <div className="fixed inset-0 z-50 flex lg:hidden">
+                <div
+                  className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+                  onClick={() => setSidebarOpen(false)}
+                />
+                <nav className="relative z-50 w-80 bg-white/95 backdrop-blur-sm shadow-2xl h-full flex flex-col pt-20 border-r border-stone-200">
+                  <button
+                    className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-stone-600 hover:text-stone-800 transition-colors duration-200"
                     onClick={() => setSidebarOpen(false)}
-                  />
-                  <nav className="relative z-50 w-80 bg-white/95 backdrop-blur-sm shadow-2xl h-full flex flex-col pt-20 border-r border-stone-200">
-                    <button
-                      className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-stone-600 hover:text-stone-800 transition-colors duration-200"
-                      onClick={() => setSidebarOpen(false)}
-                      aria-label="Close sidebar"
-                    >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                    <div className="px-8 py-6 border-b border-stone-200">
-                      <h3 className="font-serif text-xl font-light text-stone-800">Navigation</h3>
-                    </div>
-                    <div className="flex-1 py-6">
-                      <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Home</button>
-                      <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Services</button>
-                      <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Gallery</button>
-                      <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">About</button>
-                      <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Contact</button>
-                    </div>
-                  </nav>
-                </div>
-              )}
+                    aria-label="Close sidebar"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                  <div className="px-8 py-6 border-b border-stone-200">
+                    <h3 className="font-serif text-xl font-light text-stone-800">Navigation</h3>
+                  </div>
+                  <div className="flex-1 py-6">
+                    <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Home</button>
+                    <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Services</button>
+                    <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Gallery</button>
+                    <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">About</button>
+                    <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Contact</button>
+                  </div>
+                </nav>
+              </div>
+            )}
 
-              {modal === "signin" && (
-                <SignIn onSuccess={() => setModal(null)} />
-              )}
-            </div>
-          }
-        />
-        <Route path="/welcome" element={<Welcome />} />
-      </Routes>
-    </Router>
+            {modal === "signin" && (
+              <SignIn onSuccess={() => {
+                setModal(null);
+                const userSession = localStorage.getItem('userSession');
+                if (userSession) {
+                  const session = JSON.parse(userSession);
+                  setIsLoggedIn(true);
+                  setUserInfo(session);
+                }
+              }} />
+            )}
+          </div>
+        }
+      />
+      <Route path="/welcome" element={<Welcome />} />
+    </Routes>
   );
 }
 
