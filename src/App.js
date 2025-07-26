@@ -3,13 +3,7 @@ import Welcome from "./Welcome";
 import React, { useState } from "react";
 import mylogo from "./assets/mylogo.png"; 
 import { auth, provider } from "./firebase";
-import {
-  signInWithPopup,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  PhoneAuthProvider,
-  signInWithCredential
-} from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 
 // Add fonts and styles
 const link = document.createElement('link');
@@ -39,28 +33,18 @@ function SalonLogo() {
   return (
     <div className="relative h-14 w-14 sm:h-16 sm:w-16">
       <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
-        {/* Background Circle */}
         <circle cx="50" cy="50" r="48" fill="url(#logoGradient)" stroke="#fff" strokeWidth="2"/>
-        
-        {/* Woman Silhouette */}
         <path d="M35 25c0-8 6-12 15-12s15 4 15 12c0 6-4 10-8 12l2 8c2 1 4 2 4 4v3c0 2-1 3-3 3h-20c-2 0-3-1-3-3v-3c0-2 2-3 4-4l2-8c-4-2-8-6-8-12z" fill="#fff" opacity="0.9"/>
-        
-        {/* Hair */}
         <path d="M32 20c2-6 8-10 18-10s16 4 18 10c2 4 0 8-2 10-1-2-3-4-6-4s-5 2-6 4h-8c-1-2-3-4-6-4s-5 2-6 4c-2-2-4-6-2-10z" fill="#8B4513" opacity="0.8"/>
-        
-        {/* Scissors */}
         <g transform="translate(65,65) rotate(45)">
           <ellipse cx="0" cy="-8" rx="3" ry="8" fill="#C0C0C0"/>
           <ellipse cx="0" cy="8" rx="3" ry="8" fill="#C0C0C0"/>
           <circle cx="0" cy="0" r="2" fill="#666"/>
           <line x1="0" y1="-12" x2="0" y2="12" stroke="#333" strokeWidth="1"/>
         </g>
-        
-        {/* Decorative Elements */}
         <circle cx="20" cy="75" r="2" fill="#FFB6C1" opacity="0.6"/>
         <circle cx="80" cy="30" r="1.5" fill="#FFB6C1" opacity="0.6"/>
         <circle cx="25" cy="35" r="1" fill="#DDA0DD" opacity="0.6"/>
-        
         <defs>
           <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FFB6C1"/>
@@ -94,7 +78,7 @@ function SalonHeader() {
 
 function SignIn({ onSuccess }) {
   const navigate = useNavigate();
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState("");
@@ -105,7 +89,6 @@ function SignIn({ onSuccess }) {
     try {
       const result = await signInWithPopup(auth, provider);
       
-      // Save user to backend with email
       await saveUserToBackend({
         uid: result.user.uid,
         name: result.user.displayName || "",
@@ -135,35 +118,29 @@ function SignIn({ onSuccess }) {
     e.preventDefault();
     setError("");
     
-    if (phone.length < 10) {
-      setError("Please enter a valid phone number");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address");
       return;
     }
     
     try {
-      // Format phone number with country code
-      const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
+      const response = await fetch("http://localhost:5000/api/send-email-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
       
-      // Setup reCAPTCHA
-      if (!window.recaptchaVerifier) {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          size: 'invisible',
-          callback: () => {
-            console.log('reCAPTCHA solved');
-          }
-        });
+      const data = await response.json();
+      
+      if (data.success) {
+        setOtpSent(true);
+      } else {
+        setError(data.message || "Failed to send OTP");
       }
-      
-      const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
-      window.confirmationResult = confirmationResult;
-      setOtpSent(true);
     } catch (error) {
       console.error('Error sending OTP:', error);
-      setError("Failed to send OTP. Please check your phone number.");
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-        window.recaptchaVerifier = null;
-      }
+      setError("Failed to send OTP. Please try again.");
     }
   };
 
@@ -172,37 +149,46 @@ function SignIn({ onSuccess }) {
     e.preventDefault();
     setError("");
     
-    if (otp.length !== 6) {
-      setError("Please enter a valid 6-digit OTP");
+    if (otp.length !== 4) {
+      setError("Please enter a valid 4-digit OTP");
       return;
     }
     
     try {
-      const result = await window.confirmationResult.confirm(otp);
-      
-      // Save user to backend with phone number
-      await saveUserToBackend({
-        uid: result.user.uid,
-        name: result.user.displayName || "Client",
-        phone: result.user.phoneNumber,
-        email: null,
-        photoURL: result.user.photoURL || "",
+      const response = await fetch("http://localhost:5000/api/verify-email-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
       });
       
-      setLoginSuccess(true);
-      setTimeout(() => {
-        setLoginSuccess(false);
-        if (onSuccess) onSuccess();
-        navigate("/welcome", {
-          state: {
-            name: "Client",
-            phone: result.user.phoneNumber,
-          },
+      const data = await response.json();
+      
+      if (data.success) {
+        await saveUserToBackend({
+          uid: data.user.uid,
+          name: "Client",
+          email: email,
+          phone: null,
+          photoURL: "",
         });
-      }, 1500);
+        
+        setLoginSuccess(true);
+        setTimeout(() => {
+          setLoginSuccess(false);
+          if (onSuccess) onSuccess();
+          navigate("/welcome", {
+            state: {
+              name: "Client",
+              email: email,
+            },
+          });
+        }, 1500);
+      } else {
+        setError(data.message || "Invalid OTP. Please try again.");
+      }
     } catch (error) {
       console.error('Error verifying OTP:', error);
-      setError("Invalid OTP. Please try again.");
+      setError("Verification failed. Please try again.");
     }
   };
 
@@ -218,13 +204,13 @@ function SignIn({ onSuccess }) {
         {!otpSent ? (
           <form className="mb-6 w-full space-y-6" onSubmit={handleSendOtp}>
             <div>
-              <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Mobile Number</label>
+              <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Email Address</label>
               <input
-                type="tel"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
-                placeholder="Enter your mobile number"
+                placeholder="Enter your email address"
                 required
               />
             </div>
@@ -245,11 +231,11 @@ function SignIn({ onSuccess }) {
                 value={otp}
                 onChange={e => setOtp(e.target.value)}
                 className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm text-center tracking-widest"
-                placeholder="000000"
-                maxLength="6"
+                placeholder="0000"
+                maxLength="4"
                 required
               />
-              <p className="text-xs text-stone-500 mt-2 text-center">OTP sent to {phone}</p>
+              <p className="text-xs text-stone-500 mt-2 text-center">OTP sent to {email}</p>
             </div>
             {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
             <button
@@ -260,10 +246,14 @@ function SignIn({ onSuccess }) {
             </button>
             <button
               type="button"
-              onClick={() => setOtpSent(false)}
+              onClick={() => {
+                setOtpSent(false);
+                setOtp("");
+                setError("");
+              }}
               className="w-full text-stone-600 hover:text-stone-800 font-sans text-sm transition-colors duration-200"
             >
-              Change Number
+              Change Email
             </button>
           </form>
         )}
@@ -280,16 +270,13 @@ function SignIn({ onSuccess }) {
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="h-5 w-5 mr-3" />
           Continue with Google
         </button>
-        <div id="recaptcha-container"></div>
       </div>
     </div>
   );
 }
 
-// Removed SignUp component - using only mobile OTP and Gmail
-
 function App() {
-  const [modal, setModal] = useState(null); // 
+  const [modal, setModal] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -298,99 +285,92 @@ function App() {
         <Route
           path="/"
           element={
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative">
-      {/* Elegant Background Pattern */}
-      <div className="absolute inset-0 pointer-events-none opacity-30">
-        <div className="absolute top-0 left-0 w-full h-full" style={{
-          backgroundImage: `radial-gradient(circle at 25% 25%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), 
-                           radial-gradient(circle at 75% 75%, rgba(244, 63, 94, 0.08) 0%, transparent 50%)`
-        }}></div>
-      </div>
-      
-      {/* Header */}
-      <header className="relative z-10 px-4 sm:px-8 py-4 sm:py-6 bg-white/80 backdrop-blur-sm border-b border-stone-200/50 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
-        <SalonHeader />
-        <button
-          className="px-6 py-3 rounded-xl bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-sm uppercase tracking-wider transform hover:scale-105"
-          onClick={() => setModal("signin")}
-        >
-          Client Login
-        </button>
-      </header>
-<nav className="relative z-10 flex items-center px-4 sm:px-8 py-4 bg-white/60 backdrop-blur-sm border-b border-stone-200/30 font-sans">
-  <button
-    className="mr-6 focus:outline-none lg:hidden"
-    onClick={() => setSidebarOpen(true)}
-    aria-label="Open sidebar"
-  >
-    <svg className="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-  </button>
-  <div className="hidden lg:flex flex-1 justify-center space-x-12 max-w-4xl mx-auto">
-    <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Home</a>
-    <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Services</a>
-    <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Gallery</a>
-    <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">About</a>
-    <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Contact</a>
-  </div>
-</nav>
+            <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative">
+              <div className="absolute inset-0 pointer-events-none opacity-30">
+                <div className="absolute top-0 left-0 w-full h-full" style={{
+                  backgroundImage: `radial-gradient(circle at 25% 25%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), 
+                                   radial-gradient(circle at 75% 75%, rgba(244, 63, 94, 0.08) 0%, transparent 50%)`
+                }}></div>
+              </div>
+              
+              <header className="relative z-10 px-4 sm:px-8 py-4 sm:py-6 bg-white/80 backdrop-blur-sm border-b border-stone-200/50 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+                <SalonHeader />
+                <button
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-sm uppercase tracking-wider transform hover:scale-105"
+                  onClick={() => setModal("signin")}
+                >
+                  Login
+                </button>
+              </header>
 
-      {/* Main Content Area */}
-      <main className="relative z-10 min-h-screen flex items-center justify-center py-12 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-stone-800 mb-6 leading-tight">
-            Welcome to Your Beauty Sanctuary
-          </h1>
-          <button
-            onClick={() => setModal("signin")}
-            className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            Get Started
-          </button>
-        </div>
-      </main>
-      {/* Sidebar */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-50 flex lg:hidden">
-          {/* Overlay */}
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setSidebarOpen(false)}
-          />
-          {/* Sidebar */}
-          <nav className="relative z-50 w-80 bg-white/95 backdrop-blur-sm shadow-2xl h-full flex flex-col pt-20 border-r border-stone-200">
-            <button
-              className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-stone-600 hover:text-stone-800 transition-colors duration-200"
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Close sidebar"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <div className="px-8 py-6 border-b border-stone-200">
-              <h3 className="font-serif text-xl font-light text-stone-800">Navigation</h3>
-            </div>
-            <div className="flex-1 py-6">
-              <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Home</button>
-              <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Services</button>
-              <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Gallery</button>
-              <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">About</button>
-              <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Contact</button>
-            </div>
-          </nav>
-        </div>
-      )}
+              <nav className="relative z-10 flex items-center px-4 sm:px-8 py-4 bg-white/60 backdrop-blur-sm border-b border-stone-200/30 font-sans">
+                <button
+                  className="mr-6 focus:outline-none lg:hidden"
+                  onClick={() => setSidebarOpen(true)}
+                  aria-label="Open sidebar"
+                >
+                  <svg className="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
+                <div className="hidden lg:flex flex-1 justify-center space-x-12 max-w-4xl mx-auto">
+                  <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Home</a>
+                  <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Services</a>
+                  <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Gallery</a>
+                  <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">About</a>
+                  <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Contact</a>
+                </div>
+              </nav>
 
-      {/* Modal for SignIn */}
-      {modal === "signin" && (
-        <SignIn
-          onSuccess={() => setModal(null)}
-        />
-      )}
-    </div>
-            }
+              <main className="relative z-10 min-h-screen flex items-center justify-center py-12 px-4">
+                <div className="max-w-4xl mx-auto text-center">
+                  <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-stone-800 mb-6 leading-tight">
+                    Welcome to Your Beauty Sanctuary
+                  </h1>
+                  <button
+                    onClick={() => setModal("signin")}
+                    className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    Get Started
+                  </button>
+                </div>
+              </main>
+
+              {sidebarOpen && (
+                <div className="fixed inset-0 z-50 flex lg:hidden">
+                  <div
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+                    onClick={() => setSidebarOpen(false)}
+                  />
+                  <nav className="relative z-50 w-80 bg-white/95 backdrop-blur-sm shadow-2xl h-full flex flex-col pt-20 border-r border-stone-200">
+                    <button
+                      className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-stone-600 hover:text-stone-800 transition-colors duration-200"
+                      onClick={() => setSidebarOpen(false)}
+                      aria-label="Close sidebar"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                    <div className="px-8 py-6 border-b border-stone-200">
+                      <h3 className="font-serif text-xl font-light text-stone-800">Navigation</h3>
+                    </div>
+                    <div className="flex-1 py-6">
+                      <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Home</button>
+                      <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Services</button>
+                      <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Gallery</button>
+                      <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">About</button>
+                      <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Contact</button>
+                    </div>
+                  </nav>
+                </div>
+              )}
+
+              {modal === "signin" && (
+                <SignIn onSuccess={() => setModal(null)} />
+              )}
+            </div>
+          }
         />
         <Route path="/welcome" element={<Welcome />} />
       </Routes>
