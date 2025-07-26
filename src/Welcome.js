@@ -30,12 +30,10 @@ export default function Welcome() {
   const [userPhone] = useState(location.state?.phone || "");
   const [uid, setUid] = useState("");
   const [phone, setPhone] = useState("");
-  const [photo, setPhoto] = useState("");
   const [saved, setSaved] = useState(false);
   const [showAppointments, setShowAppointments] = useState(true);
-  const [showPhotoPrompt, setShowPhotoPrompt] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const fileInputRef = useRef();
+  const [originalEmail, setOriginalEmail] = useState("");
 
   // Fetch user data on mount
   useEffect(() => {
@@ -55,8 +53,8 @@ export default function Welcome() {
             if (data.user) {
               setName(data.user.name || name);
               setEmail(data.user.email || email);
+              setOriginalEmail(data.user.email || email);
               setPhone(data.user.phone || userPhone || "");
-              setPhoto(data.user.photoURL || "");
               setUid(data.user.uid || "");
             }
           }
@@ -66,19 +64,7 @@ export default function Welcome() {
     fetchUser();
   }, []);
 
-  // Handle photo upload
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => setPhoto(reader.result);
-    reader.readAsDataURL(file);
-  };
 
-  // Custom overlay for photo change
-  const handlePhotoClick = () => {
-    fileInputRef.current.click();
-  };
 
   // Save profile data to backend
   const handleSave = async (e) => {
@@ -93,9 +79,18 @@ export default function Welcome() {
           name, 
           email: email || null, 
           phone: phone || null, 
-          photoURL: photo 
+          photoURL: "" 
         }),
       });
+      
+      // Send email confirmation if email was changed
+      if (email && email !== originalEmail) {
+        await fetch("http://localhost:5000/api/send-profile-update-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, name }),
+        });
+      }
       
       // Update localStorage session
       const userSession = localStorage.getItem('userSession');
@@ -106,6 +101,7 @@ export default function Welcome() {
         localStorage.setItem('userSession', JSON.stringify(session));
       }
       
+      setOriginalEmail(email);
       setSaved(true);
       setIsEditing(false);
       setTimeout(() => {
@@ -114,11 +110,6 @@ export default function Welcome() {
     } catch (err) {
       alert("Failed to save.");
     }
-  };
-  
-  // Remove profile photo
-  const handleRemovePhoto = () => {
-    setPhoto("");
   };
 
   return (
@@ -160,39 +151,11 @@ export default function Welcome() {
             {/* Card Header */}
             <div className="bg-gradient-to-r from-stone-50 to-rose-50 px-6 sm:px-10 py-8 border-b border-stone-200">
               <div className="flex flex-col sm:flex-row items-center space-y-6 sm:space-y-0 sm:space-x-8">
-                {/* Profile Photo */}
+                {/* Profile Icon */}
                 <div className="relative flex-shrink-0">
-                  <div
-                    className="h-28 w-28 sm:h-32 sm:w-32 rounded-full bg-stone-100 flex items-center justify-center overflow-hidden cursor-pointer relative border-4 border-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-                    onMouseEnter={() => setShowPhotoPrompt(true)}
-                    onMouseLeave={() => setShowPhotoPrompt(false)}
-                    onClick={handlePhotoClick}
-                    title="Click to upload profile photo"
-                  >
-                    {photo ? (
-                      <img src={photo} alt="Profile" className="h-full w-full object-cover" />
-                    ) : (
-                      <svg className="h-14 w-14 sm:h-16 sm:w-16 text-stone-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                      </svg>
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      ref={fileInputRef}
-                      onChange={handlePhotoChange}
-                    />
-                    {showPhotoPrompt && (
-                      <div className="absolute inset-0 bg-stone-800/80 flex items-center justify-center text-white text-xs rounded-full backdrop-blur-sm font-sans uppercase tracking-wider">
-                        Upload
-                      </div>
-                    )}
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 w-8 h-8 sm:w-10 sm:h-10 bg-stone-700 rounded-full flex items-center justify-center shadow-lg">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <div className="h-28 w-28 sm:h-32 sm:w-32 rounded-full bg-gradient-to-br from-stone-100 to-stone-200 flex items-center justify-center border-4 border-white shadow-xl">
+                    <svg className="h-14 w-14 sm:h-16 sm:w-16 text-stone-500" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                     </svg>
                   </div>
                 </div>
@@ -293,15 +256,7 @@ export default function Welcome() {
                     </div>
                   )}
                   
-                  {photo && (
-                    <button
-                      type="button"
-                      onClick={handleRemovePhoto}
-                      className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-sans font-medium py-3 px-6 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-                    >
-                      Remove Profile Photo
-                    </button>
-                  )}
+
                   
                   {saved && (
                     <div className="text-center font-sans text-sm text-emerald-700 bg-emerald-50 py-4 px-6 rounded-xl border-2 border-emerald-200 animate-fade-in">
