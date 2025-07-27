@@ -45,95 +45,84 @@ router.post('/send-email-otp', async (req, res) => {
     otpStorage.set(email, { otp, expiryTime });
     
     const mailOptions = {
-      from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
-      to: email,
-      subject: 'Lavish Ladies Salon - Verification Code',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Lavish Ladies Salon - Verification Code</title>
-        </head>
-        <body style="margin: 0; padding: 0; font-family: 'Cormorant Garamond', serif; background: #ffffff; line-height: 1.6;">
-          <table width="100%" cellpadding="0" cellspacing="0" style="background: #ffffff; min-height: 100vh;">
+  from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
+  to: email,
+  subject: 'Your Lavish Ladies Salon Verification Code',
+  html: `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Verification Code - Lavish Ladies Salon</title>
+  </head>
+  <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ffffff; color: #1f2937;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #ffffff; min-height: 100vh;">
+      <tr>
+        <td>
+          <table width="100%" style="max-width: 700px; margin: auto; border: 1px solid #e5e7eb; background: #ffffff;">
             <tr>
-              <td align="center" style="padding: 40px 20px;">
-                <table width="100%" style="max-width: 800px; background: white; border: 1px solid #e5e7eb;">
-                  
-                  <tr>
-                    <td style="padding: 60px 40px; text-align: center; border-bottom: 1px solid #e5e7eb;">
-                      <h1 style="margin: 0; font-size: 42px; font-weight: 300; color: #1f2937; letter-spacing: 2px;">LAVISH LADIES BEAUTY SALON & SPA</h1>
-                    </td>
-                  </tr>
-                  
-                  <tr>
-                    <td style="padding: 50px 40px;">
-                      <h2 style="margin: 0 0 30px 0; font-size: 28px; font-weight: 400; color: #1f2937; text-align: center;">Verification Code</h2>
-                      
-                      <div style="text-align: center; margin: 40px 0;">
-                        <div style="display: inline-block; padding: 30px 40px; border: 2px solid #1f2937; background: #f9fafb;">
-                          <div style="font-size: 48px; font-weight: bold; color: #1f2937; letter-spacing: 12px; font-family: monospace;">${otp}</div>
-                        </div>
-                        <p style="margin: 20px 0 0 0; font-size: 14px; color: #6b7280;">Valid for 10 minutes</p>
-                      </div>
-                      
-                      <div style="margin: 40px 0; padding: 25px; border-left: 4px solid #1f2937; background: #f9fafb;">
-                        <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #1f2937;">Security Guidelines</h3>
-                        <ul style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px;">
-                          <li style="margin-bottom: 8px;">Never share this verification code with anyone</li>
-                          <li style="margin-bottom: 8px;">Our team will never request your code via phone or messaging</li>
-                          <li style="margin-bottom: 8px;">Always verify the sender's email address</li>
-                          <li style="margin-bottom: 8px;">Report suspicious communications immediately</li>
-                        </ul>
-                      </div>
-                      
-                      <div style="margin: 40px 0; padding: 30px; border: 1px solid #e5e7eb; background: #f9fafb;">
-                        <h3 style="margin: 0 0 25px 0; font-size: 20px; font-weight: 600; color: #1f2937; text-align: center;">Visit Our Salon</h3>
-                        <table width="100%" style="font-size: 14px; color: #4b5563;">
-                          <tr><td style="padding: 8px 0; font-weight: 600; width: 100px;">Address:</td><td style="padding: 8px 0;">Lavish Ladies Beauty Salon & Spa<br>Krishna Prasad Complex, NH66<br>Uchila, Udupi District<br>Karnataka - 574117</td></tr>
-                          <tr><td style="padding: 8px 0; font-weight: 600;">Phone:</td><td style="padding: 8px 0;">+91 81476 27651</td></tr>
-                          <tr><td style="padding: 8px 0; font-weight: 600;">Email:</td><td style="padding: 8px 0;">[redacted-email]</td></tr>
-                        </table>
-                      </div>
-                     
-                      <div style="text-align: center; margin: 40px 0; padding: 25px; border: 1px solid #e5e7eb;">
-                        <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937;">Connect With Us</h3>
-                        <div style="display: flex; justify-content: center; align-items: center; gap: 30px;">
-                          <a href="https://www.instagram.com/lavish_ladies_salon_n_spa/" style="display: inline-flex; align-items: center; text-decoration: none; color: #1f2937;">
-                            @lavish_ladies_salon_n_spa
-                          </a>
-                          <a href="https://wa.me/918147627651" style="display: inline-flex; align-items: center; text-decoration: none; color: #1f2937;">
-                            WhatsApp Business
-                          </a>
-                        </div>
-                      </div>
-                      
-                      <div style="text-align: center; margin: 40px 0; padding: 20px; border-top: 1px solid #e5e7eb;">
-                        <p style="margin: 0; font-size: 14px; color: #6b7280;">If you did not request this verification code, please ignore this email.</p>
-                      </div>
-                    </td>
-                  </tr>
-                  
-                  <tr>
-                    <td style="padding: 40px; text-align: center; border-top: 1px solid #e5e7eb; background: #f9fafb;">
-                      <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280;">© 2025 Lavish Ladies Beauty Salon & Spa</p>
-                      <p style="margin: 0 0 8px 0; font-size: 11px; color: #9ca3af;">All rights reserved.</p>
-                        <p style="margin: 0 0 5px 0; font-size: 11px; color: #9ca3af;">This is an automated message. Please do not reply.</p>
-                        <p style="margin: 0; font-size: 11px; color: #9ca3af;">Support: [redacted-email]</p>
-                      </div>
-                    </td>
-                  </tr>
-                  
-                </table>
+              <td style="padding: 60px 40px; text-align: center; background: linear-gradient(135deg, #f9fafb, #f3f4f6); border-bottom: 1px solid #e5e7eb;">
+                <h1 style="margin: 0; font-size: 36px; font-weight: 400; letter-spacing: 2px; color: #1f2937;">LAVISH LADIES SALON & SPA</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 40px;">
+                <h2 style="text-align: center; font-size: 24px; font-weight: 500; margin-bottom: 30px;">Your Verification Code</h2>
+                <div style="text-align: center; margin-bottom: 40px;">
+                  <div style="display: inline-block; padding: 30px 50px; background: #f9fafb; border: 2px solid #1f2937; border-radius: 8px;">
+                    <span style="font-size: 48px; font-weight: bold; letter-spacing: 12px; font-family: monospace; color: #1f2937;">${otp}</span>
+                  </div>
+                  <p style="margin-top: 20px; font-size: 14px; color: #6b7280;">This code is valid for 10 minutes.</p>
+                </div>
+
+                <div style="margin-top: 40px; padding: 20px; background: #f9fafb; border-left: 4px solid #1f2937;">
+                  <h3 style="margin-top: 0; font-size: 18px;">Security Tips</h3>
+                  <ul style="padding-left: 20px; font-size: 14px; color: #4b5563;">
+                    <li>Do not share this code with anyone.</li>
+                    <li>We will never ask for your code via phone or message.</li>
+                    <li>Always verify the sender's email.</li>
+                    <li>Report suspicious activity immediately.</li>
+                  </ul>
+                </div>
+
+                <div style="margin-top: 50px; padding: 25px; background: #f9fafb; border: 1px solid #e5e7eb;">
+                  <h3 style="text-align: center; font-size: 18px;">Visit Our Salon</h3>
+                  <table style="width: 100%; font-size: 14px; color: #4b5563;">
+                    <tr><td style="font-weight: 600; padding: 6px 0;">Address:</td><td>Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</td></tr>
+                    <tr><td style="font-weight: 600; padding: 6px 0;">Phone:</td><td>+91 81476 27651</td></tr>
+                    <tr><td style="font-weight: 600; padding: 6px 0;">Email:</td><td>[redacted-email]</td></tr>
+                  </table>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                  <h3 style="font-size: 16px; margin-bottom: 15px;">Connect With Us</h3>
+                  <a href="https://www.instagram.com/lavish_ladies_salon_n_spa/" style="margin: 0 15px; font-size: 14px; color: #1f2937; text-decoration: none;">Instagram</a>
+                  |
+                  <a href="https://wa.me/918147627651" style="margin: 0 15px; font-size: 14px; color: #1f2937; text-decoration: none;">WhatsApp</a>
+                </div>
+
+                <div style="margin-top: 50px; border-top: 1px solid #e5e7eb; text-align: center; padding-top: 20px;">
+                  <p style="font-size: 14px; color: #6b7280;">If you did not request this verification code, please ignore this email.</p>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center; background: #f9fafb; padding: 30px; border-top: 1px solid #e5e7eb;">
+                <p style="margin: 0; font-size: 13px; color: #6b7280;">© 2025 Lavish Ladies Beauty Salon & Spa. All rights reserved.</p>
+                <p style="margin: 5px 0 0 0; font-size: 13px; color: #9ca3af;">This is an automated message — please do not reply.</p>
+                <p style="margin: 0; font-size: 13px; color: #9ca3af;">Need help? Email us at <strong>[redacted-email]</strong></p>
               </td>
             </tr>
           </table>
-        </body>
-        </html>
-      `
-    };
+        </td>
+      </tr>
+    </table>
+  </body>
+  </html>
+  `
+};
+
     
     try {
       await transporter.sendMail(mailOptions);
