@@ -392,19 +392,6 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
 
             <main className="relative z-10 py-12 px-4">
               <div className="max-w-6xl mx-auto">
-                {/* Hero Section */}
-                <div className="text-center mb-16">
-                  <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-stone-800 mb-6 leading-tight">
-                    Welcome to Your Beauty Sanctuary
-                  </h1>
-                  <button
-                    onClick={() => isLoggedIn ? navigate('/welcome', { state: userInfo }) : setModal("signin")}
-                    className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"
-                  >
-                    {isLoggedIn ? 'Go to Dashboard' : 'Get Started'}
-                  </button>
-                </div>
-
                 {/* About Section */}
                 <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 sm:p-12 border border-stone-200/50">
                   <div className="text-center mb-8">
@@ -418,9 +405,6 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <p className="font-sans text-lg text-stone-600 leading-relaxed mb-6">
                       Since March 2018, Lavish Ladies Beauty Salon and Spa in Uchila has been dedicated to personalized beauty care in a warm and inviting atmosphere. We offer a variety of services, including stylish haircuts, vibrant hair coloring, rejuvenating facials, soothing massages, and beautiful manicures and pedicures.
                     </p>
-                    <p className="font-sans text-lg text-stone-600 leading-relaxed mb-8">
-                      Visit us and experience tailored care that makes you look and feel your best. Book your appointment today!
-                    </p>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
                       <div className="text-center p-6 bg-stone-50/50 rounded-2xl">
@@ -429,8 +413,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                           </svg>
                         </div>
-                        <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Expert Stylists</h3>
-                        <p className="font-sans text-sm text-stone-600">Professional and experienced team</p>
+                        <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Expert Stylist</h3>
+                        <p className="font-sans text-sm text-stone-600">Professional and experienced</p>
                       </div>
                       
                       <div className="text-center p-6 bg-stone-50/50 rounded-2xl">

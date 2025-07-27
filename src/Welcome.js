@@ -37,6 +37,18 @@ export default function Welcome() {
 
   // Fetch user data on mount
   useEffect(() => {
+    // First, try to get name from localStorage session
+    const userSession = localStorage.getItem('userSession');
+    if (userSession) {
+      const session = JSON.parse(userSession);
+      if (session.name && session.name !== 'Client') {
+        setName(session.name);
+      }
+      if (session.email) {
+        setEmail(session.email);
+      }
+    }
+    
     async function fetchUser() {
       try {
         let queryParam = '';
