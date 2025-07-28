@@ -111,6 +111,9 @@ export default function Welcome() {
         session.name = name;
         session.email = email;
         localStorage.setItem('userSession', JSON.stringify(session));
+        
+        // Dispatch custom event for real-time updates
+        window.dispatchEvent(new CustomEvent('userUpdated', { detail: session }));
       }
       
       setOriginalEmail(email);

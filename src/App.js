@@ -390,66 +390,155 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               </div>
             </nav>
 
-            <main className="relative z-10 py-12 px-4">
-              <div className="max-w-6xl mx-auto">
-                {/* About Section */}
-                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 sm:p-12 border border-stone-200/50">
-                  <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full mb-4">
-                      <span className="font-serif text-2xl font-bold text-stone-800">7+</span>
-                    </div>
-                    <h2 className="font-serif text-3xl sm:text-4xl font-light text-stone-800 mb-4">Years in Business</h2>
+            <main className="relative z-10">
+              {/* About Us Section */}
+              <section className="py-16 px-4">
+                <div className="max-w-7xl mx-auto">
+                  <div className="text-center mb-12">
+                    <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">About Us</h2>
+                    <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto"></div>
                   </div>
                   
-                  <div className="max-w-4xl mx-auto text-center">
-                    <p className="font-sans text-lg text-stone-600 leading-relaxed mb-6">
-                      Since March 2018, Lavish Ladies Beauty Salon and Spa in Uchila has been dedicated to personalized beauty care in a warm and inviting atmosphere. We offer a variety of services, including stylish haircuts, vibrant hair coloring, rejuvenating facials, soothing massages, and beautiful manicures and pedicures.
-                    </p>
+                  <div className="grid lg:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-6">
+                      <div className="flex items-center space-x-4 mb-6">
+                        <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center">
+                          <span className="font-serif text-2xl font-bold text-stone-800">7+</span>
+                        </div>
+                        <div>
+                          <h3 className="font-serif text-2xl font-medium text-stone-800">Years in Business</h3>
+                          <p className="text-stone-600">Since March 2018</p>
+                        </div>
+                      </div>
+                      
+                      <p className="font-sans text-lg text-stone-600 leading-relaxed">
+                        Lavish Ladies Beauty Salon and Spa in Uchila has been dedicated to personalized beauty care in a warm and inviting atmosphere. We offer a variety of services, including stylish haircuts, vibrant hair coloring, rejuvenating facials, soothing massages, and beautiful manicures and pedicures.
+                      </p>
+                      
+                      <p className="font-sans text-lg text-stone-600 leading-relaxed">
+                        Visit us and experience tailored care that makes you look and feel your best. Book your appointment today!
+                      </p>
+                      
+                      <div className="grid grid-cols-2 gap-4 mt-8">
+                        <div className="text-center p-4 bg-white/80 rounded-xl shadow-sm">
+                          <div className="w-10 h-10 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <svg className="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                          </div>
+                          <h4 className="font-serif text-lg font-medium text-stone-800">Expert Stylists</h4>
+                        </div>
+                        
+                        <div className="text-center p-4 bg-white/80 rounded-xl shadow-sm">
+                          <div className="w-10 h-10 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <svg className="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                          </div>
+                          <h4 className="font-serif text-lg font-medium text-stone-800">Premium Care</h4>
+                        </div>
+                      </div>
+                    </div>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-                      <div className="text-center p-6 bg-stone-50/50 rounded-2xl">
-                        <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <svg className="w-6 h-6 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                          </svg>
-                        </div>
-                        <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Expert Stylist</h3>
-                        <p className="font-sans text-sm text-stone-600">Professional and experienced</p>
+                    <div className="relative">
+                      <div className="aspect-[4/3] bg-gradient-to-br from-rose-100 to-pink-100 rounded-2xl overflow-hidden shadow-2xl">
+                        <img 
+                          src="https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                          alt="Lavish Ladies Beauty Salon Interior" 
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                      
-                      <div className="text-center p-6 bg-stone-50/50 rounded-2xl">
-                        <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <svg className="w-6 h-6 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                          </svg>
-                        </div>
-                        <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Premium Services</h3>
-                        <p className="font-sans text-sm text-stone-600">High-quality treatments and care</p>
-                      </div>
-                      
-                      <div className="text-center p-6 bg-stone-50/50 rounded-2xl">
-                        <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <svg className="w-6 h-6 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                          </svg>
-                        </div>
-                        <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Personalized Care</h3>
-                        <p className="font-sans text-sm text-stone-600">Tailored to your unique needs</p>
-                      </div>
-                      
-                      <div className="text-center p-6 bg-stone-50/50 rounded-2xl">
-                        <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <svg className="w-6 h-6 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                          </svg>
-                        </div>
-                        <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Convenient Location</h3>
-                        <p className="font-sans text-sm text-stone-600">Located in the heart of Uchila</p>
+                      <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl">
+                        <svg className="w-12 h-12 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M9.5 16.5c0 2-2.5 3.5-2.5 3.5s-2.5-1.5-2.5-3.5c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/>
+                          <path d="M19.5 16.5c0 2-2.5 3.5-2.5 3.5s-2.5-1.5-2.5-3.5c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/>
+                          <path d="M3 2h2l.4 2M7 13h10l4-8H5.4"/>
+                        </svg>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </section>
+              
+              {/* Services Section */}
+              <section className="py-16 px-4 bg-white/50">
+                <div className="max-w-7xl mx-auto">
+                  <div className="text-center mb-12">
+                    <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">Our Services</h2>
+                    <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-6"></div>
+                    <p className="font-sans text-lg text-stone-600 max-w-2xl mx-auto">Discover our range of premium beauty and wellness services designed to make you look and feel your best.</p>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
+                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
+                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Hair Styling & Cuts</h3>
+                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Professional haircuts, styling, and treatments for all hair types. From classic cuts to modern trends.</p>
+                      <div className="text-rose-600 font-sans text-sm font-medium"></div>
+                    </div>
+                    
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
+                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
+                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Facial Treatments</h3>
+                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Rejuvenating facials, deep cleansing for glowing, healthy skin.</p>
+                    </div>
+                    
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
+                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
+                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Spa & Massage</h3>
+                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Relaxing massages and spa treatments to rejuvenate your body and mind.</p>
+                    </div>
+                    
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
+                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
+                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Manicure & Pedicure</h3>
+                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Complete nail care services including manicures and pedicures.</p>
+                    </div>
+                    
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
+                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
+                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Hair Coloring</h3>
+                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Professional hair coloring, highlights, and color correction services.</p>
+                    </div>
+                    
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
+                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
+                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Bridal Packages</h3>
+                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Complete bridal makeover packages for your special day.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <button className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105">
+                      View All Services
+                    </button>
+                  </div>
+                </div>
+              </section>
             </main>
 
             {sidebarOpen && (
