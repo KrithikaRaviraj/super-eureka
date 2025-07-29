@@ -78,10 +78,26 @@ export default function Welcome() {
     fetchAppointments();
   }, []);
   
+  // Refresh appointments when component becomes visible (user returns from booking)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchAppointments();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [email]);
+  
   const fetchAppointments = async () => {
-    if (email) {
+    const currentEmail = email || location.state?.email;
+    if (currentEmail) {
       try {
-        const response = await fetch(`http://localhost:5000/api/appointments/user/${encodeURIComponent(email)}`);
+        const response = await fetch(`http://localhost:5000/api/appointments/user/${encodeURIComponent(currentEmail)}`);
         if (response.ok) {
           const data = await response.json();
           setAppointments(data.appointments || []);
@@ -305,9 +321,17 @@ export default function Welcome() {
           <div className="max-w-4xl mx-auto mt-12">
             <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 overflow-hidden">
               <div className="bg-gradient-to-r from-stone-50 to-rose-50 px-6 sm:px-10 py-6 border-b border-stone-200">
-                <h3 className="font-serif text-xl sm:text-2xl font-light text-stone-800 text-center">
-                  Appointment Schedule
-                </h3>
+                <div className="flex justify-between items-center">
+                  <h3 className="font-serif text-xl sm:text-2xl font-light text-stone-800">
+                    Appointment Schedule
+                  </h3>
+                  <button
+                    onClick={fetchAppointments}
+                    className="bg-stone-600 hover:bg-stone-700 text-white px-3 py-1 rounded-lg font-sans text-xs transition-all duration-200"
+                  >
+                    Refresh
+                  </button>
+                </div>
               </div>
               <div className="p-6 sm:p-10">
                 {appointments.length === 0 ? (
@@ -320,7 +344,9 @@ export default function Welcome() {
                     <p className="font-sans text-stone-700 mb-2 text-base sm:text-lg">No upcoming appointments</p>
                     <p className="font-sans text-xs sm:text-sm text-stone-500 mb-8 uppercase tracking-wider">Schedule your next visit with us</p>
                     <button 
-                      onClick={() => window.location.href = '/services'}
+                      onClick={() => {
+                        window.location.href = '/services';
+                      }}
                       className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white px-8 py-4 rounded-xl font-sans font-semibold text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
                       Book Appointment
