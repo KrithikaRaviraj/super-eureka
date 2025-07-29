@@ -17,6 +17,7 @@ export default function FeedbackForm() {
     recommendation: 0,
     comments: ''
   });
+  const [hoveredRating, setHoveredRating] = useState({});
 
   useEffect(() => {
     fetchAppointment();
@@ -73,22 +74,28 @@ export default function FeedbackForm() {
     setSubmitting(false);
   };
 
-  const StarRating = ({ category, rating, onRate }) => (
-    <div className="flex space-x-1">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          onClick={() => onRate(category, star)}
-          className={`text-2xl transition-colors ${
-            star <= rating ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-200'
-          }`}
-        >
-          ⭐
-        </button>
-      ))}
-    </div>
-  );
+  const StarRating = ({ category, rating, onRate }) => {
+    const currentRating = hoveredRating[category] || rating;
+    
+    return (
+      <div className="flex space-x-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => onRate(category, star)}
+            onMouseEnter={() => setHoveredRating({...hoveredRating, [category]: star})}
+            onMouseLeave={() => setHoveredRating({...hoveredRating, [category]: 0})}
+            className={`text-3xl transition-all duration-200 hover:scale-110 cursor-pointer ${
+              star <= currentRating ? 'text-yellow-400' : 'text-gray-300'
+            }`}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+    );
+  };
 
   if (loading) {
     return (
@@ -239,7 +246,7 @@ export default function FeedbackForm() {
               <div className="text-center pt-4">
                 <p className="font-sans text-sm text-stone-600 mb-3">Love our service? Please consider leaving a Google Review!</p>
                 <a 
-                  href="https://g.page/r/CQxYzQzQzQzQzQzQ/review" 
+                  href="https://g.page/r/CX75qAudJSuXEAI/review" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-sans font-medium transition-all duration-300"

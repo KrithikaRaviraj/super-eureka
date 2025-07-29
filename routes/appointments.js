@@ -206,8 +206,8 @@ router.put('/:id', async (req, res) => {
                     <tr>
                       <td style="padding: 40px;">
                         <div style="text-align: center; margin-bottom: 30px;">
-                          <div style="width: 80px; height: 80px; background: #10b981; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                            <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
+                          <div style="margin-bottom: 20px;">
+                            <svg width="80" height="80" fill="#10b981" viewBox="0 0 24 24">
                               <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                             </svg>
                           </div>
