@@ -132,7 +132,7 @@ router.put('/:id', async (req, res) => {
                         <div style="text-align: center; margin-bottom: 30px;">
                           <div style="width: 80px; height: 80px; background: #10b981; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
                             <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
-                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                             </svg>
                           </div>
                           <h2 style="margin: 0; font-size: 28px; font-weight: 500; color: #1f2937;">Appointment Confirmed!</h2>
@@ -155,9 +155,33 @@ router.put('/:id', async (req, res) => {
                           <p style="margin: 0; font-size: 14px; color: #92400e;">Please arrive 10 minutes early for your appointment. If you need to reschedule, contact us at +91 81476 27651.</p>
                         </div>
                         
+                        <div style="text-align: center; margin: 40px 0; padding: 25px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
+                          <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937;">Contact Information</h3>
+                          <table style="width: 100%; font-size: 14px; color: #4b5563;">
+                            <tr><td style="padding: 8px 0; font-weight: 600; width: 100px;">Address:</td><td style="padding: 8px 0;">Krishna Prasad Complex, NH66<br>Uchila, Udupi District, Karnataka - 574117</td></tr>
+                            <tr><td style="padding: 8px 0; font-weight: 600;">Phone:</td><td style="padding: 8px 0;">+91 81476 27651</td></tr>
+                            <tr><td style="padding: 8px 0; font-weight: 600;">Email:</td><td style="padding: 8px 0;">[redacted-email]</td></tr>
+                          </table>
+                        </div>
+                        
+                        <div style="text-align: center; margin: 40px 0; padding: 25px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                          <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937;">Connect With Us</h3>
+                          <div style="text-align: center;">
+                            <div style="margin-bottom: 15px;">
+                              <a href="https://www.instagram.com/lavish_ladies_salon_n_spa/" style="display: inline-block; text-decoration: none; color: #1f2937; font-size: 16px;">
+                                Instagram: @lavish_ladies_salon_n_spa
+                              </a>
+                            </div>
+                            <div>
+                              <a href="https://wa.me/918147627651" style="display: inline-block; text-decoration: none; color: #1f2937; font-size: 16px;">
+                                WhatsApp: +91 81476 27651
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                        
                         <div style="text-align: center; margin: 40px 0;">
                           <p style="font-size: 16px; color: #4b5563;">We look forward to seeing you!</p>
-                          <p style="font-size: 14px; color: #6b7280; margin-top: 20px;">Lavish Ladies Beauty Salon & Spa<br>Krishna Prasad Complex, NH66, Uchila</p>
                         </div>
                       </td>
                     </tr>

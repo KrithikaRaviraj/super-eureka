@@ -94,7 +94,18 @@ export default function Welcome() {
   }, [email]);
   
   const fetchAppointments = async () => {
-    const currentEmail = email || location.state?.email;
+    // Get email from multiple sources
+    let currentEmail = email || location.state?.email;
+    
+    // If no email, try to get from localStorage
+    if (!currentEmail) {
+      const userSession = localStorage.getItem('userSession');
+      if (userSession) {
+        const session = JSON.parse(userSession);
+        currentEmail = session.email;
+      }
+    }
+    
     if (currentEmail) {
       try {
         const response = await fetch(`http://localhost:5000/api/appointments/user/${encodeURIComponent(currentEmail)}`);
