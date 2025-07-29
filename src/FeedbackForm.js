@@ -8,6 +8,7 @@ export default function FeedbackForm() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [countdown, setCountdown] = useState(10);
   const [error, setError] = useState('');
   
   const [feedback, setFeedback] = useState({
@@ -64,6 +65,20 @@ export default function FeedbackForm() {
       
       if (data.success) {
         setSubmitted(true);
+        // Start countdown timer
+        const timer = setInterval(() => {
+          setCountdown(prev => {
+            if (prev <= 1) {
+              clearInterval(timer);
+              navigate('/');
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        
+        // Cleanup timer on component unmount
+        return () => clearInterval(timer);
       } else {
         setError(data.message);
       }
@@ -139,14 +154,38 @@ export default function FeedbackForm() {
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
           </div>
-          <h2 className="font-serif text-2xl font-medium text-stone-800 mb-4">Thank You!</h2>
-          <p className="font-sans text-stone-600 mb-6">Your feedback has been submitted successfully. We appreciate your time!</p>
-          <button 
-            onClick={() => navigate('/')}
-            className="bg-stone-600 hover:bg-stone-700 text-white px-6 py-3 rounded-xl font-sans font-medium"
-          >
-            Go Home
-          </button>
+          <h2 className="font-serif text-2xl font-medium text-stone-800 mb-4">Thank You</h2>
+          <p className="font-sans text-stone-600 mb-6">
+            Your feedback has been submitted successfully. We appreciate your time and valuable input.
+          </p>
+          
+          <div className="space-y-4">
+            <div className="bg-stone-50 p-6 rounded-xl border border-stone-200">
+              <p className="font-sans text-stone-700 mb-4 text-center">
+                Would you like to leave a Google Review?
+              </p>
+              <div className="flex space-x-3">
+                <a 
+                  href="https://g.page/r/CX75qAudJSuXEAI/review" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-sans font-medium transition-all duration-300"
+                >
+                  Leave Review
+                </a>
+                <button 
+                  onClick={() => navigate('/')}
+                  className="flex-1 bg-stone-600 hover:bg-stone-700 text-white px-4 py-3 rounded-xl font-sans font-medium transition-all duration-300"
+                >
+                  Go Home
+                </button>
+              </div>
+            </div>
+            
+            <p className="font-sans text-xs text-stone-500 text-center">
+              Redirecting to homepage in {countdown} seconds...
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -242,18 +281,6 @@ export default function FeedbackForm() {
               >
                 {submitting ? 'Submitting...' : 'Submit Feedback'}
               </button>
-              
-              <div className="text-center pt-4">
-                <p className="font-sans text-sm text-stone-600 mb-3">Love our service? Please consider leaving a Google Review!</p>
-                <a 
-                  href="https://g.page/r/CX75qAudJSuXEAI/review" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-sans font-medium transition-all duration-300"
-                >
-                  Leave Google Review
-                </a>
-              </div>
             </form>
           </div>
         </div>
