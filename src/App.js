@@ -4,6 +4,7 @@ import Services from "./Services";
 import BookAppointment from "./BookAppointment";
 import StaffLogin from "./StaffLogin";
 import StaffDashboard from "./StaffDashboard";
+import FeedbackForm from "./FeedbackForm";
 import React, { useState, useEffect } from "react";
 import mylogo from "./assets/mylogo.png"; 
 import { auth, provider } from "./firebase";
@@ -671,6 +672,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
       <Route path="/book-appointment" element={<BookAppointment />} />
       <Route path="/staff-login" element={<StaffLogin />} />
       <Route path="/staff-dashboard" element={<StaffDashboard />} />
+      <Route path="/feedback/:token" element={<FeedbackForm />} />
     </Routes>
   );
 }

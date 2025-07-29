@@ -1,0 +1,17 @@
+const mongoose = require('mongoose');
+
+const appointmentSchema = new mongoose.Schema({
+  service: { type: String, required: true },
+  date: { type: Date, required: true },
+  time: { type: String, required: true },
+  notes: { type: String, default: '' },
+  userEmail: { type: String, required: true },
+  userName: { type: String, required: true },
+  status: { type: String, enum: ['pending', 'confirmed', 'completed', 'cancelled'], default: 'pending' },
+  feedbackToken: { type: String },
+  feedbackSubmitted: { type: Boolean, default: false }
+}, {
+  timestamps: true
+});
+
+module.exports = mongoose.model('Appointment', appointmentSchema);

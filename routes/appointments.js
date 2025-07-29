@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const Appointment = require('../models/Appointment');
+const Feedback = require('../models/Feedback');
 
 // Email configuration
 const transporter = nodemailer.createTransport({
@@ -11,12 +14,8 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// In-memory storage for appointments (in production, use a database)
-let appointments = [];
-let appointmentIdCounter = 1;
-
 // Create appointment
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { service, date, time, notes, userEmail, userName } = req.body;
     
@@ -27,19 +26,17 @@ router.post('/', (req, res) => {
       });
     }
 
-    const appointment = {
-      _id: appointmentIdCounter++,
+    const appointment = new Appointment({
       service,
       date,
       time,
       notes: notes || '',
       userEmail,
       userName,
-      status: 'pending',
-      createdAt: new Date().toISOString()
-    };
+      status: 'pending'
+    });
 
-    appointments.push(appointment);
+    await appointment.save();
 
     res.json({
       success: true,
@@ -54,10 +51,10 @@ router.post('/', (req, res) => {
 });
 
 // Get user appointments
-router.get('/user/:email', (req, res) => {
+router.get('/user/:email', async (req, res) => {
   try {
     const { email } = req.params;
-    const userAppointments = appointments.filter(apt => apt.userEmail === email);
+    const userAppointments = await Appointment.find({ userEmail: email }).sort({ createdAt: -1 });
     
     res.json({
       success: true,
@@ -71,11 +68,13 @@ router.get('/user/:email', (req, res) => {
 });
 
 // Get all appointments (for staff)
-router.get('/all', (req, res) => {
+router.get('/all', async (req, res) => {
   try {
+    const appointments = await Appointment.find().sort({ createdAt: -1 });
+    
     res.json({
       success: true,
-      appointments: appointments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      appointments
     });
 
   } catch (error) {
@@ -90,16 +89,19 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
     
-    const appointmentIndex = appointments.findIndex(apt => apt._id == id);
+    const appointment = await Appointment.findById(id);
     
-    if (appointmentIndex === -1) {
+    if (!appointment) {
       return res.status(404).json({ success: false, message: "Appointment not found" });
     }
 
-    appointments[appointmentIndex].status = status;
-    appointments[appointmentIndex].updatedAt = new Date().toISOString();
+    appointment.status = status;
     
-    const appointment = appointments[appointmentIndex];
+    if (status === 'completed') {
+      appointment.feedbackToken = crypto.randomBytes(32).toString('hex');
+    }
+    
+    await appointment.save();
 
     // Send confirmation email when appointment is confirmed
     if (status === 'confirmed') {
@@ -183,6 +185,8 @@ router.put('/:id', async (req, res) => {
     
     // Send feedback form when appointment is completed
     if (status === 'completed') {
+      const feedbackUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/feedback/${appointment.feedbackToken}`;
+      
       const feedbackMailOptions = {
         from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
         to: appointment.userEmail,
@@ -193,7 +197,7 @@ router.put('/:id', async (req, res) => {
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Feedback Form</title>
+            <title>Feedback Request</title>
           </head>
           <body style="margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: #ffffff;">
             <table width="100%" cellpadding="0" cellspacing="0" style="background: #ffffff; min-height: 100vh;">
@@ -220,41 +224,10 @@ router.put('/:id', async (req, res) => {
                         
                         <p style="font-size: 16px; color: #4b5563; margin-bottom: 30px;">Thank you for visiting us for your <strong>${appointment.service}</strong> appointment. We hope you had a wonderful experience!</p>
                         
-                        <div style="background: #f9fafb; padding: 30px; border-radius: 8px; margin: 30px 0;">
-                          <h3 style="margin: 0 0 20px 0; font-size: 20px; color: #1f2937;">Please Rate Your Experience</h3>
-                          
-                          <div style="margin: 20px 0;">
-                            <p style="margin: 10px 0; font-size: 16px; color: #4b5563;"><strong>Service Quality:</strong></p>
-                            <div style="font-size: 24px; margin: 10px 0;">
-                              ⭐ ⭐ ⭐ ⭐ ⭐
-                            </div>
-                          </div>
-                          
-                          <div style="margin: 20px 0;">
-                            <p style="margin: 10px 0; font-size: 16px; color: #4b5563;"><strong>Staff Friendliness:</strong></p>
-                            <div style="font-size: 24px; margin: 10px 0;">
-                              ⭐ ⭐ ⭐ ⭐ ⭐
-                            </div>
-                          </div>
-                          
-                          <div style="margin: 20px 0;">
-                            <p style="margin: 10px 0; font-size: 16px; color: #4b5563;"><strong>Salon Cleanliness:</strong></p>
-                            <div style="font-size: 24px; margin: 10px 0;">
-                              ⭐ ⭐ ⭐ ⭐ ⭐
-                            </div>
-                          </div>
-                          
-                          <div style="margin: 30px 0;">
-                            <p style="margin: 10px 0; font-size: 16px; color: #4b5563;"><strong>Additional Comments:</strong></p>
-                            <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 15px; background: white; min-height: 80px; margin: 10px 0;">
-                              <p style="margin: 0; color: #9ca3af; font-style: italic;">Share your thoughts about your visit...</p>
-                            </div>
-                          </div>
-                        </div>
+                        <p style="font-size: 16px; color: #4b5563; margin-bottom: 30px;">Could you spare 2 minutes to share your feedback? Your opinion helps us improve our services.</p>
                         
                         <div style="text-align: center; margin: 40px 0;">
-                          <p style="font-size: 16px; color: #4b5563; margin-bottom: 20px;">We value your feedback and would love to hear from you!</p>
-                          <p style="font-size: 14px; color: #6b7280;">Please reply to this email with your ratings and comments, or call us at <strong>+91 81476 27651</strong></p>
+                          <a href="${feedbackUrl}" style="display: inline-block; background: #f59e0b; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">Share Your Feedback</a>
                         </div>
                         
                         <div style="background: #ecfdf5; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center;">
@@ -293,12 +266,83 @@ router.put('/:id', async (req, res) => {
     res.json({
       success: true,
       message: "Appointment updated successfully",
-      appointment: appointment
+      appointment
     });
 
   } catch (error) {
     console.error('Update appointment error:', error);
     res.status(500).json({ success: false, message: "Failed to update appointment" });
+  }
+});
+
+// Get feedback form
+router.get('/feedback/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    const appointment = await Appointment.findOne({ feedbackToken: token });
+    
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: "Feedback form not found" });
+    }
+    
+    if (appointment.feedbackSubmitted) {
+      return res.status(400).json({ success: false, message: "Feedback already submitted" });
+    }
+    
+    res.json({ success: true, appointment });
+  } catch (error) {
+    console.error('Get feedback error:', error);
+    res.status(500).json({ success: false, message: "Failed to get feedback form" });
+  }
+});
+
+// Submit feedback
+router.post('/feedback/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { serviceQuality, staffFriendliness, salonCleanliness, comments } = req.body;
+    
+    const appointment = await Appointment.findOne({ feedbackToken: token });
+    
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: "Feedback form not found" });
+    }
+    
+    if (appointment.feedbackSubmitted) {
+      return res.status(400).json({ success: false, message: "Feedback already submitted" });
+    }
+    
+    const feedback = new Feedback({
+      appointmentId: appointment._id,
+      userEmail: appointment.userEmail,
+      userName: appointment.userName,
+      service: appointment.service,
+      serviceQuality,
+      staffFriendliness,
+      salonCleanliness,
+      comments
+    });
+    
+    await feedback.save();
+    
+    appointment.feedbackSubmitted = true;
+    await appointment.save();
+    
+    res.json({ success: true, message: "Feedback submitted successfully" });
+  } catch (error) {
+    console.error('Submit feedback error:', error);
+    res.status(500).json({ success: false, message: "Failed to submit feedback" });
+  }
+});
+
+// Get all feedback (for staff)
+router.get('/feedback', async (req, res) => {
+  try {
+    const feedback = await Feedback.find().sort({ createdAt: -1 });
+    res.json({ success: true, feedback });
+  } catch (error) {
+    console.error('Get feedback error:', error);
+    res.status(500).json({ success: false, message: "Failed to get feedback" });
   }
 });
 
