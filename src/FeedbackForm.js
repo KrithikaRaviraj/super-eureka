@@ -14,6 +14,7 @@ export default function FeedbackForm() {
     serviceQuality: 0,
     staffFriendliness: 0,
     salonCleanliness: 0,
+    recommendation: 0,
     comments: ''
   });
 
@@ -44,7 +45,7 @@ export default function FeedbackForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!feedback.serviceQuality || !feedback.staffFriendliness || !feedback.salonCleanliness) {
+    if (!feedback.serviceQuality || !feedback.staffFriendliness || !feedback.salonCleanliness || !feedback.recommendation) {
       setError('Please rate all categories');
       return;
     }
@@ -199,6 +200,17 @@ export default function FeedbackForm() {
 
               <div>
                 <label className="block font-sans text-sm font-semibold text-stone-700 mb-3">
+                  How likely are you to recommend us to friends/family?
+                </label>
+                <StarRating 
+                  category="recommendation" 
+                  rating={feedback.recommendation} 
+                  onRate={handleRatingClick} 
+                />
+              </div>
+
+              <div>
+                <label className="block font-sans text-sm font-semibold text-stone-700 mb-3">
                   Additional Comments (Optional)
                 </label>
                 <textarea
@@ -223,6 +235,18 @@ export default function FeedbackForm() {
               >
                 {submitting ? 'Submitting...' : 'Submit Feedback'}
               </button>
+              
+              <div className="text-center pt-4">
+                <p className="font-sans text-sm text-stone-600 mb-3">Love our service? Please consider leaving a Google Review!</p>
+                <a 
+                  href="https://g.page/r/CQxYzQzQzQzQzQzQ/review" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-sans font-medium transition-all duration-300"
+                >
+                  Leave Google Review
+                </a>
+              </div>
             </form>
           </div>
         </div>

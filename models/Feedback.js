@@ -8,6 +8,7 @@ const feedbackSchema = new mongoose.Schema({
   serviceQuality: { type: Number, min: 1, max: 5, required: true },
   staffFriendliness: { type: Number, min: 1, max: 5, required: true },
   salonCleanliness: { type: Number, min: 1, max: 5, required: true },
+  recommendation: { type: Number, min: 1, max: 5, required: true },
   comments: { type: String, default: '' },
   overallRating: { type: Number, min: 1, max: 5 }
 }, {
@@ -15,7 +16,7 @@ const feedbackSchema = new mongoose.Schema({
 });
 
 feedbackSchema.pre('save', function(next) {
-  this.overallRating = Math.round((this.serviceQuality + this.staffFriendliness + this.salonCleanliness) / 3);
+  this.overallRating = Math.round((this.serviceQuality + this.staffFriendliness + this.salonCleanliness + this.recommendation) / 4);
   next();
 });
 

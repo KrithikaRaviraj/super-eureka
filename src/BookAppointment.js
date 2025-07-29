@@ -10,10 +10,12 @@ export default function BookAppointment() {
     service: selectedService?.name || '',
     date: '',
     time: '',
+    phone: '',
     notes: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [googleCalendarUrl, setGoogleCalendarUrl] = useState('');
 
   const services = [
     "Hair Styling & Cuts",
@@ -51,6 +53,7 @@ export default function BookAppointment() {
       ...formData,
       userEmail: user.email,
       userName: user.name,
+      userPhone: formData.phone,
       status: 'pending',
       createdAt: new Date().toISOString()
     };
@@ -69,9 +72,10 @@ export default function BookAppointment() {
       
       if (response.ok && result.success) {
         setSuccess(true);
+        setGoogleCalendarUrl(result.googleCalendarUrl || '');
         setTimeout(() => {
           navigate('/welcome');
-        }, 2000);
+        }, 3000);
       } else {
         alert(result.message || 'Failed to book appointment');
       }
@@ -113,6 +117,20 @@ export default function BookAppointment() {
               </div>
               <h2 className="font-serif text-2xl font-medium text-stone-800 mb-4">Appointment Booked!</h2>
               <p className="font-sans text-stone-600 mb-6">Your appointment has been successfully scheduled. We'll contact you soon to confirm.</p>
+              
+              {googleCalendarUrl && (
+                <div className="mb-6">
+                  <a 
+                    href={googleCalendarUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 mb-4"
+                  >
+                    Add to Google Calendar
+                  </a>
+                </div>
+              )}
+              
               <button 
                 onClick={() => navigate('/welcome')}
                 className="bg-gradient-to-r from-stone-800 to-stone-900 text-white font-sans font-semibold py-3 px-8 rounded-xl"
@@ -166,6 +184,19 @@ export default function BookAppointment() {
                       <option key={time} value={time}>{time}</option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="block font-sans text-sm font-semibold text-stone-700 mb-3">Phone Number</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:outline-none"
+                    placeholder="Enter your phone number"
+                  />
                 </div>
 
                 <div>

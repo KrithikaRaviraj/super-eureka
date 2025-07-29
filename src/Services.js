@@ -139,23 +139,6 @@ export default function Services() {
               </div>
             ))}
           </div>
-
-          <div className="text-center mt-16">
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-12 shadow-xl border border-stone-200/50">
-              <h2 className="font-serif text-3xl font-light text-stone-800 mb-6">Ready to Book?</h2>
-              <p className="font-sans text-lg text-stone-600 mb-8 max-w-2xl mx-auto">
-                Contact us today to schedule your appointment and experience the luxury of personalized beauty care.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105">
-                  Call +91 81476 27651
-                </button>
-                <button className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105">
-                  WhatsApp Us
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

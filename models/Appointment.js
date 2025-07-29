@@ -7,9 +7,11 @@ const appointmentSchema = new mongoose.Schema({
   notes: { type: String, default: '' },
   userEmail: { type: String, required: true },
   userName: { type: String, required: true },
+  userPhone: { type: String, required: true },
   status: { type: String, enum: ['pending', 'confirmed', 'completed', 'cancelled'], default: 'pending' },
   feedbackToken: { type: String },
-  feedbackSubmitted: { type: Boolean, default: false }
+  feedbackSubmitted: { type: Boolean, default: false },
+  googleCalendarEventId: { type: String }
 }, {
   timestamps: true
 });

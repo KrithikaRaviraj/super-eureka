@@ -17,9 +17,9 @@ const transporter = nodemailer.createTransport({
 // Create appointment
 router.post('/', async (req, res) => {
   try {
-    const { service, date, time, notes, userEmail, userName } = req.body;
+    const { service, date, time, phone, notes, userEmail, userName, userPhone } = req.body;
     
-    if (!service || !date || !time || !userEmail || !userName) {
+    if (!service || !date || !time || !userEmail || !userName || !(phone || userPhone)) {
       return res.status(400).json({ 
         success: false, 
         message: "All required fields must be provided" 
@@ -33,6 +33,7 @@ router.post('/', async (req, res) => {
       notes: notes || '',
       userEmail,
       userName,
+      userPhone: phone || userPhone,
       status: 'pending'
     });
 
@@ -41,7 +42,8 @@ router.post('/', async (req, res) => {
     res.json({
       success: true,
       message: "Appointment booked successfully",
-      appointment
+      appointment,
+      googleCalendarUrl: generateGoogleCalendarUrl(appointment)
     });
 
   } catch (error) {
@@ -49,6 +51,31 @@ router.post('/', async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to book appointment" });
   }
 });
+
+// Generate Google Calendar URL
+function generateGoogleCalendarUrl(appointment) {
+  const startDate = new Date(`${appointment.date}T${convertTo24Hour(appointment.time)}`);
+  const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour duration
+  
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: `${appointment.service} - Lavish Ladies Salon`,
+    dates: `${startDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+    details: `Service: ${appointment.service}\nSalon: Lavish Ladies Beauty Salon & Spa\nAddress: Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117\nPhone: +91 81476 27651`,
+    location: 'Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117'
+  });
+  
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+// Convert 12-hour time to 24-hour format
+function convertTo24Hour(time12h) {
+  const [time, modifier] = time12h.split(' ');
+  let [hours, minutes] = time.split(':');
+  if (hours === '12') hours = '00';
+  if (modifier === 'PM') hours = parseInt(hours, 10) + 12;
+  return `${hours.padStart(2, '0')}:${minutes}:00`;
+}
 
 // Get user appointments
 router.get('/user/:email', async (req, res) => {
@@ -324,7 +351,7 @@ router.get('/feedback/:token', async (req, res) => {
 router.post('/feedback/:token', async (req, res) => {
   try {
     const { token } = req.params;
-    const { serviceQuality, staffFriendliness, salonCleanliness, comments } = req.body;
+    const { serviceQuality, staffFriendliness, salonCleanliness, recommendation, comments } = req.body;
     
     const appointment = await Appointment.findOne({ feedbackToken: token });
     
@@ -344,6 +371,7 @@ router.post('/feedback/:token', async (req, res) => {
       serviceQuality,
       staffFriendliness,
       salonCleanliness,
+      recommendation,
       comments
     });
     
