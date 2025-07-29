@@ -164,7 +164,7 @@ export default function BookAppointment() {
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
-                    min={new Date().toISOString().split('T')[0]}
+                    min={new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().split('T')[0]}
                     required
                     className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:outline-none"
                   />

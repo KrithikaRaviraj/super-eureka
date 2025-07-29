@@ -38,12 +38,14 @@ router.post('/', async (req, res) => {
     });
 
     await appointment.save();
+    
+    const googleCalendarUrl = generateGoogleCalendarUrl(appointment);
 
     res.json({
       success: true,
       message: "Appointment booked successfully",
       appointment,
-      googleCalendarUrl: generateGoogleCalendarUrl(appointment)
+      ...(googleCalendarUrl && { googleCalendarUrl })
     });
 
   } catch (error) {
@@ -54,27 +56,74 @@ router.post('/', async (req, res) => {
 
 // Generate Google Calendar URL
 function generateGoogleCalendarUrl(appointment) {
-  const startDate = new Date(`${appointment.date}T${convertTo24Hour(appointment.time)}`);
-  const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour duration
-  
-  const params = new URLSearchParams({
-    action: 'TEMPLATE',
-    text: `${appointment.service} - Lavish Ladies Salon`,
-    dates: `${startDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
-    details: `Service: ${appointment.service}\nSalon: Lavish Ladies Beauty Salon & Spa\nAddress: Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117\nPhone: +91 81476 27651`,
-    location: 'Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117'
-  });
-  
-  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  try {
+    const appointmentDate = new Date(appointment.date);
+    const time24 = convertTo24Hour(appointment.time);
+    
+    if (!time24) {
+      console.error('Invalid time format:', appointment.time);
+      return null;
+    }
+    
+    const [hours, minutes] = time24.split(':');
+    const startDate = new Date(appointmentDate);
+    startDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour duration
+    
+    const formatDate = (date) => {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+    
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: `${appointment.service} - Lavish Ladies Salon`,
+      dates: `${formatDate(startDate)}/${formatDate(endDate)}`,
+      details: `Service: ${appointment.service}\nSalon: Lavish Ladies Beauty Salon & Spa\nAddress: Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117\nPhone: +91 81476 27651`,
+      location: 'Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117'
+    });
+    
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  } catch (error) {
+    console.error('Error generating Google Calendar URL:', error);
+    return null;
+  }
 }
 
 // Convert 12-hour time to 24-hour format
 function convertTo24Hour(time12h) {
-  const [time, modifier] = time12h.split(' ');
-  let [hours, minutes] = time.split(':');
-  if (hours === '12') hours = '00';
-  if (modifier === 'PM') hours = parseInt(hours, 10) + 12;
-  return `${hours.padStart(2, '0')}:${minutes}:00`;
+  try {
+    if (!time12h || typeof time12h !== 'string') {
+      return null;
+    }
+    
+    const timeParts = time12h.trim().split(' ');
+    if (timeParts.length !== 2) {
+      return null;
+    }
+    
+    const [time, modifier] = timeParts;
+    const [hours, minutes] = time.split(':');
+    
+    if (!hours || !minutes || !modifier) {
+      return null;
+    }
+    
+    let hour24 = parseInt(hours, 10);
+    
+    if (modifier.toUpperCase() === 'AM') {
+      if (hour24 === 12) hour24 = 0;
+    } else if (modifier.toUpperCase() === 'PM') {
+      if (hour24 !== 12) hour24 += 12;
+    } else {
+      return null;
+    }
+    
+    return `${hour24.toString().padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+  } catch (error) {
+    console.error('Error converting time:', error);
+    return null;
+  }
 }
 
 // Get user appointments
