@@ -87,6 +87,8 @@ function SignIn({ onSuccess }) {
   const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const [isStaffLogin, setIsStaffLogin] = useState(false);
+  const [staffCredentials, setStaffCredentials] = useState({ username: '', password: '' });
 
   // Google Sign-In Handler
   const handleGoogleSignIn = async () => {
@@ -212,16 +214,86 @@ function SignIn({ onSuccess }) {
     }
   };
 
+  const handleStaffLogin = (e) => {
+    e.preventDefault();
+    if (staffCredentials.username === 'staff' && staffCredentials.password === 'salon123') {
+      localStorage.setItem('staffSession', JSON.stringify({ username: 'staff', loginTime: Date.now() }));
+      navigate('/staff-dashboard');
+      onSuccess();
+    } else {
+      setError('Invalid staff credentials');
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sm:p-12 w-full max-w-lg border border-stone-200/50">
         <SalonHeader />
-        <h2 className="font-serif text-2xl sm:text-3xl font-light mb-8 text-center text-stone-800">Welcome Back</h2>
+        <div className="flex justify-center mb-6">
+          <div className="bg-stone-100 rounded-xl p-1 flex">
+            <button
+              onClick={() => setIsStaffLogin(false)}
+              className={`px-4 py-2 rounded-lg font-sans text-sm transition-all ${
+                !isStaffLogin ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-600'
+              }`}
+            >
+              Customer
+            </button>
+            <button
+              onClick={() => setIsStaffLogin(true)}
+              className={`px-4 py-2 rounded-lg font-sans text-sm transition-all ${
+                isStaffLogin ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-600'
+              }`}
+            >
+              Staff
+            </button>
+          </div>
+        </div>
+        <h2 className="font-serif text-2xl sm:text-3xl font-light mb-8 text-center text-stone-800">
+          {isStaffLogin ? 'Staff Login' : 'Welcome Back'}
+        </h2>
         {loginSuccess && (
           <div className="text-emerald-600 text-center mb-6 font-sans text-sm bg-emerald-50 py-3 px-4 rounded-xl border border-emerald-200">Login successful!</div>
         )}
         
-        {!otpSent ? (
+        {isStaffLogin ? (
+          <form className="mb-6 w-full space-y-6" onSubmit={handleStaffLogin}>
+            <div>
+              <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Username</label>
+              <input
+                type="text"
+                value={staffCredentials.username}
+                onChange={e => setStaffCredentials({...staffCredentials, username: e.target.value})}
+                className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
+                placeholder="Enter staff username"
+                required
+              />
+            </div>
+            <div>
+              <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Password</label>
+              <input
+                type="password"
+                value={staffCredentials.password}
+                onChange={e => setStaffCredentials({...staffCredentials, password: e.target.value})}
+                className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
+                placeholder="Enter staff password"
+                required
+              />
+            </div>
+            {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+            >
+              Staff Login
+            </button>
+            <div className="text-center p-3 bg-stone-50 rounded-xl">
+              <p className="font-sans text-xs text-stone-600">
+                <strong>Demo:</strong> username: staff, password: salon123
+              </p>
+            </div>
+          </form>
+        ) : !otpSent ? (
           <form className="mb-6 w-full space-y-6" onSubmit={handleSendOtp}>
             <div>
               <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Email Address</label>
@@ -391,7 +463,6 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                 <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Gallery</a>
                 <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">About</a>
                 <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Contact</a>
-                <button onClick={() => navigate('/staff-login')} className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Staff</button>
               </div>
             </nav>
 
@@ -549,15 +620,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               </section>
             </main>
             
-            {/* Staff Login Link */}
-            <footer className="relative z-10 py-8 px-4 text-center">
-              <button 
-                onClick={() => navigate('/staff-login')}
-                className="text-stone-500 hover:text-stone-700 font-sans text-sm transition-colors duration-200"
-              >
-                Staff Login
-              </button>
-            </footer>
+
 
             {sidebarOpen && (
               <div className="fixed inset-0 z-50 flex lg:hidden">
@@ -584,7 +647,6 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Gallery</button>
                     <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">About</button>
                     <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Contact</button>
-                    <button onClick={() => { navigate('/staff-login'); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Staff Login</button>
                   </div>
                 </nav>
               </div>
