@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const services = [
   {
@@ -76,6 +77,17 @@ const services = [
 ];
 
 export default function Services() {
+  const navigate = useNavigate();
+  
+  const handleBookNow = (service) => {
+    const userSession = localStorage.getItem('userSession');
+    if (!userSession) {
+      alert('Please login to book an appointment');
+      return;
+    }
+    navigate('/book-appointment', { state: { service } });
+  };
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative">
       <div className="absolute inset-0 pointer-events-none opacity-30">
@@ -118,7 +130,10 @@ export default function Services() {
                   </div>
                 </div>
                 
-                <button className="w-full mt-6 bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]">
+                <button 
+                  onClick={() => handleBookNow(service)}
+                  className="w-full mt-6 bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                >
                   Book Now
                 </button>
               </div>

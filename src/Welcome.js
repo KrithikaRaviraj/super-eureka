@@ -34,6 +34,7 @@ export default function Welcome() {
   const [showAppointments, setShowAppointments] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [originalEmail, setOriginalEmail] = useState("");
+  const [appointments, setAppointments] = useState([]);
 
   // Fetch user data on mount
   useEffect(() => {
@@ -74,7 +75,22 @@ export default function Welcome() {
       } catch {}
     }
     fetchUser();
+    fetchAppointments();
   }, []);
+  
+  const fetchAppointments = async () => {
+    if (email) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/appointments/user/${encodeURIComponent(email)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setAppointments(data.appointments || []);
+        }
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
+    }
+  };
 
 
 
@@ -294,18 +310,50 @@ export default function Welcome() {
                 </h3>
               </div>
               <div className="p-6 sm:p-10">
-                <div className="text-center text-stone-600 bg-stone-50 rounded-2xl p-8 sm:p-12 border border-stone-200">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-stone-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                {appointments.length === 0 ? (
+                  <div className="text-center text-stone-600 bg-stone-50 rounded-2xl p-8 sm:p-12 border border-stone-200">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-stone-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <svg className="w-8 h-8 sm:w-10 sm:h-10 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <p className="font-sans text-stone-700 mb-2 text-base sm:text-lg">No upcoming appointments</p>
+                    <p className="font-sans text-xs sm:text-sm text-stone-500 mb-8 uppercase tracking-wider">Schedule your next visit with us</p>
+                    <button 
+                      onClick={() => window.location.href = '/services'}
+                      className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white px-8 py-4 rounded-xl font-sans font-semibold text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
+                      Book Appointment
+                    </button>
                   </div>
-                  <p className="font-sans text-stone-700 mb-2 text-base sm:text-lg">No upcoming appointments</p>
-                  <p className="font-sans text-xs sm:text-sm text-stone-500 mb-8 uppercase tracking-wider">Schedule your next visit with us</p>
-                  <button className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white px-8 py-4 rounded-xl font-sans font-semibold text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                    Book Appointment
-                  </button>
-                </div>
+                ) : (
+                  <div className="space-y-4">
+                    {appointments.map((appointment) => (
+                      <div key={appointment._id} className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-stone-200/50 shadow-sm">
+                        <div className="flex justify-between items-start mb-3">
+                          <h4 className="font-serif text-lg font-medium text-stone-800">{appointment.service}</h4>
+                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            appointment.status === 'confirmed' ? 'bg-emerald-100 text-emerald-800' :
+                            appointment.status === 'completed' ? 'bg-blue-100 text-blue-800' :
+                            appointment.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {appointment.status.toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 text-sm text-stone-600">
+                          <p><span className="font-semibold">Date:</span> {new Date(appointment.date).toLocaleDateString()}</p>
+                          <p><span className="font-semibold">Time:</span> {appointment.time}</p>
+                        </div>
+                        {appointment.notes && (
+                          <p className="mt-3 text-sm text-stone-600 bg-stone-50 p-3 rounded-lg">
+                            <span className="font-semibold">Notes:</span> {appointment.notes}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>

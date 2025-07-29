@@ -1,6 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import Welcome from "./Welcome";
-import React, { useState } from "react";
+import Services from "./Services";
+import BookAppointment from "./BookAppointment";
+import StaffLogin from "./StaffLogin";
+import StaffDashboard from "./StaffDashboard";
+import React, { useState, useEffect } from "react";
 import mylogo from "./assets/mylogo.png"; 
 import { auth, provider } from "./firebase";
 import { signInWithPopup } from "firebase/auth";
@@ -382,8 +386,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                 </svg>
               </button>
               <div className="hidden lg:flex flex-1 justify-center space-x-12 max-w-4xl mx-auto">
-                <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Home</a>
-                <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Services</a>
+                <button onClick={() => navigate('/')} className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Home</button>
+                <button onClick={() => navigate('/services')} className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Services</button>
                 <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Gallery</a>
                 <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">About</a>
                 <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Contact</a>
@@ -533,7 +537,10 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                   </div>
                   
                   <div className="text-center">
-                    <button className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <button 
+                      onClick={() => navigate('/services')}
+                      className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
                       View All Services
                     </button>
                   </div>
@@ -561,8 +568,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <h3 className="font-serif text-xl font-light text-stone-800">Navigation</h3>
                   </div>
                   <div className="flex-1 py-6">
-                    <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Home</button>
-                    <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Services</button>
+                    <button onClick={() => { navigate('/'); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Home</button>
+                    <button onClick={() => { navigate('/services'); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Services</button>
                     <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Gallery</button>
                     <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">About</button>
                     <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Contact</button>
@@ -586,6 +593,10 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
         }
       />
       <Route path="/welcome" element={<Welcome />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/book-appointment" element={<BookAppointment />} />
+      <Route path="/staff-login" element={<StaffLogin />} />
+      <Route path="/staff-dashboard" element={<StaffDashboard />} />
     </Routes>
   );
 }

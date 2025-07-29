@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const usersRouter = require('./routes/users');
 const otpRouter = require('./routes/otp');
+const appointmentsRouter = require('./routes/appointments');
 
 const app = express();
 app.use(cors());
@@ -15,6 +16,7 @@ mongoose.connect('mongodb://localhost:27017/super-eureka');
 // API routes
 app.use('/api/users', usersRouter);
 app.use('/api', otpRouter);
+app.use('/api/appointments', appointmentsRouter);
 
 app.listen(5000, () => {
   console.log('Backend running on http://localhost:5000');
