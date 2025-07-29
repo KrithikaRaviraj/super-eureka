@@ -180,6 +180,115 @@ router.put('/:id', async (req, res) => {
         console.error('Email sending error:', emailError);
       }
     }
+    
+    // Send feedback form when appointment is completed
+    if (status === 'completed') {
+      const feedbackMailOptions = {
+        from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
+        to: appointment.userEmail,
+        subject: 'Share Your Experience - Lavish Ladies Salon',
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Feedback Form</title>
+          </head>
+          <body style="margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: #ffffff;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background: #ffffff; min-height: 100vh;">
+              <tr>
+                <td style="padding: 0;">
+                  <table width="100%" style="background: white; border: 1px solid #e5e7eb;">
+                    <tr>
+                      <td style="padding: 60px 40px; text-align: center; background: linear-gradient(135deg, #f9fafb, #f3f4f6); border-bottom: 1px solid #e5e7eb;">
+                        <h1 style="margin: 0; font-size: 36px; font-weight: 400; letter-spacing: 2px; color: #1f2937;">LAVISH LADIES SALON & SPA</h1>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px;">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                          <div style="width: 80px; height: 80px; background: #f59e0b; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                            <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                          </div>
+                          <h2 style="margin: 0; font-size: 28px; font-weight: 500; color: #1f2937;">How Was Your Experience?</h2>
+                        </div>
+                        
+                        <p style="font-size: 16px; color: #4b5563; margin-bottom: 30px;">Hello ${appointment.userName},</p>
+                        
+                        <p style="font-size: 16px; color: #4b5563; margin-bottom: 30px;">Thank you for visiting us for your <strong>${appointment.service}</strong> appointment. We hope you had a wonderful experience!</p>
+                        
+                        <div style="background: #f9fafb; padding: 30px; border-radius: 8px; margin: 30px 0;">
+                          <h3 style="margin: 0 0 20px 0; font-size: 20px; color: #1f2937;">Please Rate Your Experience</h3>
+                          
+                          <div style="margin: 20px 0;">
+                            <p style="margin: 10px 0; font-size: 16px; color: #4b5563;"><strong>Service Quality:</strong></p>
+                            <div style="font-size: 24px; margin: 10px 0;">
+                              ⭐ ⭐ ⭐ ⭐ ⭐
+                            </div>
+                          </div>
+                          
+                          <div style="margin: 20px 0;">
+                            <p style="margin: 10px 0; font-size: 16px; color: #4b5563;"><strong>Staff Friendliness:</strong></p>
+                            <div style="font-size: 24px; margin: 10px 0;">
+                              ⭐ ⭐ ⭐ ⭐ ⭐
+                            </div>
+                          </div>
+                          
+                          <div style="margin: 20px 0;">
+                            <p style="margin: 10px 0; font-size: 16px; color: #4b5563;"><strong>Salon Cleanliness:</strong></p>
+                            <div style="font-size: 24px; margin: 10px 0;">
+                              ⭐ ⭐ ⭐ ⭐ ⭐
+                            </div>
+                          </div>
+                          
+                          <div style="margin: 30px 0;">
+                            <p style="margin: 10px 0; font-size: 16px; color: #4b5563;"><strong>Additional Comments:</strong></p>
+                            <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 15px; background: white; min-height: 80px; margin: 10px 0;">
+                              <p style="margin: 0; color: #9ca3af; font-style: italic;">Share your thoughts about your visit...</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div style="text-align: center; margin: 40px 0;">
+                          <p style="font-size: 16px; color: #4b5563; margin-bottom: 20px;">We value your feedback and would love to hear from you!</p>
+                          <p style="font-size: 14px; color: #6b7280;">Please reply to this email with your ratings and comments, or call us at <strong>+91 81476 27651</strong></p>
+                        </div>
+                        
+                        <div style="background: #ecfdf5; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center;">
+                          <p style="margin: 0; font-size: 16px; color: #065f46;"><strong>Book Your Next Appointment!</strong></p>
+                          <p style="margin: 10px 0 0 0; font-size: 14px; color: #047857;">Call us at +91 81476 27651 or WhatsApp us to schedule your next visit.</p>
+                        </div>
+                        
+                        <div style="text-align: center; margin: 40px 0;">
+                          <p style="font-size: 14px; color: #6b7280;">Thank you for choosing Lavish Ladies Beauty Salon & Spa!</p>
+                          <p style="font-size: 12px; color: #9ca3af; margin-top: 20px;">Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</p>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: center; background: #f9fafb; padding: 30px; border-top: 1px solid #e5e7eb;">
+                        <p style="margin: 0; font-size: 12px; color: #6b7280;">© 2025 Lavish Ladies Beauty Salon & Spa</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `
+      };
+      
+      try {
+        await transporter.sendMail(feedbackMailOptions);
+        console.log(`Feedback form sent to ${appointment.userEmail}`);
+      } catch (emailError) {
+        console.error('Feedback email sending error:', emailError);
+      }
+    }
 
     res.json({
       success: true,
