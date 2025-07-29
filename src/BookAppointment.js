@@ -55,6 +55,8 @@ export default function BookAppointment() {
       createdAt: new Date().toISOString()
     };
 
+    console.log('Booking appointment:', appointmentData);
+
     try {
       const response = await fetch('http://localhost:5000/api/appointments', {
         method: 'POST',
@@ -62,17 +64,20 @@ export default function BookAppointment() {
         body: JSON.stringify(appointmentData)
       });
 
-      if (response.ok) {
+      const result = await response.json();
+      console.log('Server response:', result);
+      
+      if (response.ok && result.success) {
         setSuccess(true);
         setTimeout(() => {
           navigate('/welcome');
         }, 2000);
       } else {
-        alert('Failed to book appointment');
+        alert(result.message || 'Failed to book appointment');
       }
     } catch (error) {
       console.error('Booking error:', error);
-      alert('Failed to book appointment');
+      alert(`Network error: ${error.message}. Please check if the server is running on port 5000.`);
     }
     
     setIsSubmitting(false);

@@ -391,6 +391,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                 <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Gallery</a>
                 <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">About</a>
                 <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Contact</a>
+                <button onClick={() => navigate('/staff-login')} className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Staff</button>
               </div>
             </nav>
 
@@ -547,6 +548,16 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                 </div>
               </section>
             </main>
+            
+            {/* Staff Login Link */}
+            <footer className="relative z-10 py-8 px-4 text-center">
+              <button 
+                onClick={() => navigate('/staff-login')}
+                className="text-stone-500 hover:text-stone-700 font-sans text-sm transition-colors duration-200"
+              >
+                Staff Login
+              </button>
+            </footer>
 
             {sidebarOpen && (
               <div className="fixed inset-0 z-50 flex lg:hidden">
@@ -573,6 +584,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Gallery</button>
                     <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">About</button>
                     <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Contact</button>
+                    <button onClick={() => { navigate('/staff-login'); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Staff Login</button>
                   </div>
                 </nav>
               </div>
