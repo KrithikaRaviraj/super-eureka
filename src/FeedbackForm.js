@@ -16,7 +16,8 @@ export default function FeedbackForm() {
     staffFriendliness: 0,
     salonCleanliness: 0,
     recommendation: 0,
-    comments: ''
+    comments: '',
+    isAnonymous: false
   });
   const [hoveredRating, setHoveredRating] = useState({});
 
@@ -266,6 +267,19 @@ export default function FeedbackForm() {
                   className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:outline-none resize-none"
                   placeholder="Share your thoughts about your visit..."
                 />
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="anonymous"
+                  checked={feedback.isAnonymous}
+                  onChange={(e) => setFeedback({ ...feedback, isAnonymous: e.target.checked })}
+                  className="w-4 h-4 text-rose-600 border-2 border-stone-300 rounded focus:ring-rose-500"
+                />
+                <label htmlFor="anonymous" className="font-sans text-sm text-stone-700">
+                  Post anonymously (your name will not be displayed)
+                </label>
               </div>
 
               {error && (

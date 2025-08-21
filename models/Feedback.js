@@ -13,7 +13,8 @@ const feedbackSchema = new mongoose.Schema({
   overallRating: { type: Number, min: 1, max: 5 },
   approvalStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
   approvalToken: { type: String },
-  showAsTestimonial: { type: Boolean, default: false }
+  showAsTestimonial: { type: Boolean, default: false },
+  isAnonymous: { type: Boolean, default: false }
 }, {
   timestamps: true
 });

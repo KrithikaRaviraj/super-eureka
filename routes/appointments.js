@@ -400,7 +400,7 @@ router.get('/feedback/:token', async (req, res) => {
 router.post('/feedback/:token', async (req, res) => {
   try {
     const { token } = req.params;
-    const { serviceQuality, staffFriendliness, salonCleanliness, recommendation, comments } = req.body;
+    const { serviceQuality, staffFriendliness, salonCleanliness, recommendation, comments, isAnonymous } = req.body;
     
     const appointment = await Appointment.findOne({ feedbackToken: token });
     
@@ -424,7 +424,8 @@ router.post('/feedback/:token', async (req, res) => {
       salonCleanliness,
       recommendation,
       comments,
-      approvalToken
+      approvalToken,
+      isAnonymous: req.body.isAnonymous || false
     });
     
     await feedback.save();
@@ -582,7 +583,7 @@ router.get('/testimonials', async (req, res) => {
       approvalStatus: 'approved',
       comments: { $ne: '' }
     })
-    .select('userName service overallRating comments createdAt')
+    .select('userName service overallRating comments createdAt isAnonymous')
     .sort({ createdAt: -1 })
     .limit(6);
     
