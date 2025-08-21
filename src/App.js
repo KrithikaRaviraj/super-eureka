@@ -90,8 +90,9 @@ function SignIn({ onSuccess }) {
   const [error, setError] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [isStaffLogin, setIsStaffLogin] = useState(false);
-  const [staffCredentials, setStaffCredentials] = useState({ username: '', password: '' });
-  const [showPassword, setShowPassword] = useState(false);
+  const [staffEmail, setStaffEmail] = useState('');
+  const [staffOtp, setStaffOtp] = useState('');
+  const [staffOtpSent, setStaffOtpSent] = useState(false);
 
   // Google Sign-In Handler
   const handleGoogleSignIn = async () => {
@@ -217,14 +218,67 @@ function SignIn({ onSuccess }) {
     }
   };
 
-  const handleStaffLogin = (e) => {
+  const handleStaffSendOtp = async (e) => {
     e.preventDefault();
-    if (staffCredentials.username === 'staff' && staffCredentials.password === 'salon123') {
-      localStorage.setItem('staffSession', JSON.stringify({ username: 'staff', loginTime: Date.now() }));
-      navigate('/staff-dashboard');
-      onSuccess();
-    } else {
-      setError('Invalid staff credentials');
+    setError('');
+    
+    const allowedEmails = ['[redacted-email]', '[redacted-email]', '[redacted-email]'];
+    
+    if (!allowedEmails.includes(staffEmail)) {
+      setError('Access denied. Only authorized staff emails are allowed.');
+      return;
+    }
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/send-email-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: staffEmail })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setStaffOtpSent(true);
+      } else {
+        setError(data.message || 'Failed to send OTP');
+      }
+    } catch (error) {
+      setError('Failed to send OTP. Please try again.');
+    }
+  };
+  
+  const handleStaffVerifyOtp = async (e) => {
+    e.preventDefault();
+    setError('');
+    
+    if (staffOtp.length !== 4) {
+      setError('Please enter a valid 4-digit OTP');
+      return;
+    }
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/verify-email-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: staffEmail, otp: staffOtp })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        localStorage.setItem('staffSession', JSON.stringify({ email: staffEmail, loginTime: Date.now() }));
+        setLoginSuccess(true);
+        setTimeout(() => {
+          setLoginSuccess(false);
+          navigate('/staff-dashboard');
+          onSuccess();
+        }, 1500);
+      } else {
+        setError(data.message || 'Invalid OTP. Please try again.');
+      }
+    } catch (error) {
+      setError('Verification failed. Please try again.');
     }
   };
 
@@ -260,51 +314,67 @@ function SignIn({ onSuccess }) {
         )}
         
         {isStaffLogin ? (
-          <form className="mb-6 w-full space-y-6" onSubmit={handleStaffLogin}>
-            <div>
-              <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Username</label>
-              <input
-                type="text"
-                value={staffCredentials.username}
-                onChange={e => setStaffCredentials({...staffCredentials, username: e.target.value})}
-                className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
-                placeholder="Enter staff username"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Password</label>
-              <div className="relative">
+          !staffOtpSent ? (
+            <form className="mb-6 w-full space-y-6" onSubmit={handleStaffSendOtp}>
+              <div>
+                <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Staff Email Address</label>
                 <input
-                  type={isStaffLogin && showPassword ? "text" : "password"}
-                  value={staffCredentials.password}
-                  onChange={e => setStaffCredentials({...staffCredentials, password: e.target.value})}
-                  className="w-full px-5 py-4 pr-12 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
-                  placeholder="Enter staff password"
+                  type="email"
+                  value={staffEmail}
+                  onChange={e => setStaffEmail(e.target.value)}
+                  className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm"
+                  placeholder="Enter your authorized email"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-stone-500 hover:text-stone-700"
-                >
-                  {showPassword ? '👁️' : '👁️‍🗨️'}
-                </button>
               </div>
-            </div>
-            {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-            >
-              Staff Login
-            </button>
-            <div className="text-center p-3 bg-stone-50 rounded-xl">
-              <p className="font-sans text-xs text-stone-600">
-                <strong>Demo:</strong> username: staff, password: salon123
-              </p>
-            </div>
-          </form>
+              {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+              >
+                Send OTP
+              </button>
+              <div className="text-center p-3 bg-stone-50 rounded-xl">
+                <p className="font-sans text-xs text-stone-600">
+                  <strong>Authorized emails:</strong> [redacted-email], [redacted-email], [redacted-email]
+                </p>
+              </div>
+            </form>
+          ) : (
+            <form className="mb-6 w-full space-y-6" onSubmit={handleStaffVerifyOtp}>
+              <div>
+                <label className="block mb-2 font-sans text-xs font-semibold text-stone-700 uppercase tracking-wider">Enter OTP</label>
+                <input
+                  type="text"
+                  value={staffOtp}
+                  onChange={e => setStaffOtp(e.target.value)}
+                  className="w-full px-5 py-4 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:ring-4 focus:ring-rose-200/30 transition-all duration-200 outline-none bg-white font-sans text-sm text-center tracking-widest"
+                  placeholder="0000"
+                  maxLength="4"
+                  required
+                />
+                <p className="text-xs text-stone-500 mt-2 text-center">OTP sent to {staffEmail}</p>
+              </div>
+              {error && <div className="text-red-600 font-sans text-sm bg-red-50 py-3 px-4 rounded-xl border border-red-200">{error}</div>}
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+              >
+                Verify OTP
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setStaffOtpSent(false);
+                  setStaffOtp('');
+                  setError('');
+                }}
+                className="w-full text-stone-600 hover:text-stone-800 font-sans text-sm transition-colors duration-200"
+              >
+                Change Email
+              </button>
+            </form>
+          )
         ) : !otpSent ? (
           <form className="mb-6 w-full space-y-6" onSubmit={handleSendOtp}>
             <div>
@@ -709,7 +779,6 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               )}
             </main>
             
-
 
             {sidebarOpen && (
               <div className="fixed inset-0 z-50 flex lg:hidden">
