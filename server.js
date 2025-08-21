@@ -18,6 +18,11 @@ app.use('/api/users', usersRouter);
 app.use('/api', otpRouter);
 app.use('/api/appointments', appointmentsRouter);
 
+// Serve testimonial approval page
+app.get('/approve-testimonial/:token', (req, res) => {
+  res.redirect(`http://localhost:3000/approve-testimonial/${req.params.token}?action=${req.query.action}`);
+});
+
 app.listen(5000, () => {
   console.log('Backend running on http://localhost:5000');
 });

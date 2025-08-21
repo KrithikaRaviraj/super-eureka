@@ -412,6 +412,8 @@ router.post('/feedback/:token', async (req, res) => {
       return res.status(400).json({ success: false, message: "Feedback already submitted" });
     }
     
+    const approvalToken = crypto.randomBytes(32).toString('hex');
+    
     const feedback = new Feedback({
       appointmentId: appointment._id,
       userEmail: appointment.userEmail,
@@ -421,13 +423,93 @@ router.post('/feedback/:token', async (req, res) => {
       staffFriendliness,
       salonCleanliness,
       recommendation,
-      comments
+      comments,
+      approvalToken
     });
     
     await feedback.save();
     
     appointment.feedbackSubmitted = true;
     await appointment.save();
+    
+    // Send approval email to salon owners if feedback has comments and good rating
+    if (comments && comments.trim() && feedback.overallRating >= 4) {
+      const approveUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/approve-testimonial/${approvalToken}?action=approve`;
+      const rejectUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/approve-testimonial/${approvalToken}?action=reject`;
+      
+      const approvalEmails = ['[redacted-email]', '[redacted-email]'];
+      
+      for (const email of approvalEmails) {
+        const approvalMailOptions = {
+          from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
+          to: email,
+          subject: 'New Testimonial for Review - Lavish Ladies Salon',
+          html: `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Testimonial Review</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: #ffffff;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background: #ffffff;">
+                <tr>
+                  <td style="padding: 0;">
+                    <table width="100%" style="background: white; border: 1px solid #e5e7eb;">
+                      <tr>
+                        <td style="padding: 40px; text-align: center; background: linear-gradient(135deg, #f9fafb, #f3f4f6); border-bottom: 1px solid #e5e7eb;">
+                          <h1 style="margin: 0; font-size: 28px; font-weight: 500; color: #1f2937;">New Testimonial Review</h1>
+                          <p style="margin: 10px 0 0 0; color: #6b7280;">Lavish Ladies Beauty Salon & Spa</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 30px;">
+                          <p style="font-size: 16px; color: #4b5563; margin-bottom: 20px;">A new customer feedback has been submitted and is ready for review:</p>
+                          
+                          <div style="background: #f9fafb; padding: 25px; border-radius: 8px; margin: 20px 0;">
+                            <h3 style="margin: 0 0 15px 0; font-size: 18px; color: #1f2937;">Customer: ${feedback.userName}</h3>
+                            <p style="margin: 5px 0; color: #6b7280;"><strong>Service:</strong> ${feedback.service}</p>
+                            <p style="margin: 5px 0; color: #6b7280;"><strong>Overall Rating:</strong> ${feedback.overallRating}/5 stars</p>
+                            <p style="margin: 15px 0 5px 0; color: #1f2937; font-weight: 600;">Customer Comments:</p>
+                            <p style="margin: 0; color: #4b5563; font-style: italic; background: white; padding: 15px; border-radius: 6px;">"${comments}"</p>
+                          </div>
+                          
+                          <div style="text-align: center; margin: 30px 0;">
+                            <p style="font-size: 16px; color: #4b5563; margin-bottom: 20px;">Would you like to display this testimonial on the website?</p>
+                            <div style="margin: 20px 0;">
+                              <a href="${approveUrl}" style="display: inline-block; background: #10b981; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 0 10px;">Approve</a>
+                              <a href="${rejectUrl}" style="display: inline-block; background: #ef4444; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 0 10px;">Reject</a>
+                            </div>
+                          </div>
+                          
+                          <div style="background: #fef3c7; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                            <p style="margin: 0; font-size: 14px; color: #92400e;">Only approved testimonials will appear on the website. This helps maintain quality and relevance.</p>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="text-align: center; background: #f9fafb; padding: 20px; border-top: 1px solid #e5e7eb;">
+                          <p style="margin: 0; font-size: 12px; color: #6b7280;">© 2025 Lavish Ladies Beauty Salon & Spa</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </body>
+            </html>
+          `
+        };
+        
+        try {
+          await transporter.sendMail(approvalMailOptions);
+          console.log(`Approval email sent to ${email}`);
+        } catch (emailError) {
+          console.error('Approval email error:', emailError);
+        }
+      }
+    }
     
     res.json({ success: true, message: "Feedback submitted successfully" });
   } catch (error) {
@@ -444,6 +526,70 @@ router.get('/feedback', async (req, res) => {
   } catch (error) {
     console.error('Get feedback error:', error);
     res.status(500).json({ success: false, message: "Failed to get feedback" });
+  }
+});
+
+// Approve/Reject testimonial
+router.get('/testimonial/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { action } = req.query;
+    
+    const feedback = await Feedback.findOne({ approvalToken: token });
+    
+    if (!feedback) {
+      return res.status(404).json({ success: false, message: "Testimonial not found" });
+    }
+    
+    if (feedback.approvalStatus !== 'pending') {
+      return res.status(400).json({ success: false, message: "Testimonial already processed" });
+    }
+    
+    if (action === 'approve') {
+      feedback.approvalStatus = 'approved';
+      feedback.showAsTestimonial = true;
+    } else if (action === 'reject') {
+      feedback.approvalStatus = 'rejected';
+      feedback.showAsTestimonial = false;
+    } else {
+      return res.status(400).json({ success: false, message: "Invalid action" });
+    }
+    
+    await feedback.save();
+    
+    res.json({ 
+      success: true, 
+      message: `Testimonial ${action}d successfully`,
+      feedback: {
+        userName: feedback.userName,
+        service: feedback.service,
+        overallRating: feedback.overallRating,
+        comments: feedback.comments,
+        approvalStatus: feedback.approvalStatus
+      }
+    });
+  } catch (error) {
+    console.error('Testimonial approval error:', error);
+    res.status(500).json({ success: false, message: "Failed to process testimonial" });
+  }
+});
+
+// Get approved testimonials for homepage
+router.get('/testimonials', async (req, res) => {
+  try {
+    const testimonials = await Feedback.find({ 
+      showAsTestimonial: true,
+      approvalStatus: 'approved',
+      comments: { $ne: '' }
+    })
+    .select('userName service overallRating comments createdAt')
+    .sort({ createdAt: -1 })
+    .limit(6);
+    
+    res.json({ success: true, testimonials });
+  } catch (error) {
+    console.error('Get testimonials error:', error);
+    res.status(500).json({ success: false, message: "Failed to get testimonials" });
   }
 });
 

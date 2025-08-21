@@ -10,7 +10,10 @@ const feedbackSchema = new mongoose.Schema({
   salonCleanliness: { type: Number, min: 1, max: 5, required: true },
   recommendation: { type: Number, min: 1, max: 5, required: true },
   comments: { type: String, default: '' },
-  overallRating: { type: Number, min: 1, max: 5 }
+  overallRating: { type: Number, min: 1, max: 5 },
+  approvalStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+  approvalToken: { type: String },
+  showAsTestimonial: { type: Boolean, default: false }
 }, {
   timestamps: true
 });
