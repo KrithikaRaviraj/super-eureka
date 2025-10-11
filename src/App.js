@@ -9,7 +9,7 @@ import TestimonialApproval from "./TestimonialApproval";
 import SignIn from "./components/SignIn";
 import SalonHeader from "./components/SalonHeader";
 import Testimonials from "./components/Testimonials";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // Add fonts and styles
 const link = document.createElement('link');
@@ -41,6 +41,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [testimonials, setTestimonials] = useState([]);
+  const [scrolled, setScrolled] = useState(false);
   
   React.useEffect(() => {
     const userSession = localStorage.getItem('userSession');
@@ -57,6 +58,13 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
     }
     
     fetchTestimonials();
+    
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
   const fetchTestimonials = async () => {
@@ -118,9 +126,11 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               )}
             </header>
 
-            <nav className="relative z-10 flex items-center px-4 sm:px-8 py-4 bg-white/60 backdrop-blur-sm border-b border-stone-200/30 font-sans">
+            <nav className={`relative z-10 flex items-center px-4 sm:px-8 py-4 transition-all duration-300 font-sans ${
+              scrollY > 100 ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white/60 backdrop-blur-sm'
+            } border-b border-stone-200/30`}>
               <button
-                className="mr-6 focus:outline-none lg:hidden"
+                className="mr-6 focus:outline-none lg:hidden transform hover:scale-110 transition-transform duration-200"
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Open sidebar"
               >
@@ -129,18 +139,20 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                 </svg>
               </button>
               <div className="hidden lg:flex flex-1 justify-center space-x-12 max-w-4xl mx-auto">
-                <button onClick={() => navigate('/')} className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Home</button>
-                <button onClick={() => navigate('/services')} className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Services</button>
-                <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Gallery</a>
-                <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">About</a>
-                <a href="#" className="text-stone-700 hover:text-rose-600 transition-colors duration-200 font-medium text-sm uppercase tracking-wider">Contact</a>
+                <button onClick={() => navigate('/')} className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">Home</button>
+                <button onClick={() => navigate('/services')} className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">Services</button>
+                <button onClick={() => aboutRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">About</button>
+                <button onClick={() => servicesRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">Our Services</button>
+                <a href="#contact" className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">Contact</a>
               </div>
             </nav>
 
             <main className="relative z-10">
               {/* About Us Section */}
-              <section className="py-16 px-4">
-                <div className="max-w-7xl mx-auto">
+              <section id="about" ref={aboutRef} className="py-16 px-4">
+                <div className={`max-w-7xl mx-auto transition-all duration-1000 transform ${
+                  isVisible.about ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                }`}>
                   <div className="text-center mb-12">
                     <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">About Us</h2>
                     <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto"></div>
@@ -208,8 +220,10 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               </section>
               
               {/* Services Section */}
-              <section className="py-16 px-4 bg-white/50">
-                <div className="max-w-7xl mx-auto">
+              <section id="services" ref={servicesRef} className="py-16 px-4 bg-white/50">
+                <div className={`max-w-7xl mx-auto transition-all duration-1000 transform ${
+                  isVisible.services ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                }`}>
                   <div className="text-center mb-12">
                     <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">Our Services</h2>
                     <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-6"></div>
@@ -217,91 +231,99 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                   </div>
                   
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
-                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
-                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                        </svg>
+                    {[
+                      { name: "Hair Styling & Cuts", desc: "Professional haircuts, styling, and treatments for all hair types. From classic cuts to modern trends.", icon: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" },
+                      { name: "Facial Treatments", desc: "Rejuvenating facials, deep cleansing for glowing, healthy skin.", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" },
+                      { name: "Spa & Massage", desc: "Relaxing massages and spa treatments to rejuvenate your body and mind.", icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z" },
+                      { name: "Manicure & Pedicure", desc: "Complete nail care services including manicures and pedicures.", icon: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" },
+                      { name: "Hair Coloring", desc: "Professional hair coloring, highlights, and color correction services.", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" },
+                      { name: "Bridal Packages", desc: "Complete bridal makeover packages for your special day.", icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z" }
+                    ].map((service, index) => (
+                      <div 
+                        key={index}
+                        className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50 transform hover:scale-105 hover:-translate-y-2 cursor-pointer group"
+                        style={{ animationDelay: `${index * 150}ms` }}
+                        onClick={() => navigate('/services')}
+                      >
+                        <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                          <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d={service.icon}/>
+                          </svg>
+                        </div>
+                        <h3 className="font-serif text-xl font-medium text-stone-800 mb-3 group-hover:text-rose-600 transition-colors duration-300">{service.name}</h3>
+                        <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">{service.desc}</p>
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <span className="text-rose-600 font-semibold text-sm">Click to explore →</span>
+                        </div>
                       </div>
-                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Hair Styling & Cuts</h3>
-                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Professional haircuts, styling, and treatments for all hair types. From classic cuts to modern trends.</p>
-                    </div>
-                    
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
-                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
-                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                      </div>
-                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Facial Treatments</h3>
-                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Rejuvenating facials, deep cleansing for glowing, healthy skin.</p>
-                    </div>
-                    
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
-                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
-                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/>
-                        </svg>
-                      </div>
-                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Spa & Massage</h3>
-                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Relaxing massages and spa treatments to rejuvenate your body and mind.</p>
-                    </div>
-                    
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
-                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
-                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                        </svg>
-                      </div>
-                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Manicure & Pedicure</h3>
-                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Complete nail care services including manicures and pedicures.</p>
-                    </div>
-                    
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
-                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
-                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                      </div>
-                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Hair Coloring</h3>
-                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Professional hair coloring, highlights, and color correction services.</p>
-                    </div>
-                    
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50">
-                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
-                        <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/>
-                        </svg>
-                      </div>
-                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-3">Bridal Packages</h3>
-                      <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">Complete bridal makeover packages for your special day.</p>
-                    </div>
+                    ))}
                   </div>
                   
                   <div className="text-center">
                     <button 
                       onClick={() => navigate('/services')}
-                      className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"
+                      className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105 relative overflow-hidden group"
                     >
-                      View All Services
+                      <span className="relative z-10">View All Services</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-rose-600 to-pink-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                     </button>
                   </div>
                 </div>
               </section>
               
               <Testimonials testimonials={testimonials} />
+              
+              {/* Contact Section */}
+              <section id="contact" className="py-16 px-4 bg-gradient-to-br from-stone-100 to-rose-100">
+                <div className="max-w-4xl mx-auto text-center">
+                  <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">Get In Touch</h2>
+                  <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-8"></div>
+                  <div className="grid md:grid-cols-3 gap-8">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                      </div>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Call Us</h3>
+                      <p className="font-sans text-stone-600">+91 98765 43210</p>
+                    </div>
+                    
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Visit Us</h3>
+                      <p className="font-sans text-stone-600">Uchila, Udupi District</p>
+                    </div>
+                    
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Hours</h3>
+                      <p className="font-sans text-stone-600">Mon-Sun: 9AM-8PM</p>
+                    </div>
+                  </div>
+                </div>
+              </section>
             </main>
             
 
             {sidebarOpen && (
               <div className="fixed inset-0 z-50 flex lg:hidden">
                 <div
-                  className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+                  className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
                   onClick={() => setSidebarOpen(false)}
                 />
-                <nav className="relative z-50 w-80 bg-white/95 backdrop-blur-sm shadow-2xl h-full flex flex-col pt-20 border-r border-stone-200">
+                <nav className="relative z-50 w-80 bg-white/95 backdrop-blur-sm shadow-2xl h-full flex flex-col pt-20 border-r border-stone-200 transform transition-transform duration-300">
                   <button
-                    className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-stone-600 hover:text-stone-800 transition-colors duration-200"
+                    className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-stone-600 hover:text-stone-800 transition-all duration-200 hover:scale-110 transform"
                     onClick={() => setSidebarOpen(false)}
                     aria-label="Close sidebar"
                   >
@@ -313,11 +335,11 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <h3 className="font-serif text-xl font-light text-stone-800">Navigation</h3>
                   </div>
                   <div className="flex-1 py-6">
-                    <button onClick={() => { navigate('/'); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Home</button>
-                    <button onClick={() => { navigate('/services'); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Services</button>
-                    <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Gallery</button>
-                    <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">About</button>
-                    <button className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700">Contact</button>
+                    <button onClick={() => { navigate('/'); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2">Home</button>
+                    <button onClick={() => { navigate('/services'); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2">Services</button>
+                    <button onClick={() => { aboutRef.current?.scrollIntoView({ behavior: 'smooth' }); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2">About</button>
+                    <button onClick={() => { servicesRef.current?.scrollIntoView({ behavior: 'smooth' }); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2">Our Services</button>
+                    <a href="#contact" onClick={() => setSidebarOpen(false)} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Contact</a>
                   </div>
                 </nav>
               </div>
