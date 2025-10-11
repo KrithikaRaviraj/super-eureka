@@ -159,7 +159,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                       </div>
                       
                       <p className="font-sans text-lg text-stone-600 leading-relaxed">
-                        Lavish Ladies Beauty Salon and Spa in Uchila has been dedicated to personalized beauty care in a warm and inviting atmosphere. We offer a variety of services, including stylish haircuts, vibrant hair coloring, rejuvenating facials, soothing massages, and beautiful manicures and pedicures.
+                        Lavish Ladies Beauty Salon in Uchila has been dedicated to personalized beauty care in a warm and inviting atmosphere. We offer a variety of services, including stylish haircuts, vibrant hair coloring, rejuvenating facials, soothing massages, and beautiful manicures and pedicures.
                       </p>
                       
                       <p className="font-sans text-lg text-stone-600 leading-relaxed">

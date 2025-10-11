@@ -187,7 +187,7 @@ export default function Welcome() {
             <div className="absolute -inset-6 bg-gradient-to-r from-rose-200/20 to-pink-200/20 rounded-full blur-2xl"></div>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-stone-800 mb-4 tracking-wide leading-tight">
-            Lavish Ladies Beauty Salon & Spa
+            Lavish Ladies Beauty Salon
           </h1>
           <div className="flex items-center justify-center mb-4">
             <div className="w-20 h-px bg-gradient-to-r from-transparent via-rose-400 to-transparent"></div>

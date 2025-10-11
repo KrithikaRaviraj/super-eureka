@@ -8,7 +8,7 @@ export default function SalonHeader() {
         <SalonLogo />
       </div>
       <span className="font-serif text-xl sm:text-2xl font-light text-stone-800 text-center tracking-wide">
-        Lavish Ladies Beauty Salon & Spa
+        Lavish Ladies Beauty Salon
       </span>
       <div className="flex items-center justify-center mt-2">
         <div className="w-12 h-px bg-gradient-to-r from-transparent via-rose-400 to-transparent"></div>
