@@ -219,48 +219,7 @@ export default function Welcome() {
             Good {currentTime.getHours() < 12 ? 'Morning' : currentTime.getHours() < 17 ? 'Afternoon' : 'Evening'}, {name?.split(' ')[0] || 'Valued Client'}
           </h2>
           
-          {/* Quick Actions */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <button 
-              onClick={() => window.location.href = '/services'}
-              className="bg-gradient-to-br from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
-            >
-              <svg className="w-8 h-8 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-              </svg>
-              <span className="font-sans text-sm font-semibold">Book Service</span>
-            </button>
-            
-            <button 
-              onClick={() => setShowAppointments(!showAppointments)}
-              className="bg-gradient-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
-            >
-              <svg className="w-8 h-8 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span className="font-sans text-sm font-semibold">Appointments</span>
-            </button>
-            
-            <button 
-              onClick={() => setIsEditing(!isEditing)}
-              className="bg-gradient-to-br from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
-            >
-              <svg className="w-8 h-8 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              <span className="font-sans text-sm font-semibold">Edit Profile</span>
-            </button>
-            
-            <button 
-              onClick={() => fetchAppointments()}
-              className="bg-gradient-to-br from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
-            >
-              <svg className="w-8 h-8 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span className="font-sans text-sm font-semibold">Refresh</span>
-            </button>
-          </div>
+
         </div>
 
         {/* Profile Card */}
@@ -360,7 +319,7 @@ export default function Welcome() {
                     <div className="flex space-x-4">
                       <button
                         type="submit"
-                        className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                        className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-sans font-semibold py-4 px-8 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
                       >
                         Save Changes
                       </button>
@@ -423,47 +382,40 @@ export default function Welcome() {
                         onClick={() => {
                           window.location.href = '/services';
                         }}
-                        className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white px-8 py-4 rounded-xl font-sans font-semibold text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 relative overflow-hidden group"
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-xl font-sans font-semibold text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                       >
-                        <span className="relative z-10">Book Appointment</span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                        Book Appointment
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {appointments.map((appointment, index) => (
                       <div 
                         key={appointment._id} 
-                        className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-stone-200/50 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] cursor-pointer group"
+                        className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-stone-200/50 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
-                        <div className="flex justify-between items-start mb-3">
-                          <h4 className="font-serif text-lg font-medium text-stone-800 group-hover:text-rose-600 transition-colors duration-300">{appointment.service}</h4>
-                          <span className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 group-hover:scale-110 ${
-                            appointment.status === 'confirmed' ? 'bg-emerald-100 text-emerald-800' :
-                            appointment.status === 'completed' ? 'bg-blue-100 text-blue-800' :
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-serif text-base font-medium text-stone-800 group-hover:text-gray-600 transition-colors duration-300">{appointment.service}</h4>
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold transition-all duration-300 ${
+                            appointment.status === 'confirmed' ? 'bg-gray-100 text-gray-800' :
+                            appointment.status === 'completed' ? 'bg-green-100 text-green-800' :
                             appointment.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                            'bg-yellow-100 text-yellow-800'
+                            'bg-gray-100 text-gray-800'
                           }`}>
                             {appointment.status.toUpperCase()}
                           </span>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 text-sm text-stone-600">
+                        <div className="grid grid-cols-2 gap-3 text-sm text-stone-600">
                           <p><span className="font-semibold">Date:</span> {new Date(appointment.date).toLocaleDateString()}</p>
                           <p><span className="font-semibold">Time:</span> {appointment.time}</p>
                         </div>
                         {appointment.notes && (
-                          <p className="mt-3 text-sm text-stone-600 bg-stone-50 p-3 rounded-lg group-hover:bg-rose-50 transition-colors duration-300">
+                          <p className="mt-2 text-sm text-stone-600 bg-stone-50 p-2 rounded-lg group-hover:bg-gray-50 transition-colors duration-300">
                             <span className="font-semibold">Notes:</span> {appointment.notes}
                           </p>
                         )}
-                        <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <div className="flex space-x-2">
-                            <button className="text-xs bg-rose-100 text-rose-600 px-3 py-1 rounded-full hover:bg-rose-200 transition-colors duration-200">Reschedule</button>
-                            <button className="text-xs bg-stone-100 text-stone-600 px-3 py-1 rounded-full hover:bg-stone-200 transition-colors duration-200">Cancel</button>
-                          </div>
-                        </div>
                       </div>
                     ))}
                   </div>
