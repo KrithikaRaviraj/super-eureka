@@ -11,8 +11,7 @@ export default function StaffLogin() {
 
   // Authorized staff emails from environment variables
   const authorizedEmails = (
-    process.env.REACT_APP_AUTHORIZED_STAFF_EMAILS || 
-    'staff@lavishladies.com,manager@lavishladies.com,admin@lavishladies.com'
+    process.env.REACT_APP_AUTHORIZED_STAFF_EMAILS || ''
   ).split(',').map(email => email.trim().toLowerCase());
 
   const handleEmailSubmit = async (e) => {
@@ -36,10 +35,11 @@ export default function StaffLogin() {
       if (response.ok) {
         setOtpSent(true);
       } else {
-        setError('Failed to send OTP');
+        const data = await response.json().catch(() => ({}));
+        setError(data.error || 'Failed to send OTP. Please check the email and try again.');
       }
     } catch {
-      setError('Network error');
+      setError('Network error. Could not connect to the server.');
     }
     
     setLoading(false);
@@ -64,10 +64,11 @@ export default function StaffLogin() {
         }));
         navigate('/staff-dashboard');
       } else {
-        setError('Invalid OTP');
+        const data = await response.json().catch(() => ({}));
+        setError(data.error || 'Invalid OTP.');
       }
     } catch {
-      setError('Network error');
+      setError('Network error. Could not connect to the server.');
     }
     
     setLoading(false);

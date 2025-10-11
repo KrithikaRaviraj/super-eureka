@@ -145,9 +145,16 @@ export default function SignIn({ onSuccess }) {
     e.preventDefault();
     setError('');
     
-    const allowedEmails = process.env.REACT_APP_STAFF_EMAILS ? process.env.REACT_APP_STAFF_EMAILS.split(',') : ['[redacted-email]', '[redacted-email]', '[redacted-email]'];
+    const allowedEmails = (
+      process.env.REACT_APP_AUTHORIZED_STAFF_EMAILS || 
+      '[redacted-email],[redacted-email],[redacted-email]'
+    ).split(',').map(email => email.trim().toLowerCase());
     
-    if (!allowedEmails.includes(staffEmail)) {
+    console.log('Env var:', process.env.REACT_APP_AUTHORIZED_STAFF_EMAILS);
+    console.log('Allowed emails:', allowedEmails);
+    console.log('Staff email entered:', staffEmail.toLowerCase());
+    
+    if (!allowedEmails.includes(staffEmail.toLowerCase())) {
       setError('Access denied. Only authorized staff emails are allowed.');
       return;
     }
@@ -257,11 +264,7 @@ export default function SignIn({ onSuccess }) {
               >
                 Send OTP
               </button>
-              <div className="text-center p-3 bg-stone-50 rounded-xl">
-                <p className="font-sans text-xs text-stone-600">
-                  <strong>Authorized emails:</strong> {(process.env.REACT_APP_STAFF_EMAILS || '[redacted-email],[redacted-email],[redacted-email]').replace(/,/g, ', ')}
-                </p>
-              </div>
+
             </form>
           ) : (
             <form className="mb-6 w-full space-y-6" onSubmit={handleStaffVerifyOtp}>
@@ -354,19 +357,25 @@ export default function SignIn({ onSuccess }) {
             </button>
           </form>
         )}
-        <div className="flex items-center my-6 w-full">
-          <div className="flex-grow h-px bg-stone-300" />
-          <span className="mx-4 font-sans text-xs text-stone-500 uppercase tracking-wider">OR</span>
-          <div className="flex-grow h-px bg-stone-300" />
-        </div>
-        <button
-          type="button"
-          onClick={handleGoogleSignIn}
-          className="w-full mb-6 flex items-center justify-center bg-white border-2 border-stone-200 hover:border-stone-300 text-stone-700 font-sans font-medium py-4 px-6 rounded-xl transition-all duration-200 text-sm shadow-sm hover:shadow-md"
-        >
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="h-5 w-5 mr-3" />
-          Continue with Google
-        </button>
+        
+        {!isStaffLogin && (
+          <>
+            <div className="flex items-center my-6 w-full">
+              <div className="flex-grow h-px bg-stone-300" />
+              <span className="mx-4 font-sans text-xs text-stone-500 uppercase tracking-wider">OR</span>
+              <div className="flex-grow h-px bg-stone-300" />
+            </div>
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              className="w-full mb-6 flex items-center justify-center bg-white border-2 border-stone-200 hover:border-stone-300 text-stone-700 font-sans font-medium py-4 px-6 rounded-xl transition-all duration-200 text-sm shadow-sm hover:shadow-md"
+            >
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="h-5 w-5 mr-3" />
+              Continue with Google
+            </button>
+          </>
+        )}
+
       </div>
     </div>
   );

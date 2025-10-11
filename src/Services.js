@@ -99,6 +99,7 @@ export default function Services() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('default');
   const [favorites, setFavorites] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
   
@@ -117,16 +118,35 @@ export default function Services() {
     localStorage.setItem('serviceFavorites', JSON.stringify(newFavorites));
   };
   
-  const filteredServices = services.filter(service => {
+  const filteredAndSortedServices = services.filter(service => {
     const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          service.description.toLowerCase().includes(searchTerm.toLowerCase());
     
+    const priceValue = parseInt(service.price.split(' - ')[0].replace('₹', ''));
     const matchesPrice = priceFilter === 'all' ||
-      (priceFilter === 'budget' && parseInt(service.price.split(' - ')[0].replace('₹', '')) < 1000) ||
-      (priceFilter === 'premium' && parseInt(service.price.split(' - ')[0].replace('₹', '')) >= 1000);
+      (priceFilter === 'budget' && priceValue < 1500) ||
+      (priceFilter === 'premium' && priceValue >= 1500);
     
     return matchesSearch && matchesPrice;
   });
+
+  if (sortBy === 'name') {
+    filteredAndSortedServices.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortBy === 'price_asc') {
+    filteredAndSortedServices.sort((a, b) => parseInt(a.price.replace('₹', '')) - parseInt(b.price.replace('₹', '')));
+  } else if (sortBy === 'price_desc') {
+    filteredAndSortedServices.sort((a, b) => parseInt(b.price.replace('₹', '')) - parseInt(a.price.replace('₹', '')));
+  }
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setPriceFilter('all');
+    setSortBy('default');
+  };
+  const handleDetailsClick = (e, service) => {
+    e.stopPropagation();
+    setSelectedService(service);
+  };
   
   const handleBookNow = (service) => {
     const userSession = localStorage.getItem('userSession');
@@ -156,7 +176,7 @@ export default function Services() {
             </p>
             
             {/* Search and Filter Controls */}
-            <div className="max-w-2xl mx-auto space-y-4">
+            <div className="max-w-3xl mx-auto space-y-4">
               <div className="relative">
                 <input
                   type="text"
@@ -170,40 +190,45 @@ export default function Services() {
                 </svg>
               </div>
               
-              <div className="flex justify-center space-x-4">
-                <button
-                  onClick={() => setPriceFilter('all')}
-                  className={`px-6 py-2 rounded-full font-sans text-sm transition-all duration-200 ${
-                    priceFilter === 'all' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'
-                  }`}
-                >
-                  All Services
-                </button>
-                <button
-                  onClick={() => setPriceFilter('budget')}
-                  className={`px-6 py-2 rounded-full font-sans text-sm transition-all duration-200 ${
-                    priceFilter === 'budget' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'
-                  }`}
-                >
-                  Budget Friendly
-                </button>
-                <button
-                  onClick={() => setPriceFilter('premium')}
-                  className={`px-6 py-2 rounded-full font-sans text-sm transition-all duration-200 ${
-                    priceFilter === 'premium' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'
-                  }`}
-                >
-                  Premium
-                </button>
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <div className="flex space-x-2">
+                  <button onClick={() => setPriceFilter('all')} className={`px-4 py-2 rounded-full font-sans text-xs sm:text-sm transition-all duration-200 ${priceFilter === 'all' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'}`}>All Prices</button>
+                  <button onClick={() => setPriceFilter('budget')} className={`px-4 py-2 rounded-full font-sans text-xs sm:text-sm transition-all duration-200 ${priceFilter === 'budget' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'}`}>Under ₹1500</button>
+                  <button onClick={() => setPriceFilter('premium')} className={`px-4 py-2 rounded-full font-sans text-xs sm:text-sm transition-all duration-200 ${priceFilter === 'premium' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'}`}>₹1500+</button>
+                </div>
+                <div className="relative">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="appearance-none w-full sm:w-auto bg-white/80 border-2 border-stone-200 text-stone-600 py-2 pl-4 pr-10 rounded-full focus:outline-none focus:border-rose-400 font-sans text-sm"
+                  >
+                    <option value="default">Sort by Default</option>
+                    <option value="name">Sort by Name</option>
+                    <option value="price_asc">Price: Low to High</option>
+                    <option value="price_desc">Price: High to Low</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-stone-400">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                  </div>
+                </div>
+                {(searchTerm || priceFilter !== 'all' || sortBy !== 'default') && (
+                  <button
+                    onClick={clearFilters}
+                    className="text-rose-600 hover:text-rose-800 font-sans text-sm font-semibold transition-colors"
+                  >
+                    Clear
+                  </button>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredServices.map((service, index) => (
+          {filteredAndSortedServices.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredAndSortedServices.map((service, index) => (
               <div 
                 key={service.id} 
-                className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-stone-200/50 hover:border-rose-200 group cursor-pointer transform hover:scale-105"
+                className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-stone-200/50 hover:border-rose-200 group cursor-pointer transform hover:scale-105 animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
                 onClick={() => setSelectedService(service)}
               >
@@ -253,10 +278,7 @@ export default function Services() {
                     Book Now
                   </button>
                   <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedService(service);
-                    }}
+                    onClick={(e) => handleDetailsClick(e, service)}
                     className="px-4 py-3 border-2 border-stone-300 hover:border-rose-400 text-stone-700 hover:text-rose-600 rounded-xl transition-all duration-300 font-sans font-medium text-sm"
                   >
                     Details
@@ -264,14 +286,31 @@ export default function Services() {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-12 h-12 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h3 className="font-serif text-2xl text-stone-700 mb-2">No Services Found</h3>
+              <p className="font-sans text-stone-500 mb-6">Try adjusting your search or filter settings.</p>
+              <button
+                onClick={clearFilters}
+                className="bg-rose-600 hover:bg-rose-700 text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Clear All Filters
+              </button>
+            </div>
+          )}
         </div>
       </div>
       
       {/* Service Detail Modal */}
       {selectedService && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedService(null)}>
+          <div className="bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center">
