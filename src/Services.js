@@ -1,5 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// Add inline CSS animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+`;
+document.head.appendChild(style);
 
 const services = [
   {
@@ -78,6 +97,36 @@ const services = [
 
 export default function Services() {
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [priceFilter, setPriceFilter] = useState('all');
+  const [favorites, setFavorites] = useState([]);
+  const [selectedService, setSelectedService] = useState(null);
+  
+  useEffect(() => {
+    const savedFavorites = localStorage.getItem('serviceFavorites');
+    if (savedFavorites) {
+      setFavorites(JSON.parse(savedFavorites));
+    }
+  }, []);
+  
+  const toggleFavorite = (serviceId) => {
+    const newFavorites = favorites.includes(serviceId)
+      ? favorites.filter(id => id !== serviceId)
+      : [...favorites, serviceId];
+    setFavorites(newFavorites);
+    localStorage.setItem('serviceFavorites', JSON.stringify(newFavorites));
+  };
+  
+  const filteredServices = services.filter(service => {
+    const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         service.description.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesPrice = priceFilter === 'all' ||
+      (priceFilter === 'budget' && parseInt(service.price.split(' - ')[0].replace('₹', '')) < 1000) ||
+      (priceFilter === 'premium' && parseInt(service.price.split(' - ')[0].replace('₹', '')) >= 1000);
+    
+    return matchesSearch && matchesPrice;
+  });
   
   const handleBookNow = (service) => {
     const userSession = localStorage.getItem('userSession');
@@ -102,18 +151,81 @@ export default function Services() {
           <div className="text-center mb-16">
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-stone-800 mb-6">Our Services</h1>
             <div className="w-32 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-8"></div>
-            <p className="font-sans text-xl text-stone-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="font-sans text-xl text-stone-600 max-w-3xl mx-auto leading-relaxed mb-8">
               Discover our comprehensive range of premium beauty and wellness services designed to make you look and feel your absolute best.
             </p>
+            
+            {/* Search and Filter Controls */}
+            <div className="max-w-2xl mx-auto space-y-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search services..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-rose-400 focus:outline-none bg-white/80 backdrop-blur-sm font-sans text-stone-700 placeholder-stone-400"
+                />
+                <svg className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={() => setPriceFilter('all')}
+                  className={`px-6 py-2 rounded-full font-sans text-sm transition-all duration-200 ${
+                    priceFilter === 'all' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'
+                  }`}
+                >
+                  All Services
+                </button>
+                <button
+                  onClick={() => setPriceFilter('budget')}
+                  className={`px-6 py-2 rounded-full font-sans text-sm transition-all duration-200 ${
+                    priceFilter === 'budget' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'
+                  }`}
+                >
+                  Budget Friendly
+                </button>
+                <button
+                  onClick={() => setPriceFilter('premium')}
+                  className={`px-6 py-2 rounded-full font-sans text-sm transition-all duration-200 ${
+                    priceFilter === 'premium' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'
+                  }`}
+                >
+                  Premium
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service) => (
-              <div key={service.id} className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-stone-200/50 hover:border-rose-200 group">
-                <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-10 h-10 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d={service.icon}/>
-                  </svg>
+            {filteredServices.map((service, index) => (
+              <div 
+                key={service.id} 
+                className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-stone-200/50 hover:border-rose-200 group cursor-pointer transform hover:scale-105"
+                style={{ animationDelay: `${index * 100}ms` }}
+                onClick={() => setSelectedService(service)}
+              >
+                <div className="flex justify-between items-start mb-6">
+                  <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg className="w-10 h-10 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d={service.icon}/>
+                    </svg>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(service.id);
+                    }}
+                    className="p-2 rounded-full hover:bg-rose-100 transition-colors duration-200"
+                  >
+                    <svg className={`w-6 h-6 transition-colors duration-200 ${
+                      favorites.includes(service.id) ? 'text-rose-600 fill-current' : 'text-stone-400'
+                    }`} fill={favorites.includes(service.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </button>
                 </div>
                 
                 <h3 className="font-serif text-2xl font-medium text-stone-800 mb-4">{service.name}</h3>
@@ -130,17 +242,100 @@ export default function Services() {
                   </div>
                 </div>
                 
-                <button 
-                  onClick={() => handleBookNow(service)}
-                  className="w-full mt-6 bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-                >
-                  Book Now
-                </button>
+                <div className="flex space-x-3 mt-6">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleBookNow(service);
+                    }}
+                    className="flex-1 bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  >
+                    Book Now
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedService(service);
+                    }}
+                    className="px-4 py-3 border-2 border-stone-300 hover:border-rose-400 text-stone-700 hover:text-rose-600 rounded-xl transition-all duration-300 font-sans font-medium text-sm"
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
+      
+      {/* Service Detail Modal */}
+      {selectedService && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d={selectedService.icon}/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-serif text-3xl font-medium text-stone-800">{selectedService.name}</h3>
+                  <p className="text-rose-600 font-semibold text-lg">{selectedService.price}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedService(null)}
+                className="p-2 hover:bg-stone-100 rounded-full transition-colors duration-200"
+              >
+                <svg className="w-6 h-6 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="space-y-6">
+              <div>
+                <h4 className="font-sans font-semibold text-stone-800 mb-2">Description</h4>
+                <p className="font-sans text-stone-600 leading-relaxed">{selectedService.description}</p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-stone-50 p-4 rounded-xl">
+                  <h4 className="font-sans font-semibold text-stone-800 mb-1">Duration</h4>
+                  <p className="font-sans text-stone-600">{selectedService.duration}</p>
+                </div>
+                <div className="bg-stone-50 p-4 rounded-xl">
+                  <h4 className="font-sans font-semibold text-stone-800 mb-1">Price Range</h4>
+                  <p className="font-sans text-rose-600 font-semibold">{selectedService.price}</p>
+                </div>
+              </div>
+              
+              <div className="flex space-x-4 pt-4">
+                <button 
+                  onClick={() => {
+                    handleBookNow(selectedService);
+                    setSelectedService(null);
+                  }}
+                  className="flex-1 bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-4 px-6 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl"
+                >
+                  Book This Service
+                </button>
+                <button
+                  onClick={() => toggleFavorite(selectedService.id)}
+                  className={`px-6 py-4 rounded-xl border-2 transition-all duration-300 font-sans font-medium text-sm ${
+                    favorites.includes(selectedService.id)
+                      ? 'border-rose-400 text-rose-600 bg-rose-50'
+                      : 'border-stone-300 text-stone-700 hover:border-rose-400 hover:text-rose-600'
+                  }`}
+                >
+                  {favorites.includes(selectedService.id) ? 'Remove from Favorites' : 'Add to Favorites'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
