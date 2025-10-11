@@ -17,7 +17,7 @@ export default function StaffDashboard() {
 
   const fetchAppointments = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/appointments/all');
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/all`);
       if (response.ok) {
         const data = await response.json();
         setAppointments(data.appointments || []);
@@ -30,7 +30,7 @@ export default function StaffDashboard() {
 
   const updateAppointmentStatus = async (id, status) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/appointments/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })

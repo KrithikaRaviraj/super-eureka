@@ -60,7 +60,7 @@ export default function Welcome() {
         }
         
         if (queryParam) {
-          const res = await fetch(`http://localhost:5000/api/users?${queryParam}`);
+          const res = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/users?${queryParam}`);
           if (res.ok) {
             const data = await res.json();
             if (data.user) {
@@ -108,7 +108,7 @@ export default function Welcome() {
     
     if (currentEmail) {
       try {
-        const response = await fetch(`http://localhost:5000/api/appointments/user/${encodeURIComponent(currentEmail)}`);
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/user/${encodeURIComponent(currentEmail)}`);
         if (response.ok) {
           const data = await response.json();
           setAppointments(data.appointments || []);
@@ -126,7 +126,7 @@ export default function Welcome() {
     e.preventDefault();
     setSaved(false);
     try {
-      await fetch("http://localhost:5000/api/users", {
+      await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -140,7 +140,7 @@ export default function Welcome() {
       
       // Send email confirmation if email was changed
       if (email && email !== originalEmail) {
-        await fetch("http://localhost:5000/api/send-profile-update-email", {
+        await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/send-profile-update-email`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, name }),

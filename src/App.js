@@ -61,7 +61,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   
   const fetchTestimonials = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/appointments/testimonials');
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/testimonials`);
       const data = await response.json();
       if (data.success) {
         setTestimonials(data.testimonials);

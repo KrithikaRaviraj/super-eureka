@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
@@ -438,7 +439,7 @@ router.post('/feedback/:token', async (req, res) => {
       const approveUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/approve-testimonial/${approvalToken}?action=approve`;
       const rejectUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/approve-testimonial/${approvalToken}?action=reject`;
       
-      const approvalEmails = ['[redacted-email]', '[redacted-email]'];
+      const approvalEmails = process.env.APPROVAL_EMAILS ? process.env.APPROVAL_EMAILS.split(',') : ['[redacted-email]', '[redacted-email]'];
       
       for (const email of approvalEmails) {
         const approvalMailOptions = {

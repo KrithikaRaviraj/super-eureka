@@ -161,7 +161,7 @@ export default function Testimonials({ testimonials }) {
         
         <div className="text-center mt-12">
           <a 
-            href="https://g.page/r/CX75qAudJSuXEAI/review" 
+            href={process.env.REACT_APP_GOOGLE_REVIEWS_URL || 'https://g.page/r/CX75qAudJSuXEAI/review'} 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"

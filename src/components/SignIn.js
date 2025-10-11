@@ -5,7 +5,7 @@ import { auth, provider } from '../firebase';
 import SalonHeader from './SalonHeader';
 
 async function saveUserToBackend(user) {
-  await fetch("http://localhost:5000/api/users", {
+  await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/users`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(user),
@@ -70,7 +70,7 @@ export default function SignIn({ onSuccess }) {
     }
     
     try {
-      const response = await fetch("http://localhost:5000/api/send-email-otp", {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/send-email-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -98,7 +98,7 @@ export default function SignIn({ onSuccess }) {
     }
     
     try {
-      const response = await fetch("http://localhost:5000/api/verify-email-otp", {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/verify-email-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
@@ -145,7 +145,7 @@ export default function SignIn({ onSuccess }) {
     e.preventDefault();
     setError('');
     
-    const allowedEmails = ['[redacted-email]', '[redacted-email]', '[redacted-email]'];
+    const allowedEmails = process.env.REACT_APP_STAFF_EMAILS ? process.env.REACT_APP_STAFF_EMAILS.split(',') : ['[redacted-email]', '[redacted-email]', '[redacted-email]'];
     
     if (!allowedEmails.includes(staffEmail)) {
       setError('Access denied. Only authorized staff emails are allowed.');
@@ -153,7 +153,7 @@ export default function SignIn({ onSuccess }) {
     }
     
     try {
-      const response = await fetch('http://localhost:5000/api/send-email-otp', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/send-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: staffEmail })
@@ -181,7 +181,7 @@ export default function SignIn({ onSuccess }) {
     }
     
     try {
-      const response = await fetch('http://localhost:5000/api/verify-email-otp', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/verify-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: staffEmail, otp: staffOtp })
@@ -259,7 +259,7 @@ export default function SignIn({ onSuccess }) {
               </button>
               <div className="text-center p-3 bg-stone-50 rounded-xl">
                 <p className="font-sans text-xs text-stone-600">
-                  <strong>Authorized emails:</strong> [redacted-email], [redacted-email], [redacted-email]
+                  <strong>Authorized emails:</strong> {(process.env.REACT_APP_STAFF_EMAILS || '[redacted-email],[redacted-email],[redacted-email]').replace(/,/g, ', ')}
                 </p>
               </div>
             </form>

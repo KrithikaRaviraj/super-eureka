@@ -27,7 +27,7 @@ export default function FeedbackForm() {
 
   const fetchAppointment = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/appointments/feedback/${token}`);
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/feedback/${token}`);
       const data = await response.json();
       
       if (data.success) {
@@ -56,7 +56,7 @@ export default function FeedbackForm() {
     setSubmitting(true);
     
     try {
-      const response = await fetch(`http://localhost:5000/api/appointments/feedback/${token}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/feedback/${token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(feedback)
@@ -167,7 +167,7 @@ export default function FeedbackForm() {
               </p>
               <div className="flex space-x-3">
                 <a 
-                  href="https://g.page/r/CX75qAudJSuXEAI/review" 
+                  href={process.env.REACT_APP_GOOGLE_REVIEWS_URL || 'https://g.page/r/CX75qAudJSuXEAI/review'} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-sans font-medium transition-all duration-300"

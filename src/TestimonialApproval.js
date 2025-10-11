@@ -22,7 +22,7 @@ export default function TestimonialApproval() {
 
   const processApproval = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/appointments/testimonial/${token}?action=${action}`);
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/testimonial/${token}?action=${action}`);
       const data = await response.json();
       
       if (data.success) {
