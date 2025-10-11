@@ -41,7 +41,10 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [testimonials, setTestimonials] = useState([]);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const [isVisible, setIsVisible] = useState({});
+  const aboutRef = useRef(null);
+  const servicesRef = useRef(null);
   
   React.useEffect(() => {
     const userSession = localStorage.getItem('userSession');
@@ -59,12 +62,34 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
     
     fetchTestimonials();
     
+    // Scroll animations
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrollY(window.scrollY);
     };
     
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        setIsVisible(prev => ({
+          ...prev,
+          [entry.target.id]: entry.isIntersecting
+        }));
+      });
+    }, observerOptions);
+    
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    if (aboutRef.current) observer.observe(aboutRef.current);
+    if (servicesRef.current) observer.observe(servicesRef.current);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
   }, []);
   
   const fetchTestimonials = async () => {
