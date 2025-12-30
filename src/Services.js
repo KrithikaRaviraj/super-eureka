@@ -25,7 +25,6 @@ const services = [
     id: 1,
     name: "Hair Styling & Cuts",
     description: "Professional haircuts, styling, and treatments for all hair types. From classic cuts to modern trends.",
-    price: "₹500 - ₹2000",
     duration: "45-90 mins",
     icon: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
   },
@@ -33,7 +32,6 @@ const services = [
     id: 2,
     name: "Facial Treatments",
     description: "Rejuvenating facials, deep cleansing, and anti-aging treatments for glowing, healthy skin.",
-    price: "₹800 - ₹3000",
     duration: "60-90 mins",
     icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
   },
@@ -41,7 +39,6 @@ const services = [
     id: 3,
     name: "Spa & Massage",
     description: "Relaxing massages and spa treatments to rejuvenate your body and mind.",
-    price: "₹1200 - ₹4000",
     duration: "60-120 mins",
     icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"
   },
@@ -49,7 +46,6 @@ const services = [
     id: 4,
     name: "Manicure & Pedicure",
     description: "Complete nail care services including manicures, pedicures, and nail art.",
-    price: "₹600 - ₹1500",
     duration: "45-75 mins",
     icon: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
   },
@@ -57,7 +53,6 @@ const services = [
     id: 5,
     name: "Hair Coloring",
     description: "Professional hair coloring, highlights, and color correction services.",
-    price: "₹1500 - ₹5000",
     duration: "90-180 mins",
     icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
   },
@@ -65,7 +60,6 @@ const services = [
     id: 6,
     name: "Bridal Packages",
     description: "Complete bridal makeover packages for your special day.",
-    price: "₹5000 - ₹15000",
     duration: "3-5 hours",
     icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"
   },
@@ -73,7 +67,6 @@ const services = [
     id: 7,
     name: "Threading & Waxing",
     description: "Professional threading and waxing services for smooth, hair-free skin.",
-    price: "₹200 - ₹1000",
     duration: "15-60 mins",
     icon: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
   },
@@ -81,7 +74,6 @@ const services = [
     id: 8,
     name: "Hair Treatments",
     description: "Deep conditioning, keratin treatments, and hair repair services.",
-    price: "₹1000 - ₹3500",
     duration: "60-120 mins",
     icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
   },
@@ -89,7 +81,6 @@ const services = [
     id: 9,
     name: "Makeup Services",
     description: "Professional makeup for parties, events, and special occasions.",
-    price: "₹1500 - ₹4000",
     duration: "60-90 mins",
     icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"
   }
@@ -98,7 +89,6 @@ const services = [
 export default function Services() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [priceFilter, setPriceFilter] = useState('all');
   const [sortBy, setSortBy] = useState('default');
   const [favorites, setFavorites] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
@@ -122,25 +112,15 @@ export default function Services() {
     const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          service.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const priceValue = parseInt(service.price.split(' - ')[0].replace('₹', ''));
-    const matchesPrice = priceFilter === 'all' ||
-      (priceFilter === 'budget' && priceValue < 1500) ||
-      (priceFilter === 'premium' && priceValue >= 1500);
-    
-    return matchesSearch && matchesPrice;
+    return matchesSearch;
   });
 
   if (sortBy === 'name') {
     filteredAndSortedServices.sort((a, b) => a.name.localeCompare(b.name));
-  } else if (sortBy === 'price_asc') {
-    filteredAndSortedServices.sort((a, b) => parseInt(a.price.replace('₹', '')) - parseInt(b.price.replace('₹', '')));
-  } else if (sortBy === 'price_desc') {
-    filteredAndSortedServices.sort((a, b) => parseInt(b.price.replace('₹', '')) - parseInt(a.price.replace('₹', '')));
   }
 
   const clearFilters = () => {
     setSearchTerm('');
-    setPriceFilter('all');
     setSortBy('default');
   };
   const handleDetailsClick = (e, service) => {
@@ -191,11 +171,6 @@ export default function Services() {
               </div>
               
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <div className="flex space-x-2">
-                  <button onClick={() => setPriceFilter('all')} className={`px-4 py-2 rounded-full font-sans text-xs sm:text-sm transition-all duration-200 ${priceFilter === 'all' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'}`}>All Prices</button>
-                  <button onClick={() => setPriceFilter('budget')} className={`px-4 py-2 rounded-full font-sans text-xs sm:text-sm transition-all duration-200 ${priceFilter === 'budget' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'}`}>Under ₹1500</button>
-                  <button onClick={() => setPriceFilter('premium')} className={`px-4 py-2 rounded-full font-sans text-xs sm:text-sm transition-all duration-200 ${priceFilter === 'premium' ? 'bg-rose-600 text-white' : 'bg-white/80 text-stone-600 hover:bg-rose-100'}`}>₹1500+</button>
-                </div>
                 <div className="relative">
                   <select
                     value={sortBy}
@@ -204,14 +179,12 @@ export default function Services() {
                   >
                     <option value="default">Sort by Default</option>
                     <option value="name">Sort by Name</option>
-                    <option value="price_asc">Price: Low to High</option>
-                    <option value="price_desc">Price: High to Low</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-stone-400">
                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                   </div>
                 </div>
-                {(searchTerm || priceFilter !== 'all' || sortBy !== 'default') && (
+                {(searchTerm || sortBy !== 'default') && (
                   <button
                     onClick={clearFilters}
                     className="text-rose-600 hover:text-rose-800 font-sans text-sm font-semibold transition-colors"
@@ -257,10 +230,6 @@ export default function Services() {
                 <p className="font-sans text-stone-600 leading-relaxed mb-6">{service.description}</p>
                 
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="font-sans text-sm font-medium text-stone-700">Price Range:</span>
-                    <span className="font-sans text-lg font-semibold text-rose-600">{service.price}</span>
-                  </div>
                   <div className="flex justify-between items-center">
                     <span className="font-sans text-sm font-medium text-stone-700">Duration:</span>
                     <span className="font-sans text-sm text-stone-600">{service.duration}</span>
@@ -320,7 +289,6 @@ export default function Services() {
                 </div>
                 <div>
                   <h3 className="font-serif text-3xl font-medium text-stone-800">{selectedService.name}</h3>
-                  <p className="text-rose-600 font-semibold text-lg">{selectedService.price}</p>
                 </div>
               </div>
               <button
@@ -339,15 +307,9 @@ export default function Services() {
                 <p className="font-sans text-stone-600 leading-relaxed">{selectedService.description}</p>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-stone-50 p-4 rounded-xl">
-                  <h4 className="font-sans font-semibold text-stone-800 mb-1">Duration</h4>
-                  <p className="font-sans text-stone-600">{selectedService.duration}</p>
-                </div>
-                <div className="bg-stone-50 p-4 rounded-xl">
-                  <h4 className="font-sans font-semibold text-stone-800 mb-1">Price Range</h4>
-                  <p className="font-sans text-rose-600 font-semibold">{selectedService.price}</p>
-                </div>
+              <div className="bg-stone-50 p-4 rounded-xl">
+                <h4 className="font-sans font-semibold text-stone-800 mb-1">Duration</h4>
+                <p className="font-sans text-stone-600">{selectedService.duration}</p>
               </div>
               
               <div className="flex space-x-4 pt-4">

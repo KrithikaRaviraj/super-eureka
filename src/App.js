@@ -9,7 +9,7 @@ import TestimonialApproval from "./TestimonialApproval";
 import SignIn from "./components/SignIn";
 import SalonHeader from "./components/SalonHeader";
 import Testimonials from "./components/Testimonials";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 
 // Add fonts and styles
 const link = document.createElement('link');
@@ -298,6 +298,123 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               
               <Testimonials testimonials={testimonials} />
               
+              {/* FAQ Section */}
+              <section className="py-16 px-4 bg-white/50">
+                <div className="max-w-7xl mx-auto">
+                  <div className="text-center mb-12">
+                    <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">Frequently Asked Questions</h2>
+                    <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-6"></div>
+                  </div>
+                  
+                  <div className="grid lg:grid-cols-3 gap-8">
+                    {/* FAQ Questions - Left side */}
+                    <div className="lg:col-span-2 space-y-6">
+                      {[
+                        {
+                          question: "What services do you offer?",
+                          answer: "We offer a complete range of beauty services including haircuts, hair coloring, facials, massages, manicures, pedicures, and bridal packages."
+                        },
+                        {
+                          question: "Do I need to book an appointment?",
+                          answer: "Yes, we recommend booking an appointment to ensure availability. You can book online through our website or call us directly."
+                        },
+                        {
+                          question: "What are your operating hours?",
+                          answer: "We are open Monday to Sunday from 9:00 AM to 8:00 PM. We're here to serve you throughout the week."
+                        },
+                        {
+                          question: "Do you offer bridal packages?",
+                          answer: "Yes, we offer comprehensive bridal packages including hair styling, makeup, facials, and nail services for your special day."
+                        },
+                        {
+                          question: "What safety measures do you follow?",
+                          answer: "We maintain the highest hygiene standards with sanitized tools, clean workstations, and follow all health and safety protocols."
+                        }
+                      ].map((faq, index) => (
+                        <div key={index} className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                          <h3 className="font-serif text-lg font-medium text-stone-800 mb-3">{faq.question}</h3>
+                          <p className="font-sans text-stone-600 leading-relaxed">{faq.answer}</p>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Contact Card - Right side */}
+                    <div className="lg:col-span-1">
+                      <div className="bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl p-6 shadow-md border-2 border-rose-200 sticky top-8">
+                        <h3 className="font-serif text-xl font-medium text-rose-700 mb-4 flex items-center">
+                          <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                          </svg>
+                          Have more questions?
+                        </h3>
+                        <p className="font-sans text-stone-700 leading-relaxed mb-6">
+                          For any additional questions or specific inquiries, feel free to contact us directly.
+                        </p>
+                        
+                        {/* Contact Options */}
+                        <div className="space-y-4">
+                          <a 
+                            href="https://mail.google.com/mail/?view=cm&fs=1&to=[redacted-email]&su=Inquiry%20from%20Website"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center p-3 bg-white/80 rounded-lg hover:bg-white transition-all duration-200 group"
+                          >
+                            <div className="w-10 h-10 bg-rose-600 rounded-full flex items-center justify-center mr-3 group-hover:bg-rose-700 transition-colors">
+                              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-stone-800 text-sm">Email Us</p>
+                              <p className="text-stone-600 text-xs">[redacted-email]</p>
+                            </div>
+                          </a>
+                          
+                          <a 
+                            href="https://www.instagram.com/lavish_ladies_salon_n_spa/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center p-3 bg-white/80 rounded-lg hover:bg-white transition-all duration-200 group"
+                          >
+                            <div className="w-10 h-10 bg-rose-600 rounded-full flex items-center justify-center mr-3 group-hover:bg-rose-700 transition-colors">
+                              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-stone-800 text-sm">Follow Us</p>
+                              <p className="text-stone-600 text-xs">@lavish_ladies_salon_n_spa</p>
+                            </div>
+                          </a>
+                          
+                          <button 
+                            onClick={() => {
+                              if (navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i)) {
+                                window.location.href = 'tel:+918147627651';
+                              } else {
+                                navigator.clipboard.writeText('8147627651');
+                                alert('Phone number copied to clipboard: 8147627651');
+                              }
+                            }}
+                            className="flex items-center p-3 bg-white/80 rounded-lg hover:bg-white transition-all duration-200 group w-full text-left"
+                          >
+                            <div className="w-10 h-10 bg-rose-600 rounded-full flex items-center justify-center mr-3 group-hover:bg-rose-700 transition-colors">
+                              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-stone-800 text-sm">Call Us</p>
+                              <p className="text-stone-600 text-xs">+91 8147627651</p>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              
               {/* Contact Section */}
               <section id="contact" className="py-16 px-4 bg-gradient-to-br from-stone-100 to-rose-100">
                 <div className="max-w-4xl mx-auto text-center">
@@ -311,7 +428,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         </svg>
                       </div>
                       <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Call Us</h3>
-                      <p className="font-sans text-stone-600">+91 98765 43210</p>
+                      <p className="font-sans text-stone-600">+91 8147627651</p>
                     </div>
                     
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
@@ -338,6 +455,103 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                 </div>
               </section>
             </main>
+            
+            {/* Professional Footer */}
+            <footer className="bg-stone-800 text-white relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-stone-800 to-stone-900"></div>
+              <div className="relative z-10">
+                {/* Main Footer Content */}
+                <div className="max-w-7xl mx-auto px-4 py-12">
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {/* About Section */}
+                    <div className="space-y-4">
+                      <h3 className="font-serif text-xl font-medium text-white mb-4">Lavish Ladies Beauty Salon</h3>
+                      <p className="font-sans text-stone-300 text-sm leading-relaxed">
+                        Your premier destination for beauty and wellness in Uchila. Experience personalized care that makes you look and feel your best.
+                      </p>
+                      <div className="flex space-x-3">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=[redacted-email]&su=Inquiry%20from%20Website" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
+                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                          </svg>
+                        </a>
+                        <a href="https://www.instagram.com/lavish_ladies_salon_n_spa/" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
+                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                    
+                    {/* Services */}
+                    <div className="space-y-4">
+                      <h3 className="font-serif text-lg font-medium text-white mb-4">Our Services</h3>
+                      <ul className="space-y-2 font-sans text-sm">
+                        <li><span className="text-stone-300 hover:text-rose-400 transition-colors cursor-pointer">Hair Styling & Cuts</span></li>
+                        <li><span className="text-stone-300 hover:text-rose-400 transition-colors cursor-pointer">Hair Coloring</span></li>
+                        <li><span className="text-stone-300 hover:text-rose-400 transition-colors cursor-pointer">Facial Treatments</span></li>
+                        <li><span className="text-stone-300 hover:text-rose-400 transition-colors cursor-pointer">Spa & Massage</span></li>
+                        <li><span className="text-stone-300 hover:text-rose-400 transition-colors cursor-pointer">Manicure & Pedicure</span></li>
+                        <li><span className="text-stone-300 hover:text-rose-400 transition-colors cursor-pointer">Bridal Packages</span></li>
+                      </ul>
+                    </div>
+                    
+                    {/* Quick Links */}
+                    <div className="space-y-4">
+                      <h3 className="font-serif text-lg font-medium text-white mb-4">Quick Links</h3>
+                      <ul className="space-y-2 font-sans text-sm">
+                        <li><button onClick={() => navigate('/')} className="text-stone-300 hover:text-rose-400 transition-colors text-left">Home</button></li>
+                        <li><button onClick={() => navigate('/services')} className="text-stone-300 hover:text-rose-400 transition-colors text-left">Services</button></li>
+                        <li><button onClick={() => aboutRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-stone-300 hover:text-rose-400 transition-colors text-left">About Us</button></li>
+                        <li><a href="#contact" className="text-stone-300 hover:text-rose-400 transition-colors">Contact</a></li>
+                        <li><button onClick={() => navigate('/staff-login')} className="text-stone-300 hover:text-rose-400 transition-colors text-left">Staff Login</button></li>
+                      </ul>
+                    </div>
+                    
+                    {/* Contact Info */}
+                    <div className="space-y-4">
+                      <h3 className="font-serif text-lg font-medium text-white mb-4">Contact Info</h3>
+                      <div className="space-y-3 font-sans text-sm">
+                        <div className="flex items-center space-x-3">
+                          <svg className="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <span className="text-stone-300">Uchila, Udupi District</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <svg className="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          <span className="text-stone-300">+91 8147627651</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <svg className="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span className="text-stone-300">Mon-Sun: 9AM-8PM</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Bottom Footer */}
+                <div className="border-t border-stone-700">
+                  <div className="max-w-7xl mx-auto px-4 py-6">
+                    <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                      <div className="font-sans text-sm text-stone-400">
+                        © 2024 Lavish Ladies Beauty Salon Uchila. All rights reserved.
+                      </div>
+                      <div className="flex space-x-6 font-sans text-sm">
+                        <span className="text-stone-400 hover:text-rose-400 transition-colors cursor-pointer">Privacy Policy</span>
+                        <span className="text-stone-400 hover:text-rose-400 transition-colors cursor-pointer">Terms of Service</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </footer>
             
 
             {sidebarOpen && (
