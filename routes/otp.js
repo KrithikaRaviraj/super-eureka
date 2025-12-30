@@ -290,6 +290,171 @@ router.post('/send-profile-update-email', async (req, res) => {
   }
 });
 
+// Send Staff OTP
+router.post('/send-staff-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email || !validateEmail(email)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Valid email address required" 
+      });
+    }
+    
+    // Check if email is authorized for staff access
+    const authorizedEmails = process.env.REACT_APP_AUTHORIZED_STAFF_EMAILS?.split(',') || [];
+    if (!authorizedEmails.includes(email)) {
+      return res.status(403).json({ 
+        success: false, 
+        message: "Unauthorized email address" 
+      });
+    }
+    
+    const otp = generateOTP();
+    const expiryTime = Date.now() + 10 * 60 * 1000;
+    
+    // Store OTP with expiry
+    otpStorage.set(`staff_${email}`, { otp, expiryTime });
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
+      to: email,
+      subject: 'Staff Login OTP - Lavish Ladies Salon',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Staff Login OTP - Lavish Ladies Salon</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ffffff; color: #1f2937;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #ffffff; min-height: 100vh;">
+            <tr>
+              <td>
+                <table width="100%" style="max-width: 600px; margin: auto; border: 1px solid #e5e7eb; background: #ffffff;">
+                  <tr>
+                    <td style="padding: 40px; text-align: center; background: linear-gradient(135deg, #f9fafb, #f3f4f6); border-bottom: 1px solid #e5e7eb;">
+                      <h1 style="margin: 0; font-size: 28px; font-weight: 400; letter-spacing: 2px; color: #1f2937;">LAVISH LADIES SALON</h1>
+                      <p style="margin: 10px 0 0 0; font-size: 16px; color: #6b7280;">Staff Dashboard Access</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 40px;">
+                      <h2 style="text-align: center; font-size: 24px; font-weight: 500; margin-bottom: 30px;">Your Staff Login OTP</h2>
+                      <div style="text-align: center; margin-bottom: 40px;">
+                        <div style="display: inline-block; padding: 25px 40px; background: #f9fafb; border: 2px solid #1f2937; border-radius: 8px;">
+                          <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; font-family: monospace; color: #1f2937;">${otp}</span>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 14px; color: #6b7280;">This code is valid for 10 minutes.</p>
+                      </div>
+                      
+                      <div style="margin-top: 30px; padding: 20px; background: #f9fafb; border-left: 4px solid #1f2937;">
+                        <h3 style="margin-top: 0; font-size: 16px;">Security Notice</h3>
+                        <p style="margin: 0; font-size: 14px; color: #4b5563;">This OTP is for staff dashboard access only. Do not share this code with anyone.</p>
+                      </div>
+                      
+                      <div style="margin-top: 40px; border-top: 1px solid #e5e7eb; text-align: center; padding-top: 20px;">
+                        <p style="font-size: 14px; color: #6b7280;">If you did not request this OTP, please ignore this email.</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: center; background: #f9fafb; padding: 20px; border-top: 1px solid #e5e7eb;">
+                      <p style="margin: 0; font-size: 12px; color: #6b7280;">© 2025 Lavish Ladies Beauty Salon. All rights reserved.</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `
+    };
+    
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`Staff OTP sent to ${email}: ${otp}`);
+      
+      res.json({ 
+        success: true, 
+        message: "OTP sent to your email"
+      });
+      
+    } catch (emailError) {
+      console.error('Staff email sending error:', emailError);
+      console.log('\n=== EMAIL FAILED - USING CONSOLE OTP ===');
+      console.log(`EMAIL: ${email}`);
+      console.log(`OTP: ${otp}`);
+      console.log('=== USE THIS OTP TO LOGIN ===\n');
+      
+      res.json({ 
+        success: true, 
+        message: "OTP sent successfully (check console)",
+        otp: otp
+      });
+    }
+    
+  } catch (error) {
+    console.error('Send Staff OTP error:', error);
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
+  }
+});
+
+// Verify Staff OTP
+router.post('/verify-staff-otp', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: "Email and OTP required" });
+    }
+    
+    // Check if email is authorized for staff access
+    const authorizedEmails = process.env.REACT_APP_AUTHORIZED_STAFF_EMAILS?.split(',') || [];
+    if (!authorizedEmails.includes(email)) {
+      return res.status(403).json({ 
+        success: false, 
+        message: "Unauthorized email address" 
+      });
+    }
+    
+    const storedData = otpStorage.get(`staff_${email}`);
+    
+    if (!storedData) {
+      return res.status(400).json({ success: false, message: "OTP not found or expired" });
+    }
+    
+    const { otp: storedOtp, expiryTime } = storedData;
+    
+    // Check if OTP expired
+    if (Date.now() > expiryTime) {
+      otpStorage.delete(`staff_${email}`);
+      return res.status(400).json({ success: false, message: "OTP expired. Please request a new one." });
+    }
+    
+    // Verify OTP
+    if (otp !== storedOtp) {
+      return res.status(400).json({ success: false, message: "Invalid OTP" });
+    }
+    
+    // OTP verified successfully
+    otpStorage.delete(`staff_${email}`);
+    
+    res.json({ 
+      success: true, 
+      message: "Staff login successful",
+      staff: { email }
+    });
+    
+  } catch (error) {
+    console.error('Verify Staff OTP error:', error);
+    res.status(500).json({ success: false, message: "Failed to verify OTP" });
+  }
+});
+
 router.get('/otp-status/:email', (req, res) => {
   const { email } = req.params;
   const storedData = otpStorage.get(email);
