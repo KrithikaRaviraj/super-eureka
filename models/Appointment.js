@@ -11,7 +11,10 @@ const appointmentSchema = new mongoose.Schema({
   status: { type: String, enum: ['pending', 'confirmed', 'completed', 'cancelled'], default: 'pending' },
   feedbackToken: { type: String },
   feedbackSubmitted: { type: Boolean, default: false },
-  googleCalendarEventId: { type: String }
+  googleCalendarEventId: { type: String },
+  price: { type: Number, default: 0 },
+  paymentStatus: { type: String, enum: ['pending', 'paid', 'refunded'], default: 'pending' },
+  paymentMethod: { type: String, enum: ['cash', 'card', 'upi', 'online'], default: 'cash' }
 }, {
   timestamps: true
 });

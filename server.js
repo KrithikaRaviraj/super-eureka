@@ -5,6 +5,7 @@ const cors = require('cors');
 const usersRouter = require('./routes/users');
 const otpRouter = require('./routes/otp');
 const appointmentsRouter = require('./routes/appointments');
+const revenueRouter = require('./routes/revenue');
 
 const app = express();
 app.use(cors());
@@ -18,6 +19,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/super-eur
 app.use('/api/users', usersRouter);
 app.use('/api', otpRouter);
 app.use('/api/appointments', appointmentsRouter);
+app.use('/api/revenue', revenueRouter);
 
 // Serve testimonial approval page
 app.get('/approve-testimonial/:token', (req, res) => {

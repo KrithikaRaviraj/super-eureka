@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const Appointment = require('../models/Appointment');
 const Feedback = require('../models/Feedback');
+const servicePricing = require('../config/servicePricing');
 
 // Email configuration
 const transporter = nodemailer.createTransport({
@@ -35,7 +36,9 @@ router.post('/', async (req, res) => {
       userEmail,
       userName,
       userPhone: phone || userPhone,
-      status: 'pending'
+      status: 'pending',
+      price: servicePricing[service] || 0,
+      paymentStatus: 'pending'
     });
 
     await appointment.save();
@@ -160,11 +163,11 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// Update appointment status
+// Update appointment (full edit)
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, service, date, time, userName, userEmail, userPhone, notes, price } = req.body;
     
     const appointment = await Appointment.findById(id);
     
@@ -172,9 +175,18 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ success: false, message: "Appointment not found" });
     }
 
-    appointment.status = status;
+    // Update all provided fields
+    if (status !== undefined) appointment.status = status;
+    if (service !== undefined) appointment.service = service;
+    if (date !== undefined) appointment.date = date;
+    if (time !== undefined) appointment.time = time;
+    if (userName !== undefined) appointment.userName = userName;
+    if (userEmail !== undefined) appointment.userEmail = userEmail;
+    if (userPhone !== undefined) appointment.userPhone = userPhone;
+    if (notes !== undefined) appointment.notes = notes;
+    if (price !== undefined) appointment.price = price;
     
-    if (status === 'completed') {
+    if (status === 'completed' && !appointment.feedbackToken) {
       appointment.feedbackToken = crypto.randomBytes(32).toString('hex');
     }
     
@@ -592,6 +604,52 @@ router.get('/testimonials', async (req, res) => {
   } catch (error) {
     console.error('Get testimonials error:', error);
     res.status(500).json({ success: false, message: "Failed to get testimonials" });
+  }
+});
+
+// Revenue Analytics
+router.get('/revenue-analytics', async (req, res) => {
+  try {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekStart = new Date(today.getTime() - (today.getDay() * 24 * 60 * 60 * 1000));
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    // Daily Revenue
+    const dailyAppointments = await Appointment.find({
+      status: 'completed',
+      date: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) }
+    });
+    
+    // Weekly Revenue
+    const weeklyAppointments = await Appointment.find({
+      status: 'completed',
+      date: { $gte: weekStart, $lt: new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000) }
+    });
+    
+    // Monthly Revenue
+    const monthlyAppointments = await Appointment.find({
+      status: 'completed',
+      date: { $gte: monthStart, $lt: new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 1) }
+    });
+    
+    const calculateStats = (appointments) => {
+      const revenue = appointments.reduce((sum, apt) => sum + (apt.price || 0), 0);
+      const count = appointments.length;
+      const avgTransaction = count > 0 ? revenue / count : 0;
+      return { revenue, appointments: count, avgTransaction };
+    };
+    
+    const analytics = {
+      daily: calculateStats(dailyAppointments),
+      weekly: calculateStats(weeklyAppointments),
+      monthly: calculateStats(monthlyAppointments)
+    };
+    
+    res.json({ success: true, analytics });
+  } catch (error) {
+    console.error('Revenue analytics error:', error);
+    res.status(500).json({ success: false, message: "Failed to get revenue analytics" });
   }
 });
 

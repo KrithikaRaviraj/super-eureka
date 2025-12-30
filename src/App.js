@@ -6,6 +6,7 @@ import StaffLogin from "./StaffLogin";
 import StaffDashboard from "./StaffDashboard";
 import FeedbackForm from "./FeedbackForm";
 import TestimonialApproval from "./TestimonialApproval";
+import RevenueAnalytics from "./RevenueAnalytics";
 import SignIn from "./components/SignIn";
 import SalonHeader from "./components/SalonHeader";
 import Testimonials from "./components/Testimonials";
@@ -603,6 +604,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
       <Route path="/book-appointment" element={<BookAppointment />} />
       <Route path="/staff-login" element={<StaffLogin />} />
       <Route path="/staff-dashboard" element={<StaffDashboard />} />
+      <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
       <Route path="/feedback/:token" element={<FeedbackForm />} />
       <Route path="/approve-testimonial/:token" element={<TestimonialApproval />} />
     </Routes>
