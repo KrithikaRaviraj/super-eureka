@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import mylogo from "./assets/mylogo.png";
+import SalonLogo from "./components/SalonLogo";
 
 const link = document.createElement('link');
 link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap';
@@ -200,8 +200,9 @@ export default function Welcome() {
         {/* Header Section */}
         <div className="text-center mb-12 max-w-4xl mx-auto">
           <div className="relative inline-block mb-8">
-            <img src={mylogo} alt="Salon Logo" className="h-20 w-20 sm:h-24 sm:w-24 mx-auto drop-shadow-xl" />
-            <div className="absolute -inset-6 bg-gradient-to-r from-rose-200/20 to-pink-200/20 rounded-full blur-2xl"></div>
+            <div className="h-20 w-20 sm:h-24 sm:w-24 mx-auto">
+              <SalonLogo />
+            </div>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-stone-800 mb-4 tracking-wide leading-tight">
             Lavish Ladies Beauty Salon

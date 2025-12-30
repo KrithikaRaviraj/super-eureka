@@ -227,8 +227,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <div className="relative">
                       <div className="aspect-[4/3] bg-gradient-to-br from-rose-100 to-pink-100 rounded-2xl overflow-hidden shadow-2xl">
                         <img 
-                          src="https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                          alt="Lavish Ladies Beauty Salon Interior" 
+                          src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                          alt="Lavish Ladies Beauty Salon Uchila - Professional Hair Styling" 
                           className="w-full h-full object-cover"
                         />
                       </div>

@@ -9,21 +9,10 @@ export default function StaffLogin() {
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
 
-  // Authorized staff emails from environment variables
-  const authorizedEmails = (
-    process.env.REACT_APP_AUTHORIZED_STAFF_EMAILS || ''
-  ).split(',').map(email => email.trim().toLowerCase());
-
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
-    if (!authorizedEmails.includes(email.toLowerCase())) {
-      setError('Unauthorized email address');
-      setLoading(false);
-      return;
-    }
 
     try {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/send-staff-otp`, {
@@ -35,7 +24,7 @@ export default function StaffLogin() {
       if (response.ok) {
         setOtpSent(true);
       } else {
-        const data = await response.json().catch(() => ({}));
+        const data = await response.json().catch(() => ({})); // handle non-json responses
         setError(data.error || 'Failed to send OTP. Please check the email and try again.');
       }
     } catch {
