@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth';
 import './styles.css';
 
-const services = [
+const staticServices = [
   {
     id: 1,
     name: "Hair Styling & Cuts",
@@ -70,12 +71,35 @@ const services = [
 
 export default function Services() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+  const [services, setServices] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('default');
   const [favorites, setFavorites] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
+  const modalRef = useRef(null);
+  const closeButtonRef = useRef(null);
   
   useEffect(() => {
+    // Fetch services from API
+    const fetchServices = async () => {
+      try {
+        // TODO: Replace with actual API call
+        // const response = await fetch('/api/services');
+        // const data = await response.json();
+        // setServices(data);
+        
+        // Temporary: use static data
+        setServices(staticServices);
+      } catch (error) {
+        console.error('Error fetching services:', error);
+        setServices(staticServices); // Fallback to static data
+      }
+    };
+    
+    fetchServices();
+    
+    // Load user-scoped favorites (TODO: move to user profile API)
     try {
       const savedFavorites = localStorage.getItem('serviceFavorites');
       if (savedFavorites) {
@@ -86,6 +110,34 @@ export default function Services() {
       setFavorites([]);
     }
   }, []);
+  
+  // Focus trapping for modal
+  useEffect(() => {
+    if (selectedService && closeButtonRef.current) {
+      closeButtonRef.current.focus();
+      
+      const handleKeyDown = (e) => {
+        if (e.key === 'Tab') {
+          const focusableElements = modalRef.current?.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          const firstElement = focusableElements?.[0];
+          const lastElement = focusableElements?.[focusableElements.length - 1];
+          
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement?.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement?.focus();
+          }
+        }
+      };
+      
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [selectedService]);
   
   const toggleFavorite = (serviceId) => {
     const newFavorites = favorites.includes(serviceId)
@@ -119,18 +171,15 @@ export default function Services() {
     setSelectedService(service);
   };
   
+  const [authMessage, setAuthMessage] = useState('');
+  
   const handleBookNow = (service) => {
-    try {
-      const userSession = localStorage.getItem('userSession');
-      if (!userSession) {
-        alert('Please login to book an appointment');
-        return;
-      }
-      navigate('/book-appointment', { state: { service } });
-    } catch (error) {
-      console.error('Error checking user session:', error);
-      alert('Please login to book an appointment');
+    if (!isLoggedIn) {
+      setAuthMessage('Please login to book an appointment');
+      setTimeout(() => setAuthMessage(''), 3000);
+      return;
     }
+    navigate('/book-appointment', { state: { service } });
   };
   
   return (
@@ -200,6 +249,12 @@ export default function Services() {
             </div>
           </div>
 
+          {authMessage && (
+            <div className="fixed top-4 right-4 bg-rose-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in-up">
+              {authMessage}
+            </div>
+          )}
+          
           {filteredAndSortedServices.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredAndSortedServices.map((service, index) => (
@@ -308,7 +363,14 @@ export default function Services() {
              }}
              tabIndex={-1}
         >
-          <div className="bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+          <div 
+            ref={modalRef}
+            className="bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" 
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+          >
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center">
@@ -317,10 +379,11 @@ export default function Services() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-serif text-3xl font-medium text-stone-800">{selectedService.name}</h3>
+                  <h3 id="modal-title" className="font-serif text-3xl font-medium text-stone-800">{selectedService.name}</h3>
                 </div>
               </div>
               <button
+                ref={closeButtonRef}
                 onClick={() => setSelectedService(null)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
