@@ -12,6 +12,7 @@ import SalonHeader from "./components/SalonHeader";
 import Testimonials from "./components/Testimonials";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import TermsOfService from "./components/TermsOfService";
+import CookieConsent from "./components/CookieConsent";
 import React, { useState, useRef } from "react";
 
 // Add fonts and styles
@@ -606,6 +607,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
             {modal === "terms" && (
               <TermsOfService onClose={() => setModal(null)} />
             )}
+            
+            <CookieConsent />
           </div>
         }
       />
