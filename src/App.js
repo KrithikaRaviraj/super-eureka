@@ -10,6 +10,8 @@ import RevenueAnalytics from "./RevenueAnalytics";
 import SignIn from "./components/SignIn";
 import SalonHeader from "./components/SalonHeader";
 import Testimonials from "./components/Testimonials";
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import TermsOfService from "./components/TermsOfService";
 import React, { useState, useRef } from "react";
 
 // Add fonts and styles
@@ -545,8 +547,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         © 2024 Lavish Ladies Beauty Salon Uchila. All rights reserved.
                       </div>
                       <div className="flex space-x-6 font-sans text-sm">
-                        <span className="text-stone-400 hover:text-rose-400 transition-colors cursor-pointer">Privacy Policy</span>
-                        <span className="text-stone-400 hover:text-rose-400 transition-colors cursor-pointer">Terms of Service</span>
+                        <button onClick={() => setModal("privacy")} className="text-stone-400 hover:text-rose-400 transition-colors cursor-pointer">Privacy Policy</button>
+                        <button onClick={() => setModal("terms")} className="text-stone-400 hover:text-rose-400 transition-colors cursor-pointer">Terms of Service</button>
                       </div>
                     </div>
                   </div>
@@ -595,6 +597,14 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                   setUserInfo(session);
                 }
               }} />
+            )}
+            
+            {modal === "privacy" && (
+              <PrivacyPolicy onClose={() => setModal(null)} />
+            )}
+            
+            {modal === "terms" && (
+              <TermsOfService onClose={() => setModal(null)} />
             )}
           </div>
         }
