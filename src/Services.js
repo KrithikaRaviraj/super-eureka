@@ -184,7 +184,14 @@ export default function Services() {
                 {(searchTerm || sortBy !== 'default') && (
                   <button
                     onClick={clearFilters}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        clearFilters();
+                      }
+                    }}
                     className="text-rose-600 hover:text-rose-800 font-sans text-sm font-semibold transition-colors"
+                    aria-label="Clear search and filters"
                   >
                     Clear
                   </button>
@@ -201,6 +208,15 @@ export default function Services() {
                 className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-stone-200/50 hover:border-rose-200 group cursor-pointer transform hover:scale-105 animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
                 onClick={() => setSelectedService(service)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedService(service);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`View details for ${service.name}`}
               >
                 <div className="flex justify-between items-start mb-6">
                   <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -212,6 +228,13 @@ export default function Services() {
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleFavorite(service.id);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleFavorite(service.id);
+                      }
                     }}
                     className="p-2 rounded-full hover:bg-rose-100 transition-colors duration-200"
                     aria-label={favorites.includes(service.id) ? `Remove ${service.name} from favorites` : `Add ${service.name} to favorites`}
@@ -276,7 +299,15 @@ export default function Services() {
       
       {/* Service Detail Modal */}
       {selectedService && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedService(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" 
+             onClick={() => setSelectedService(null)}
+             onKeyDown={(e) => {
+               if (e.key === 'Escape') {
+                 setSelectedService(null);
+               }
+             }}
+             tabIndex={-1}
+        >
           <div className="bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center space-x-4">
@@ -291,7 +322,14 @@ export default function Services() {
               </div>
               <button
                 onClick={() => setSelectedService(null)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedService(null);
+                  }
+                }}
                 className="p-2 hover:bg-stone-100 rounded-full transition-colors duration-200"
+                aria-label="Close service details"
               >
                 <svg className="w-6 h-6 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

@@ -8,11 +8,13 @@ import FeedbackForm from "./FeedbackForm";
 import TestimonialApproval from "./TestimonialApproval";
 import RevenueAnalytics from "./RevenueAnalytics";
 import SignIn from "./components/SignIn";
-import SalonHeader from "./components/SalonHeader";
 import Testimonials from "./components/Testimonials";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import TermsOfService from "./components/TermsOfService";
 import CookieConsent from "./components/CookieConsent";
+import Header from "./components/Header";
+import Navigation from "./components/Navigation";
+import { useAuth } from "./hooks/useAuth";
 import React, { useState, useRef } from "react";
 import './styles.css';
 
@@ -29,8 +31,7 @@ function App() {
 
 function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
+  const { isLoggedIn, userInfo, logout, setIsLoggedIn, setUserInfo } = useAuth();
   const [testimonials, setTestimonials] = useState([]);
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState({});
@@ -38,26 +39,6 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const servicesRef = useRef(null);
   
   React.useEffect(() => {
-    try {
-      const userSession = localStorage.getItem('userSession');
-      if (userSession) {
-        const session = JSON.parse(userSession);
-        if (Date.now() - session.loginTime < 7 * 24 * 60 * 60 * 1000) {
-          setIsLoggedIn(true);
-          setUserInfo(session);
-        } else {
-          localStorage.removeItem('userSession');
-          setIsLoggedIn(false);
-          setUserInfo(null);
-        }
-      }
-    } catch (error) {
-      console.error('Error reading user session:', error);
-      localStorage.removeItem('userSession');
-      setIsLoggedIn(false);
-      setUserInfo(null);
-    }
-    
     fetchTestimonials();
     
     // Scroll animations
@@ -103,18 +84,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   };
   
   const handleLogout = () => {
-    try {
-      localStorage.removeItem('userSession');
-      setIsLoggedIn(false);
-      setUserInfo(null);
-      navigate('/');
-    } catch (error) {
-      console.error('Error during logout:', error);
-      // Fallback: still update state even if localStorage fails
-      setIsLoggedIn(false);
-      setUserInfo(null);
-      navigate('/');
-    }
+    logout();
+    navigate('/');
   };
 
   return (
@@ -130,53 +101,19 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               }}></div>
             </div>
             
-            <header className="relative z-10 px-4 sm:px-8 py-4 sm:py-6 bg-white/80 backdrop-blur-sm border-b border-stone-200/50 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
-              <SalonHeader />
-              {!isLoggedIn ? (
-                <button
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-sm uppercase tracking-wider transform hover:scale-105"
-                  onClick={() => setModal("signin")}
-                >
-                  Login
-                </button>
-              ) : (
-                <div className="flex items-center space-x-4">
-                  <button
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-sans font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-sm uppercase tracking-wider transform hover:scale-105"
-                    onClick={() => navigate('/welcome', { state: userInfo })}
-                  >
-                    {userInfo?.name ? `Welcome, ${userInfo.name.split(' ')[0]}` : 'Welcome User'}
-                  </button>
-                  <button
-                    className="px-4 py-3 rounded-xl border-2 border-stone-300 hover:border-stone-400 text-stone-700 hover:text-stone-800 font-sans font-medium transition-all duration-300 text-sm uppercase tracking-wider"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </header>
+            <Header 
+              isLoggedIn={isLoggedIn} 
+              userInfo={userInfo} 
+              onLogin={() => setModal("signin")} 
+              onLogout={handleLogout} 
+            />
 
-            <nav className={`relative z-10 flex items-center px-4 sm:px-8 py-4 transition-all duration-300 font-sans ${
-              scrollY > 100 ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white/60 backdrop-blur-sm'
-            } border-b border-stone-200/30`}>
-              <button
-                className="mr-6 focus:outline-none lg:hidden transform hover:scale-110 transition-transform duration-200"
-                onClick={() => setSidebarOpen(true)}
-                aria-label="Open sidebar"
-              >
-                <svg className="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <div className="hidden lg:flex flex-1 justify-center space-x-12 max-w-4xl mx-auto">
-                <button onClick={() => navigate('/')} className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">Home</button>
-                <button onClick={() => navigate('/services')} className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">Services</button>
-                <button onClick={() => aboutRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">About</button>
-                <button onClick={() => servicesRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">Our Services</button>
-                <a href="#contact" className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">Contact</a>
-              </div>
-            </nav>
+            <Navigation 
+              scrollY={scrollY} 
+              aboutRef={aboutRef} 
+              servicesRef={servicesRef} 
+              setSidebarOpen={setSidebarOpen} 
+            />
 
             <main className="relative z-10">
               {/* About Us Section */}
