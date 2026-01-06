@@ -484,7 +484,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                   <div className="max-w-7xl mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                       <div className="font-sans text-sm text-stone-400">
-                        © 2024 Lavish Ladies Beauty Salon Uchila. All rights reserved.
+                        © 2026 Lavish Ladies Beauty Salon Uchila. All rights reserved.
                       </div>
                       <div className="flex space-x-6 font-sans text-sm">
                         <button onClick={() => setModal("privacy")} className="text-stone-400 hover:text-rose-400 transition-colors cursor-pointer">Privacy Policy</button>

@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
+import Toast from './components/Toast';
+import { ICONS } from './constants/icons';
 import './styles.css';
 
 const staticServices = [
@@ -9,99 +11,102 @@ const staticServices = [
     name: "Hair Styling & Cuts",
     description: "Professional haircuts, styling, and treatments for all hair types. From classic cuts to modern trends.",
     duration: "45-90 mins",
-    icon: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+    icon: ICONS.HAIR
   },
   {
     id: 2,
     name: "Facial Treatments",
     description: "Rejuvenating facials, deep cleansing, and anti-aging treatments for glowing, healthy skin.",
     duration: "60-90 mins",
-    icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+    icon: ICONS.STAR
   },
   {
     id: 3,
     name: "Spa & Massage",
     description: "Relaxing massages and spa treatments to rejuvenate your body and mind.",
     duration: "60-120 mins",
-    icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"
+    icon: ICONS.CIRCLE
   },
   {
     id: 4,
     name: "Manicure & Pedicure",
     description: "Complete nail care services including manicures, pedicures, and nail art.",
     duration: "45-75 mins",
-    icon: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+    icon: ICONS.LOCATION
   },
   {
     id: 5,
     name: "Hair Coloring",
     description: "Professional hair coloring, highlights, and color correction services.",
     duration: "90-180 mins",
-    icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+    icon: ICONS.STAR
   },
   {
     id: 6,
     name: "Bridal Packages",
     description: "Complete bridal makeover packages for your special day.",
     duration: "3-5 hours",
-    icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"
+    icon: ICONS.CIRCLE
   },
   {
     id: 7,
     name: "Threading & Waxing",
     description: "Professional threading and waxing services for smooth, hair-free skin.",
     duration: "15-60 mins",
-    icon: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+    icon: ICONS.HAIR
   },
   {
     id: 8,
     name: "Hair Treatments",
     description: "Deep conditioning, keratin treatments, and hair repair services.",
     duration: "60-120 mins",
-    icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+    icon: ICONS.STAR
   },
   {
     id: 9,
     name: "Makeup Services",
     description: "Professional makeup for parties, events, and special occasions.",
     duration: "60-90 mins",
-    icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"
+    icon: ICONS.CIRCLE
   }
 ];
 
 export default function Services() {
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, userInfo } = useAuth();
   const [services, setServices] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('default');
   const [favorites, setFavorites] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [authMessage, setAuthMessage] = useState('');
   const modalRef = useRef(null);
   const closeButtonRef = useRef(null);
   
   useEffect(() => {
-    // Fetch services from API
     const fetchServices = async () => {
       try {
-        // TODO: Replace with actual API call
-        // const response = await fetch('/api/services');
-        // const data = await response.json();
-        // setServices(data);
-        
-        // Temporary: use static data
-        setServices(staticServices);
+        setLoading(true);
+        setError(null);
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/services`);
+        if (!response.ok) throw new Error('Failed to fetch services');
+        const data = await response.json();
+        setServices(data.services || staticServices);
       } catch (error) {
         console.error('Error fetching services:', error);
-        setServices(staticServices); // Fallback to static data
+        setError('Failed to load services');
+        setServices(staticServices);
+      } finally {
+        setLoading(false);
       }
     };
     
     fetchServices();
     
-    // Load user-scoped favorites (TODO: move to user profile API)
     try {
-      const savedFavorites = localStorage.getItem('serviceFavorites');
+      const savedFavorites = localStorage.getItem(`serviceFavorites_${userInfo?.id || 'guest'}`);
       if (savedFavorites) {
         setFavorites(JSON.parse(savedFavorites));
       }
@@ -109,7 +114,7 @@ export default function Services() {
       console.error('Error loading favorites:', error);
       setFavorites([]);
     }
-  }, []);
+  }, [userInfo?.id]);
   
   // Focus trapping for modal
   useEffect(() => {
@@ -139,44 +144,45 @@ export default function Services() {
     }
   }, [selectedService]);
   
+  const filteredAndSortedServices = useMemo(() => {
+    let filtered = services.filter(service => {
+      const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           service.description.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesSearch;
+    });
+
+    if (sortBy === 'name') {
+      filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    
+    return filtered;
+  }, [services, searchTerm, sortBy]);
+  
   const toggleFavorite = (serviceId) => {
     const newFavorites = favorites.includes(serviceId)
       ? favorites.filter(id => id !== serviceId)
       : [...favorites, serviceId];
     setFavorites(newFavorites);
     try {
-      localStorage.setItem('serviceFavorites', JSON.stringify(newFavorites));
+      localStorage.setItem(`serviceFavorites_${userInfo?.id || 'guest'}`, JSON.stringify(newFavorites));
     } catch (error) {
       console.error('Error saving favorites:', error);
     }
   };
   
-  const filteredAndSortedServices = [...services].filter(service => {
-    const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         service.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    return matchesSearch;
-  });
-
-  if (sortBy === 'name') {
-    filteredAndSortedServices.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
   const clearFilters = () => {
     setSearchTerm('');
     setSortBy('default');
   };
+  
   const handleDetailsClick = (e, service) => {
     e.stopPropagation();
     setSelectedService(service);
   };
   
-  const [authMessage, setAuthMessage] = useState('');
-  
   const handleBookNow = (service) => {
     if (!isLoggedIn) {
       setAuthMessage('Please login to book an appointment');
-      setTimeout(() => setAuthMessage(''), 3000);
       return;
     }
     navigate('/book-appointment', { state: { service } });
@@ -249,13 +255,30 @@ export default function Services() {
             </div>
           </div>
 
-          {authMessage && (
-            <div className="fixed top-4 right-4 bg-rose-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in-up">
-              {authMessage}
-            </div>
-          )}
+          <Toast message={authMessage} onClose={() => setAuthMessage('')} />
           
-          {filteredAndSortedServices.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 border-4 border-rose-200 border-t-rose-600 rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-stone-600">Loading services...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="font-serif text-2xl text-stone-700 mb-2">Error Loading Services</h3>
+              <p className="font-sans text-stone-500 mb-6">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-rose-600 hover:bg-rose-700 text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Retry
+              </button>
+            </div>
+          ) : filteredAndSortedServices.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredAndSortedServices.map((service, index) => (
               <div 
@@ -354,14 +377,14 @@ export default function Services() {
       
       {/* Service Detail Modal */}
       {selectedService && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" 
+        <div 
+             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" 
              onClick={() => setSelectedService(null)}
              onKeyDown={(e) => {
                if (e.key === 'Escape') {
                  setSelectedService(null);
                }
              }}
-             tabIndex={-1}
         >
           <div 
             ref={modalRef}
