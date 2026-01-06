@@ -41,9 +41,9 @@ const TermsOfService = ({ onClose }) => {
             <h4 className="font-semibold mb-2">3.1 Booking Requirements</h4>
             <ul className="list-disc pl-6 space-y-1 mb-4">
               <li>Appointments must be booked through our online system or by phone</li>
-              <li>Phone verification is required for all bookings</li>
+              <li>Phone verification may be required for certain bookings</li>
               <li>Accurate personal information must be provided</li>
-              <li>Appointment confirmation is required within 24 hours</li>
+              <li>Appointment confirmation is recommended within 24 hours</li>
             </ul>
             
             <h4 className="font-semibold mb-2">3.2 Cancellation and Rescheduling</h4>
@@ -70,7 +70,7 @@ const TermsOfService = ({ onClose }) => {
               <li>Service prices are subject to change without notice</li>
               <li>Additional charges may apply for premium products or extended services</li>
               <li>Gratuities are appreciated but not mandatory</li>
-              <li>Refunds are provided only in cases of service failure or cancellation by the salon</li>
+              <li>Refunds are provided for service failure, cancellation by the salon, or as required under the Consumer Protection Act, 2019</li>
             </ul>
           </section>
 
@@ -109,7 +109,7 @@ const TermsOfService = ({ onClose }) => {
 
           <section>
             <h3 className="text-lg font-semibold mb-3 text-stone-800">7. Limitation of Liability</h3>
-            <p className="mb-4">To the fullest extent permitted by law, Lavish Ladies Beauty Salon shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or use, arising out of or in connection with our services. Our total liability shall not exceed the amount paid for the specific service in question.</p>
+            <p className="mb-4">To the fullest extent permitted by Indian law, Lavish Ladies Beauty Salon shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or use, arising out of or in connection with our services. Our total liability shall not exceed the amount paid for the specific service in question. These limitations apply only to the extent permitted under applicable Indian consumer protection and other laws.</p>
           </section>
 
           <section>
@@ -150,7 +150,12 @@ const TermsOfService = ({ onClose }) => {
           </section>
 
           <section>
-            <h3 className="text-lg font-semibold mb-3 text-stone-800">13. Governing Law and Jurisdiction</h3>
+            <h3 className="text-lg font-semibold mb-3 text-stone-800">13. Dispute Resolution</h3>
+            <p className="mb-4">We encourage amicable resolution of any disputes through direct communication with our management. If a dispute cannot be resolved amicably within 30 days, either party may pursue legal remedies under applicable Indian law.</p>
+          </section>
+
+          <section>
+            <h3 className="text-lg font-semibold mb-3 text-stone-800">14. Governing Law and Jurisdiction</h3>
             <p className="mb-4">These Terms shall be governed by and construed in accordance with the laws of India. Any disputes arising from these Terms or our services shall be subject to the exclusive jurisdiction of the courts in Udupi, Karnataka.</p>
           </section>
 
