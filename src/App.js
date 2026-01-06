@@ -14,20 +14,7 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import TermsOfService from "./components/TermsOfService";
 import CookieConsent from "./components/CookieConsent";
 import React, { useState, useRef } from "react";
-
-// Add fonts and styles
-const link = document.createElement('link');
-link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap';
-link.rel = 'stylesheet';
-document.head.appendChild(link);
-
-const style = document.createElement('style');
-style.textContent = `
-  .font-serif { font-family: 'Cormorant Garamond', serif; }
-  .font-sans { font-family: 'Inter', sans-serif; }
-  body { font-family: 'Inter', sans-serif; }
-`;
-document.head.appendChild(style);
+import './styles.css';
 
 function App() {
   const [modal, setModal] = useState(null);
@@ -51,17 +38,24 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const servicesRef = useRef(null);
   
   React.useEffect(() => {
-    const userSession = localStorage.getItem('userSession');
-    if (userSession) {
-      const session = JSON.parse(userSession);
-      if (Date.now() - session.loginTime < 7 * 24 * 60 * 60 * 1000) {
-        setIsLoggedIn(true);
-        setUserInfo(session);
-      } else {
-        localStorage.removeItem('userSession');
-        setIsLoggedIn(false);
-        setUserInfo(null);
+    try {
+      const userSession = localStorage.getItem('userSession');
+      if (userSession) {
+        const session = JSON.parse(userSession);
+        if (Date.now() - session.loginTime < 7 * 24 * 60 * 60 * 1000) {
+          setIsLoggedIn(true);
+          setUserInfo(session);
+        } else {
+          localStorage.removeItem('userSession');
+          setIsLoggedIn(false);
+          setUserInfo(null);
+        }
       }
+    } catch (error) {
+      console.error('Error reading user session:', error);
+      localStorage.removeItem('userSession');
+      setIsLoggedIn(false);
+      setUserInfo(null);
     }
     
     fetchTestimonials();
@@ -109,10 +103,18 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   };
   
   const handleLogout = () => {
-    localStorage.removeItem('userSession');
-    setIsLoggedIn(false);
-    setUserInfo(null);
-    navigate('/');
+    try {
+      localStorage.removeItem('userSession');
+      setIsLoggedIn(false);
+      setUserInfo(null);
+      navigate('/');
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Fallback: still update state even if localStorage fails
+      setIsLoggedIn(false);
+      setUserInfo(null);
+      navigate('/');
+    }
   };
 
   return (

@@ -1,24 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// Add inline CSS animation
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out forwards;
-  }
-`;
-document.head.appendChild(style);
+import './styles.css';
 
 const services = [
   {
@@ -94,9 +76,14 @@ export default function Services() {
   const [selectedService, setSelectedService] = useState(null);
   
   useEffect(() => {
-    const savedFavorites = localStorage.getItem('serviceFavorites');
-    if (savedFavorites) {
-      setFavorites(JSON.parse(savedFavorites));
+    try {
+      const savedFavorites = localStorage.getItem('serviceFavorites');
+      if (savedFavorites) {
+        setFavorites(JSON.parse(savedFavorites));
+      }
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+      setFavorites([]);
     }
   }, []);
   
@@ -105,10 +92,14 @@ export default function Services() {
       ? favorites.filter(id => id !== serviceId)
       : [...favorites, serviceId];
     setFavorites(newFavorites);
-    localStorage.setItem('serviceFavorites', JSON.stringify(newFavorites));
+    try {
+      localStorage.setItem('serviceFavorites', JSON.stringify(newFavorites));
+    } catch (error) {
+      console.error('Error saving favorites:', error);
+    }
   };
   
-  const filteredAndSortedServices = services.filter(service => {
+  const filteredAndSortedServices = [...services].filter(service => {
     const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          service.description.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -129,12 +120,17 @@ export default function Services() {
   };
   
   const handleBookNow = (service) => {
-    const userSession = localStorage.getItem('userSession');
-    if (!userSession) {
+    try {
+      const userSession = localStorage.getItem('userSession');
+      if (!userSession) {
+        alert('Please login to book an appointment');
+        return;
+      }
+      navigate('/book-appointment', { state: { service } });
+    } catch (error) {
+      console.error('Error checking user session:', error);
       alert('Please login to book an appointment');
-      return;
     }
-    navigate('/book-appointment', { state: { service } });
   };
   
   return (
@@ -164,6 +160,7 @@ export default function Services() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-rose-400 focus:outline-none bg-white/80 backdrop-blur-sm font-sans text-stone-700 placeholder-stone-400"
+                  aria-label="Search services"
                 />
                 <svg className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -217,6 +214,7 @@ export default function Services() {
                       toggleFavorite(service.id);
                     }}
                     className="p-2 rounded-full hover:bg-rose-100 transition-colors duration-200"
+                    aria-label={favorites.includes(service.id) ? `Remove ${service.name} from favorites` : `Add ${service.name} to favorites`}
                   >
                     <svg className={`w-6 h-6 transition-colors duration-200 ${
                       favorites.includes(service.id) ? 'text-rose-600 fill-current' : 'text-stone-400'
