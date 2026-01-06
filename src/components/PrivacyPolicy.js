@@ -40,7 +40,7 @@ const PrivacyPolicy = ({ onClose }) => {
               <li><strong>Consent:</strong> You have given clear consent for processing (Section 43A, IT Act 2000)</li>
               <li><strong>Contract Performance:</strong> Processing necessary for service delivery</li>
               <li><strong>Legal Obligation:</strong> Compliance with tax, accounting, and regulatory requirements</li>
-              <li><strong>Legitimate Interest:</strong> Business operations and service improvement</li>
+              <li><strong>Permitted lawful use:</strong> For business purposes permitted under applicable Indian law and that do not override your fundamental rights</li>
             </ul>
           </section>
 
