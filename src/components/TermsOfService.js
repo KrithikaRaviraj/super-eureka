@@ -160,17 +160,17 @@ const TermsOfService = ({ onClose }) => {
           </section>
 
           <section>
-            <h3 className="text-lg font-semibold mb-3 text-stone-800">14. Severability</h3>
+            <h3 className="text-lg font-semibold mb-3 text-stone-800">15. Severability</h3>
             <p className="mb-4">If any provision of these Terms is found to be unenforceable or invalid, the remaining provisions shall continue in full force and effect.</p>
           </section>
 
           <section>
-            <h3 className="text-lg font-semibold mb-3 text-stone-800">15. Modifications to Terms</h3>
+            <h3 className="text-lg font-semibold mb-3 text-stone-800">16. Modifications to Terms</h3>
             <p className="mb-4">We reserve the right to modify these Terms at any time. Changes will be effective immediately upon posting on our website. Your continued use of our services constitutes acceptance of the modified Terms.</p>
           </section>
 
           <section>
-            <h3 className="text-lg font-semibold mb-3 text-stone-800">16. Contact Information</h3>
+            <h3 className="text-lg font-semibold mb-3 text-stone-800">17. Contact Information</h3>
             <p className="mb-2">For questions about these Terms of Service, please contact us:</p>
             <div className="bg-stone-50 p-4 rounded-lg">
               <p><strong>Lavish Ladies Beauty Salon</strong></p>
@@ -181,7 +181,7 @@ const TermsOfService = ({ onClose }) => {
           </section>
 
           <section>
-            <h3 className="text-lg font-semibold mb-3 text-stone-800">17. Acknowledgment</h3>
+            <h3 className="text-lg font-semibold mb-3 text-stone-800">18. Acknowledgment</h3>
             <p className="mb-4">By using our services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.</p>
           </section>
         </div>
