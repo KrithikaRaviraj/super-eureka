@@ -5,12 +5,6 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 
-// Trust proxy for proper IP detection
-router.use((req, res, next) => {
-  req.app.set('trust proxy', 1);
-  next();
-});
-
 // HTTPS enforcement
 router.use((req, res, next) => {
   if (process.env.NODE_ENV === 'production' && !req.secure && req.get('x-forwarded-proto') !== 'https') {
@@ -20,16 +14,18 @@ router.use((req, res, next) => {
 });
 
 const ipRateLimitSchema = new mongoose.Schema({
-  ip: { type: String, required: true, unique: true },
+  ip: { type: String, required: true },
   attempts: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now, expires: 3600 }
 });
+ipRateLimitSchema.index({ ip: 1 }, { unique: true });
 
 const emailRateLimitSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
+  email: { type: String, required: true },
   attempts: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now, expires: 900 }
 });
+emailRateLimitSchema.index({ email: 1 }, { unique: true });
 
 const otpSchema = new mongoose.Schema({
   email: { type: String, required: true, index: true },
@@ -50,6 +46,25 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// Monitoring hook
+function logSecurityEvent(event, data) {
+  const logData = {
+    timestamp: new Date().toISOString(),
+    event,
+    ...data
+  };
+  console.log('SECURITY_EVENT:', JSON.stringify(logData));
+  
+  // In production, send to monitoring service
+  if (process.env.WEBHOOK_URL) {
+    fetch(process.env.WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(logData)
+    }).catch(err => console.error('Webhook failed:', err));
+  }
+}
+
 function generateOTP() {
   return crypto.randomInt(100000, 999999).toString();
 }
@@ -60,18 +75,16 @@ function hashOTP(otp) {
   return `${salt}:${hash}`;
 }
 
-async function safeVerifyOTP(otp, hashedOtp) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      try {
-        const [salt, hash] = hashedOtp.split(':');
-        const verifyHash = crypto.pbkdf2Sync(otp, salt, 10000, 64, 'sha512').toString('hex');
-        resolve(hash === verifyHash);
-      } catch {
-        resolve(false);
-      }
-    }, 100); // Constant time delay
-  });
+function safeVerifyOTP(otp, hashedOtp) {
+  try {
+    const [salt, hash] = hashedOtp.split(':');
+    const verifyHash = crypto.pbkdf2Sync(otp, salt, 10000, 64, 'sha512').toString('hex');
+    const hashBuffer = Buffer.from(hash, 'hex');
+    const verifyBuffer = Buffer.from(verifyHash, 'hex');
+    return crypto.timingSafeEqual(hashBuffer, verifyBuffer);
+  } catch {
+    return false;
+  }
 }
 
 function generateUID() {
@@ -100,11 +113,14 @@ function normalizeIP(req) {
 
 // Send Email OTP
 router.post('/send-email-otp', async (req, res) => {
+  const startTime = Date.now();
+  const clientIP = normalizeIP(req);
+  
   try {
     const { email } = req.body;
-    const clientIP = normalizeIP(req);
     
     if (!email || !validateEmail(email)) {
+      logSecurityEvent('invalid_email_attempt', { ip: clientIP, email });
       return res.status(400).json({ 
         success: false, 
         message: "Valid email address required" 
@@ -121,6 +137,7 @@ router.post('/send-email-otp', async (req, res) => {
     );
     
     if (ipResult.attempts > 10) {
+      logSecurityEvent('ip_rate_limit_exceeded', { ip: clientIP, attempts: ipResult.attempts });
       return res.status(429).json({ 
         success: false, 
         message: "Too many requests from this IP. Please try again later." 
@@ -135,6 +152,7 @@ router.post('/send-email-otp', async (req, res) => {
     );
     
     if (emailResult.attempts > 5) {
+      logSecurityEvent('email_rate_limit_exceeded', { ip: clientIP, email: normalizedEmail, attempts: emailResult.attempts });
       return res.status(429).json({ 
         success: false, 
         message: "Too many requests. Please try again later." 
@@ -202,8 +220,9 @@ router.post('/send-email-otp', async (req, res) => {
     try {
       await transporter.sendMail(mailOptions);
       emailSent = true;
+      logSecurityEvent('otp_sent', { ip: clientIP, email: normalizedEmail, duration: Date.now() - startTime });
     } catch (emailError) {
-      console.error(`Email failed for ${normalizedEmail}:`, emailError.message);
+      logSecurityEvent('email_send_failed', { ip: clientIP, email: normalizedEmail, error: emailError.message });
     }
     
     res.json({ 
@@ -213,13 +232,16 @@ router.post('/send-email-otp', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Send Email OTP error:', error);
+    logSecurityEvent('otp_send_error', { ip: clientIP, error: error.message });
     res.status(500).json({ success: false, message: "Failed to process request" });
   }
 });
 
 // Verify Email OTP
 router.post('/verify-email-otp', async (req, res) => {
+  const startTime = Date.now();
+  const clientIP = normalizeIP(req);
+  
   try {
     const { email, otp } = req.body;
     
@@ -231,27 +253,35 @@ router.post('/verify-email-otp', async (req, res) => {
     const otpRecord = await OTP.findOne({ email: normalizedEmail }).lean();
     
     if (!otpRecord) {
-      // Constant time delay even for non-existent records
-      await new Promise(resolve => setTimeout(resolve, 100));
+      logSecurityEvent('otp_not_found', { ip: clientIP, email: normalizedEmail });
       return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
     }
     
     if (otpRecord.attempts >= 3) {
       await OTP.deleteOne({ email: normalizedEmail });
+      logSecurityEvent('otp_max_attempts', { ip: clientIP, email: normalizedEmail });
       return res.status(429).json({ success: false, message: "Too many failed attempts. Please request a new OTP." });
     }
     
-    const isValid = await safeVerifyOTP(otp, otpRecord.hashedOtp);
+    const isValid = safeVerifyOTP(otp, otpRecord.hashedOtp);
     
     if (!isValid) {
       await OTP.updateOne({ email: normalizedEmail }, { $inc: { attempts: 1 } });
+      logSecurityEvent('otp_invalid', { ip: clientIP, email: normalizedEmail, attempts: otpRecord.attempts + 1 });
       return res.status(400).json({ 
         success: false, 
         message: "Invalid OTP"
       });
     }
     
-    await OTP.deleteOne({ email: normalizedEmail });
+    // Success - reset rate limits and clean up
+    await Promise.all([
+      OTP.deleteOne({ email: normalizedEmail }),
+      EmailRateLimit.deleteOne({ email: normalizedEmail }),
+      IpRateLimit.deleteOne({ ip: clientIP })
+    ]);
+    
+    logSecurityEvent('otp_verified', { ip: clientIP, email: normalizedEmail, duration: Date.now() - startTime });
     
     res.json({ 
       success: true, 
@@ -260,13 +290,14 @@ router.post('/verify-email-otp', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Verify Email OTP error:', error);
+    logSecurityEvent('otp_verify_error', { ip: clientIP, error: error.message });
     res.status(500).json({ success: false, message: "Failed to verify OTP" });
   }
 });
 
 router.get('/staff-data', (req, res) => {
   if (!isAuthorizedStaff(req)) {
+    logSecurityEvent('unauthorized_staff_access', { ip: normalizeIP(req) });
     return res.status(403).json({ success: false, message: "Unauthorized" });
   }
   
