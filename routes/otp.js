@@ -5,30 +5,48 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 
-// Rate limiting schema
-const rateLimitSchema = new mongoose.Schema({
-  email: { type: String, required: true, index: true },
-  attempts: { type: Number, default: 1 },
-  createdAt: { type: Date, default: Date.now, expires: 900 } // 15 minutes
+// Trust proxy for proper IP detection
+router.use((req, res, next) => {
+  req.app.set('trust proxy', 1);
+  next();
 });
 
-// OTP Schema with TTL only
+// HTTPS enforcement
+router.use((req, res, next) => {
+  if (process.env.NODE_ENV === 'production' && !req.secure && req.get('x-forwarded-proto') !== 'https') {
+    return res.status(403).json({ success: false, message: "HTTPS required" });
+  }
+  next();
+});
+
+const ipRateLimitSchema = new mongoose.Schema({
+  ip: { type: String, required: true, unique: true },
+  attempts: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now, expires: 3600 }
+});
+
+const emailRateLimitSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  attempts: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now, expires: 900 }
+});
+
 const otpSchema = new mongoose.Schema({
   email: { type: String, required: true, index: true },
   hashedOtp: { type: String, required: true },
   attempts: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now, expires: 600 } // 10 minutes TTL
+  createdAt: { type: Date, default: Date.now, expires: 600 }
 });
 
-const RateLimit = mongoose.model('RateLimit', rateLimitSchema);
+const IpRateLimit = mongoose.model('IpRateLimit', ipRateLimitSchema);
+const EmailRateLimit = mongoose.model('EmailRateLimit', emailRateLimitSchema);
 const OTP = mongoose.model('OTP', otpSchema);
 
-// Email configuration
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER || 'your-email@gmail.com',
-    pass: process.env.EMAIL_PASS || 'your-app-password'
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
@@ -42,10 +60,18 @@ function hashOTP(otp) {
   return `${salt}:${hash}`;
 }
 
-function verifyOTP(otp, hashedOtp) {
-  const [salt, hash] = hashedOtp.split(':');
-  const verifyHash = crypto.pbkdf2Sync(otp, salt, 10000, 64, 'sha512').toString('hex');
-  return hash === verifyHash;
+async function safeVerifyOTP(otp, hashedOtp) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      try {
+        const [salt, hash] = hashedOtp.split(':');
+        const verifyHash = crypto.pbkdf2Sync(otp, salt, 10000, 64, 'sha512').toString('hex');
+        resolve(hash === verifyHash);
+      } catch {
+        resolve(false);
+      }
+    }, 100); // Constant time delay
+  });
 }
 
 function generateUID() {
@@ -59,13 +85,24 @@ function validateEmail(email) {
 
 function isAuthorizedStaff(req) {
   const authHeader = req.headers['x-staff-authorization'];
-  return authHeader === process.env.STAFF_SECRET_KEY;
+  const currentKey = process.env.STAFF_SECRET_KEY;
+  const rotatedKey = process.env.STAFF_SECRET_KEY_ROTATED;
+  return authHeader === currentKey || (rotatedKey && authHeader === rotatedKey);
+}
+
+function normalizeIP(req) {
+  const forwarded = req.get('x-forwarded-for');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  return req.ip || req.connection.remoteAddress || '127.0.0.1';
 }
 
 // Send Email OTP
 router.post('/send-email-otp', async (req, res) => {
   try {
     const { email } = req.body;
+    const clientIP = normalizeIP(req);
     
     if (!email || !validateEmail(email)) {
       return res.status(400).json({ 
@@ -74,36 +111,49 @@ router.post('/send-email-otp', async (req, res) => {
       });
     }
     
-    // Rate limiting check
-    const rateLimit = await RateLimit.findOne({ email }).lean();
-    if (rateLimit && rateLimit.attempts >= 5) {
+    const normalizedEmail = email.toLowerCase().trim();
+    
+    // Atomic IP rate limiting
+    const ipResult = await IpRateLimit.findOneAndUpdate(
+      { ip: clientIP },
+      { $inc: { attempts: 1 } },
+      { upsert: true, new: true }
+    );
+    
+    if (ipResult.attempts > 10) {
+      return res.status(429).json({ 
+        success: false, 
+        message: "Too many requests from this IP. Please try again later." 
+      });
+    }
+    
+    // Atomic email rate limiting
+    const emailResult = await EmailRateLimit.findOneAndUpdate(
+      { email: normalizedEmail },
+      { $inc: { attempts: 1 } },
+      { upsert: true, new: true }
+    );
+    
+    if (emailResult.attempts > 5) {
       return res.status(429).json({ 
         success: false, 
         message: "Too many requests. Please try again later." 
       });
     }
     
-    // Update rate limit
-    await RateLimit.findOneAndUpdate(
-      { email },
-      { $inc: { attempts: 1 } },
-      { upsert: true }
-    );
-    
-    // Delete existing OTP
-    await OTP.deleteMany({ email });
+    await OTP.deleteMany({ email: normalizedEmail });
     
     const otp = generateOTP();
     const hashedOtp = hashOTP(otp);
     
     await new OTP({
-      email,
+      email: normalizedEmail,
       hashedOtp
     }).save();
     
     const mailOptions = {
-      from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
-      to: email,
+      from: process.env.EMAIL_USER,
+      to: normalizedEmail,
       subject: 'Your Lavish Ladies Salon Verification Code',
       html: `
         <!DOCTYPE html>
@@ -148,16 +198,17 @@ router.post('/send-email-otp', async (req, res) => {
       `
     };
     
+    let emailSent = false;
     try {
       await transporter.sendMail(mailOptions);
+      emailSent = true;
     } catch (emailError) {
-      console.error('Email sending error:', emailError);
+      console.error(`Email failed for ${normalizedEmail}:`, emailError.message);
     }
     
-    // Always return success to prevent email enumeration
     res.json({ 
       success: true, 
-      message: "If the email exists, an OTP has been sent",
+      message: emailSent ? "OTP sent to your email" : "Request processed. If email exists, OTP will be sent.",
       expiresIn: "10 minutes"
     });
     
@@ -176,34 +227,36 @@ router.post('/verify-email-otp', async (req, res) => {
       return res.status(400).json({ success: false, message: "Email and OTP required" });
     }
     
-    const otpRecord = await OTP.findOne({ email }).lean();
+    const normalizedEmail = email.toLowerCase().trim();
+    const otpRecord = await OTP.findOne({ email: normalizedEmail }).lean();
     
     if (!otpRecord) {
+      // Constant time delay even for non-existent records
+      await new Promise(resolve => setTimeout(resolve, 100));
       return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
     }
     
-    // Check attempt limit
     if (otpRecord.attempts >= 3) {
-      await OTP.deleteOne({ email });
+      await OTP.deleteOne({ email: normalizedEmail });
       return res.status(429).json({ success: false, message: "Too many failed attempts. Please request a new OTP." });
     }
     
-    // Verify OTP
-    if (!verifyOTP(otp, otpRecord.hashedOtp)) {
-      await OTP.updateOne({ email }, { $inc: { attempts: 1 } });
+    const isValid = await safeVerifyOTP(otp, otpRecord.hashedOtp);
+    
+    if (!isValid) {
+      await OTP.updateOne({ email: normalizedEmail }, { $inc: { attempts: 1 } });
       return res.status(400).json({ 
         success: false, 
         message: "Invalid OTP"
       });
     }
     
-    // Success
-    await OTP.deleteOne({ email });
+    await OTP.deleteOne({ email: normalizedEmail });
     
     res.json({ 
       success: true, 
       message: "OTP verified successfully",
-      user: { uid: generateUID(), email }
+      user: { uid: generateUID(), email: normalizedEmail }
     });
     
   } catch (error) {
@@ -212,7 +265,6 @@ router.post('/verify-email-otp', async (req, res) => {
   }
 });
 
-// Staff-only route
 router.get('/staff-data', (req, res) => {
   if (!isAuthorizedStaff(req)) {
     return res.status(403).json({ success: false, message: "Unauthorized" });
