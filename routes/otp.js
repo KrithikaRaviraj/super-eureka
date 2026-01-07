@@ -5,10 +5,13 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 
-// HTTPS enforcement
+// HTTPS enforcement with proper proxy trust check
 router.use((req, res, next) => {
-  if (process.env.NODE_ENV === 'production' && !req.secure && req.get('x-forwarded-proto') !== 'https') {
-    return res.status(403).json({ success: false, message: "HTTPS required" });
+  if (process.env.NODE_ENV === 'production') {
+    const isSecure = req.secure || req.get('x-forwarded-proto') === 'https' || req.get('x-forwarded-ssl') === 'on';
+    if (!isSecure) {
+      return res.status(403).json({ success: false, message: "HTTPS required" });
+    }
   }
   next();
 });
@@ -28,7 +31,7 @@ const emailRateLimitSchema = new mongoose.Schema({
 emailRateLimitSchema.index({ email: 1 }, { unique: true });
 
 const otpSchema = new mongoose.Schema({
-  email: { type: String, required: true, index: true },
+  email: { type: String, required: true, unique: true },
   hashedOtp: { type: String, required: true },
   attempts: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now, expires: 600 }
@@ -46,22 +49,60 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Monitoring hook
+// Hash function for user identifiers
+function hashIdentifier(identifier) {
+  return crypto.createHash('sha256').update(identifier + process.env.LOG_SALT || 'default').digest('hex').slice(0, 8);
+}
+
+// Safe monitoring with Node.js compatibility
 function logSecurityEvent(event, data) {
+  const safeData = { ...data };
+  
+  // Hash all user identifiers
+  if (safeData.email) {
+    safeData.emailHash = hashIdentifier(safeData.email);
+    delete safeData.email;
+  }
+  if (safeData.ip && safeData.ip !== '127.0.0.1') {
+    safeData.ipHash = hashIdentifier(safeData.ip);
+    delete safeData.ip;
+  }
+  
   const logData = {
     timestamp: new Date().toISOString(),
     event,
-    ...data
+    ...safeData
   };
+  
   console.log('SECURITY_EVENT:', JSON.stringify(logData));
   
-  // In production, send to monitoring service
+  // Node.js compatible HTTP request
   if (process.env.WEBHOOK_URL) {
-    fetch(process.env.WEBHOOK_URL, {
+    const url = require('url');
+    const https = require('https');
+    const http = require('http');
+    
+    const parsedUrl = url.parse(process.env.WEBHOOK_URL);
+    const client = parsedUrl.protocol === 'https:' ? https : http;
+    
+    const postData = JSON.stringify(logData);
+    const options = {
+      hostname: parsedUrl.hostname,
+      port: parsedUrl.port,
+      path: parsedUrl.path,
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(logData)
-    }).catch(err => console.error('Webhook failed:', err));
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(postData)
+      },
+      timeout: 5000
+    };
+    
+    const req = client.request(options, () => {});
+    req.on('error', () => {});
+    req.on('timeout', () => req.destroy());
+    req.write(postData);
+    req.end();
   }
 }
 
@@ -78,9 +119,13 @@ function hashOTP(otp) {
 function safeVerifyOTP(otp, hashedOtp) {
   try {
     const [salt, hash] = hashedOtp.split(':');
+    if (!salt || !hash) return false;
+    
     const verifyHash = crypto.pbkdf2Sync(otp, salt, 10000, 64, 'sha512').toString('hex');
     const hashBuffer = Buffer.from(hash, 'hex');
     const verifyBuffer = Buffer.from(verifyHash, 'hex');
+    
+    if (hashBuffer.length !== verifyBuffer.length) return false;
     return crypto.timingSafeEqual(hashBuffer, verifyBuffer);
   } catch {
     return false;
@@ -104,11 +149,36 @@ function isAuthorizedStaff(req) {
 }
 
 function normalizeIP(req) {
-  const forwarded = req.get('x-forwarded-for');
+  const forwarded = req.get('x-forwarded-for') || req.get('x-real-ip');
   if (forwarded) {
-    return forwarded.split(',')[0].trim();
+    const ips = forwarded.split(',').map(ip => ip.trim());
+    for (const ip of ips) {
+      if (!ip.startsWith('10.') && !ip.startsWith('192.168.') && !ip.startsWith('172.')) {
+        return ip;
+      }
+    }
+    return ips[0];
   }
-  return req.ip || req.connection.remoteAddress || '127.0.0.1';
+  return req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '127.0.0.1';
+}
+
+async function checkRateLimit(Model, query, limit, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const result = await Model.findOneAndUpdate(
+        query,
+        { $inc: { attempts: 1 } },
+        { upsert: true, new: true }
+      );
+      return result;
+    } catch (error) {
+      if (error.code === 11000 && i < retries - 1) {
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
+        continue;
+      }
+      throw error;
+    }
+  }
 }
 
 // Send Email OTP
@@ -120,7 +190,7 @@ router.post('/send-email-otp', async (req, res) => {
     const { email } = req.body;
     
     if (!email || !validateEmail(email)) {
-      logSecurityEvent('invalid_email_attempt', { ip: clientIP, email });
+      logSecurityEvent('invalid_email_attempt', { ip: clientIP });
       return res.status(400).json({ 
         success: false, 
         message: "Valid email address required" 
@@ -129,12 +199,10 @@ router.post('/send-email-otp', async (req, res) => {
     
     const normalizedEmail = email.toLowerCase().trim();
     
-    // Atomic IP rate limiting
-    const ipResult = await IpRateLimit.findOneAndUpdate(
-      { ip: clientIP },
-      { $inc: { attempts: 1 } },
-      { upsert: true, new: true }
-    );
+    const [ipResult, emailResult] = await Promise.all([
+      checkRateLimit(IpRateLimit, { ip: clientIP }, 10),
+      checkRateLimit(EmailRateLimit, { email: normalizedEmail }, 5)
+    ]);
     
     if (ipResult.attempts > 10) {
       logSecurityEvent('ip_rate_limit_exceeded', { ip: clientIP, attempts: ipResult.attempts });
@@ -144,13 +212,6 @@ router.post('/send-email-otp', async (req, res) => {
       });
     }
     
-    // Atomic email rate limiting
-    const emailResult = await EmailRateLimit.findOneAndUpdate(
-      { email: normalizedEmail },
-      { $inc: { attempts: 1 } },
-      { upsert: true, new: true }
-    );
-    
     if (emailResult.attempts > 5) {
       logSecurityEvent('email_rate_limit_exceeded', { ip: clientIP, email: normalizedEmail, attempts: emailResult.attempts });
       return res.status(429).json({ 
@@ -159,15 +220,15 @@ router.post('/send-email-otp', async (req, res) => {
       });
     }
     
-    await OTP.deleteMany({ email: normalizedEmail });
-    
     const otp = generateOTP();
     const hashedOtp = hashOTP(otp);
     
-    await new OTP({
-      email: normalizedEmail,
-      hashedOtp
-    }).save();
+    // Atomic OTP creation/update
+    await OTP.findOneAndUpdate(
+      { email: normalizedEmail },
+      { hashedOtp, attempts: 0, createdAt: new Date() },
+      { upsert: true }
+    );
     
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -222,7 +283,7 @@ router.post('/send-email-otp', async (req, res) => {
       emailSent = true;
       logSecurityEvent('otp_sent', { ip: clientIP, email: normalizedEmail, duration: Date.now() - startTime });
     } catch (emailError) {
-      logSecurityEvent('email_send_failed', { ip: clientIP, email: normalizedEmail, error: emailError.message });
+      logSecurityEvent('email_send_failed', { ip: clientIP, email: normalizedEmail, error: emailError.code || 'unknown' });
     }
     
     res.json({ 
@@ -232,7 +293,7 @@ router.post('/send-email-otp', async (req, res) => {
     });
     
   } catch (error) {
-    logSecurityEvent('otp_send_error', { ip: clientIP, error: error.message });
+    logSecurityEvent('otp_send_error', { ip: clientIP, error: error.code || 'unknown' });
     res.status(500).json({ success: false, message: "Failed to process request" });
   }
 });
@@ -250,23 +311,22 @@ router.post('/verify-email-otp', async (req, res) => {
     }
     
     const normalizedEmail = email.toLowerCase().trim();
-    const otpRecord = await OTP.findOne({ email: normalizedEmail }).lean();
+    
+    // Atomic OTP verification and attempt increment
+    const otpRecord = await OTP.findOneAndUpdate(
+      { email: normalizedEmail, attempts: { $lt: 3 } },
+      { $inc: { attempts: 1 } },
+      { new: false }
+    );
     
     if (!otpRecord) {
-      logSecurityEvent('otp_not_found', { ip: clientIP, email: normalizedEmail });
+      logSecurityEvent('otp_not_found_or_max_attempts', { ip: clientIP, email: normalizedEmail });
       return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
-    }
-    
-    if (otpRecord.attempts >= 3) {
-      await OTP.deleteOne({ email: normalizedEmail });
-      logSecurityEvent('otp_max_attempts', { ip: clientIP, email: normalizedEmail });
-      return res.status(429).json({ success: false, message: "Too many failed attempts. Please request a new OTP." });
     }
     
     const isValid = safeVerifyOTP(otp, otpRecord.hashedOtp);
     
     if (!isValid) {
-      await OTP.updateOne({ email: normalizedEmail }, { $inc: { attempts: 1 } });
       logSecurityEvent('otp_invalid', { ip: clientIP, email: normalizedEmail, attempts: otpRecord.attempts + 1 });
       return res.status(400).json({ 
         success: false, 
@@ -274,7 +334,7 @@ router.post('/verify-email-otp', async (req, res) => {
       });
     }
     
-    // Success - reset rate limits and clean up
+    // Success - cleanup atomically
     await Promise.all([
       OTP.deleteOne({ email: normalizedEmail }),
       EmailRateLimit.deleteOne({ email: normalizedEmail }),
@@ -290,7 +350,7 @@ router.post('/verify-email-otp', async (req, res) => {
     });
     
   } catch (error) {
-    logSecurityEvent('otp_verify_error', { ip: clientIP, error: error.message });
+    logSecurityEvent('otp_verify_error', { ip: clientIP, error: error.code || 'unknown' });
     res.status(500).json({ success: false, message: "Failed to verify OTP" });
   }
 });
