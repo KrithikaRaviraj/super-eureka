@@ -8,7 +8,7 @@ const Feedback = require('../models/Feedback');
 const servicePricing = require('../config/servicePricing');
 
 // Email configuration
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransporter({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER || 'your-email@gmail.com',
@@ -83,7 +83,7 @@ function generateGoogleCalendarUrl(appointment) {
       action: 'TEMPLATE',
       text: `${appointment.service} - Lavish Ladies Salon`,
       dates: `${formatDate(startDate)}/${formatDate(endDate)}`,
-      details: `Service: ${appointment.service}\nSalon: Lavish Ladies Beauty Salon & Spa\nAddress: Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117\nPhone: +91 81476 27651`,
+      details: `Service: ${appointment.service}\\nSalon: Lavish Ladies Beauty Salon & Spa\\nAddress: Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117\\nPhone: +91 81476 27651`,
       location: 'Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117'
     });
     
@@ -276,7 +276,7 @@ router.put('/:id', async (req, res) => {
                     </tr>
                     <tr>
                       <td style="text-align: center; background: #f9fafb; padding: 30px; border-top: 1px solid #e5e7eb;">
-                        <p style="margin: 0; font-size: 12px; color: #6b7280;">© 2025 Lavish Ladies Beauty Salon & Spa</p>
+                        <p style="margin: 0; font-size: 12px; color: #6b7280;">© 2026 Lavish Ladies Beauty Salon & Spa</p>
                       </td>
                     </tr>
                   </table>
@@ -356,7 +356,7 @@ router.put('/:id', async (req, res) => {
                     </tr>
                     <tr>
                       <td style="text-align: center; background: #f9fafb; padding: 30px; border-top: 1px solid #e5e7eb;">
-                        <p style="margin: 0; font-size: 12px; color: #6b7280;">© 2025 Lavish Ladies Beauty Salon & Spa</p>
+                        <p style="margin: 0; font-size: 12px; color: #6b7280;">© 2026 Lavish Ladies Beauty Salon & Spa</p>
                       </td>
                     </tr>
                   </table>
@@ -504,7 +504,7 @@ router.post('/feedback/:token', async (req, res) => {
                       </tr>
                       <tr>
                         <td style="text-align: center; background: #f9fafb; padding: 20px; border-top: 1px solid #e5e7eb;">
-                          <p style="margin: 0; font-size: 12px; color: #6b7280;">© 2025 Lavish Ladies Beauty Salon & Spa</p>
+                          <p style="margin: 0; font-size: 12px; color: #6b7280;">© 2026 Lavish Ladies Beauty Salon & Spa</p>
                         </td>
                       </tr>
                     </table>

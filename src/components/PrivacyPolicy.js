@@ -14,7 +14,6 @@ const PrivacyPolicy = ({ onClose }) => {
         </div>
         
         <div className="p-6 space-y-6 text-stone-700 text-sm leading-relaxed">
-          <p className="text-xs text-stone-500 italic">Effective Date: January 1, 2024</p>
           <p className="text-xs text-stone-500 italic">Last Updated: {new Date().toLocaleDateString()}</p>
 
           <section>
