@@ -349,49 +349,40 @@ router.post('/verify-email-otp', async (req, res) => {
     
     const normalizedEmail = email.toLowerCase().trim();
     
-    // Atomic OTP verification - single hash computation
-    const session = await mongoose.startSession();
+    // Simple non-transactional OTP verification for reliability
     let isValid = false;
     let currentAttempts = 0;
     
-    try {
-      await session.withTransaction(async () => {
-        const otpRecord = await OTP.findOne({ email: normalizedEmail }).session(session);
-        
-        if (!otpRecord || otpRecord.attempts >= 3) {
-          return;
-        }
-        
-        isValid = safeVerifyOTP(otp, otpRecord.hashedOtp);
-        currentAttempts = otpRecord.attempts;
-        
-        if (!isValid) {
-          await OTP.updateOne(
-            { email: normalizedEmail },
-            { $inc: { attempts: 1 } },
-            { session }
-          );
-          currentAttempts += 1;
-        }
-      });
-    } finally {
-      await session.endSession();
-    }
+    const otpRecord = await OTP.findOne({ email: normalizedEmail });
     
-    // Check if OTP exists and hasn't exceeded attempts
-    const otpExists = currentAttempts > 0 || isValid;
-    if (!otpExists) {
+    if (!otpRecord) {
       logSecurityEvent('otp_not_found', { ip: clientIP, email: normalizedEmail });
       return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
     }
     
-    if (currentAttempts >= 3) {
+    if (otpRecord.attempts >= 3) {
       await OTP.deleteOne({ email: normalizedEmail });
       logSecurityEvent('otp_max_attempts', { ip: clientIP, email: normalizedEmail });
       return res.status(429).json({ success: false, message: "Too many failed attempts. Please request a new OTP." });
     }
     
+    // Verify OTP
+    try {
+      isValid = safeVerifyOTP(otp, otpRecord.hashedOtp);
+      currentAttempts = otpRecord.attempts;
+    } catch (verifyError) {
+      console.error('OTP verification error:', verifyError);
+      logSecurityEvent('otp_verification_error', { ip: clientIP, email: normalizedEmail, error: verifyError.message });
+      currentAttempts = otpRecord.attempts + 1;
+      isValid = false;
+    }
+    
     if (!isValid) {
+      await OTP.findOneAndUpdate(
+        { email: normalizedEmail },
+        { $inc: { attempts: 1 } }
+      );
+      currentAttempts += 1;
       logSecurityEvent('otp_invalid', { ip: clientIP, email: normalizedEmail, attempts: currentAttempts });
       return res.status(400).json({ 
         success: false, 
@@ -399,12 +390,16 @@ router.post('/verify-email-otp', async (req, res) => {
       });
     }
     
-    // Success - cleanup atomically
-    await Promise.all([
-      OTP.deleteOne({ email: normalizedEmail }),
-      EmailRateLimit.deleteOne({ email: normalizedEmail }),
-      IpRateLimit.deleteOne({ ip: clientIP })
-    ]);
+    // Success - cleanup
+    try {
+      await Promise.all([
+        OTP.deleteOne({ email: normalizedEmail }),
+        EmailRateLimit.deleteOne({ email: normalizedEmail }),
+        IpRateLimit.deleteOne({ ip: clientIP })
+      ]);
+    } catch (cleanupError) {
+      console.error('Cleanup error (non-critical):', cleanupError);
+    }
     
     logSecurityEvent('otp_verified', { ip: clientIP, email: normalizedEmail, duration: Date.now() - startTime });
     
@@ -415,7 +410,8 @@ router.post('/verify-email-otp', async (req, res) => {
     });
     
   } catch (error) {
-    logSecurityEvent('otp_verify_error', { ip: clientIP, error: error.code || 'unknown' });
+    console.error('OTP verification endpoint error:', error);
+    logSecurityEvent('otp_verify_error', { ip: clientIP, error: error.code || error.message || 'unknown' });
     res.status(500).json({ success: false, message: "Failed to verify OTP" });
   }
 });
