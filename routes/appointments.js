@@ -309,6 +309,16 @@ router.put('/:id', async (req, res) => {
                           <p style="font-size: 18px; color: #374151; font-weight: 500;">Thank you for choosing Lavish Ladies!</p>
                           <p style="font-size: 14px; color: #9ca3af; margin-top: 10px;">We can't wait to pamper you ✨</p>
                         </div>
+
+                        <!-- Compliance & Trust -->
+                        <div style="margin: 30px 0; padding: 18px 20px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 12px; color: #6b7280; line-height: 1.7;">
+                          <strong style="display: block; color: #374151; margin-bottom: 8px;">Why you received this email</strong>
+                          You are receiving this confirmation because an appointment was scheduled with Lavish Ladies Beauty Salon & Spa using this email address. If this wasn't you, please reply to this email or call us at <a href="tel:+918147627651" style="color: #667eea; text-decoration: none;">+91 81476 27651</a> so we can help.
+                          <div style="margin-top: 12px;">
+                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #667eea; text-decoration: none; margin-right: 12px;">Privacy Policy</a>
+                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #667eea; text-decoration: none;">Terms of Service</a>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                     
@@ -461,6 +471,16 @@ router.put('/:id', async (req, res) => {
                         <div style="text-align: center; margin: 40px 0 20px;">
                           <p style="font-size: 16px; color: #374151; font-weight: 500;">Thank you for choosing Lavish Ladies!</p>
                           <p style="font-size: 14px; color: #9ca3af; margin-top: 10px;">Your satisfaction is our priority ❤️</p>
+                        </div>
+
+                        <!-- Compliance & Trust -->
+                        <div style="margin: 30px 0; padding: 18px 20px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 12px; color: #6b7280; line-height: 1.7;">
+                          <strong style="display: block; color: #374151; margin-bottom: 8px;">Why you received this email</strong>
+                          You are receiving this message because you recently completed a service with Lavish Ladies Beauty Salon & Spa using this email address. If this wasn't you, please reply to this email or call us at <a href="tel:+918147627651" style="color: #f59e0b; text-decoration: none;">+91 81476 27651</a> so we can assist.
+                          <div style="margin-top: 12px;">
+                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #f59e0b; text-decoration: none; margin-right: 12px;">Privacy Policy</a>
+                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #f59e0b; text-decoration: none;">Terms of Service</a>
+                          </div>
                         </div>
                       </td>
                     </tr>
