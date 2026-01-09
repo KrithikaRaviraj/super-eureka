@@ -6,6 +6,7 @@ const usersRouter = require('./routes/users');
 const otpRouter = require('./routes/otp');
 const appointmentsRouter = require('./routes/appointments');
 const revenueRouter = require('./routes/revenue');
+const servicesRouter = require('./routes/services');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -21,6 +22,7 @@ app.use('/api/users', usersRouter);
 app.use('/api', otpRouter);
 app.use('/api/appointments', appointmentsRouter);
 app.use('/api/revenue', revenueRouter);
+app.use('/api/services', servicesRouter);
 
 // Serve testimonial approval page
 app.get('/approve-testimonial/:token', (req, res) => {

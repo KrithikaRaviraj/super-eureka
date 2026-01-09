@@ -5,11 +5,12 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 
-// HTTPS enforcement with proper proxy trust check
+// HTTPS enforcement with strict validation
 router.use((req, res, next) => {
   if (process.env.NODE_ENV === 'production') {
-    const isSecure = req.secure || req.get('x-forwarded-proto') === 'https' || req.get('x-forwarded-ssl') === 'on';
-    if (!isSecure) {
+    // Only trust req.secure (requires proper trust proxy configuration)
+    if (!req.secure) {
+      logSecurityEvent('https_required', { ip: normalizeIP(req) });
       return res.status(403).json({ success: false, message: "HTTPS required" });
     }
   }
@@ -312,22 +313,50 @@ router.post('/verify-email-otp', async (req, res) => {
     
     const normalizedEmail = email.toLowerCase().trim();
     
-    // Atomic OTP verification and attempt increment
-    const otpRecord = await OTP.findOneAndUpdate(
-      { email: normalizedEmail, attempts: { $lt: 3 } },
-      { $inc: { attempts: 1 } },
-      { new: false }
-    );
+    // Atomic OTP verification - single hash computation
+    const session = await mongoose.startSession();
+    let isValid = false;
+    let currentAttempts = 0;
     
-    if (!otpRecord) {
-      logSecurityEvent('otp_not_found_or_max_attempts', { ip: clientIP, email: normalizedEmail });
+    try {
+      await session.withTransaction(async () => {
+        const otpRecord = await OTP.findOne({ email: normalizedEmail }).session(session);
+        
+        if (!otpRecord || otpRecord.attempts >= 3) {
+          return;
+        }
+        
+        isValid = safeVerifyOTP(otp, otpRecord.hashedOtp);
+        currentAttempts = otpRecord.attempts;
+        
+        if (!isValid) {
+          await OTP.updateOne(
+            { email: normalizedEmail },
+            { $inc: { attempts: 1 } },
+            { session }
+          );
+          currentAttempts += 1;
+        }
+      });
+    } finally {
+      await session.endSession();
+    }
+    
+    // Check if OTP exists and hasn't exceeded attempts
+    const otpExists = currentAttempts > 0 || isValid;
+    if (!otpExists) {
+      logSecurityEvent('otp_not_found', { ip: clientIP, email: normalizedEmail });
       return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
     }
     
-    const isValid = safeVerifyOTP(otp, otpRecord.hashedOtp);
+    if (currentAttempts >= 3) {
+      await OTP.deleteOne({ email: normalizedEmail });
+      logSecurityEvent('otp_max_attempts', { ip: clientIP, email: normalizedEmail });
+      return res.status(429).json({ success: false, message: "Too many failed attempts. Please request a new OTP." });
+    }
     
     if (!isValid) {
-      logSecurityEvent('otp_invalid', { ip: clientIP, email: normalizedEmail, attempts: otpRecord.attempts + 1 });
+      logSecurityEvent('otp_invalid', { ip: clientIP, email: normalizedEmail, attempts: currentAttempts });
       return res.status(400).json({ 
         success: false, 
         message: "Invalid OTP"
