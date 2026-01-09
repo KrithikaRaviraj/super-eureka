@@ -282,7 +282,7 @@ export default function Services() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredAndSortedServices.map((service, index) => (
               <div 
-                key={service.id} 
+                key={service.id || `service-${index}`} 
                 className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-stone-200/50 hover:border-rose-200 group cursor-pointer transform hover:scale-105 animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
                 onClick={() => setSelectedService(service)}
