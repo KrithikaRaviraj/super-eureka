@@ -108,7 +108,8 @@ function logSecurityEvent(event, data) {
 }
 
 function generateOTP() {
-  return crypto.randomInt(100000, 999999).toString();
+  // 4-digit OTP for shorter entry while keeping leading zeros intact
+  return crypto.randomInt(1000, 9999).toString();
 }
 
 function hashOTP(otp) {
@@ -234,7 +235,7 @@ router.post('/send-email-otp', async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: normalizedEmail,
-      subject: 'Your Lavish Ladies Salon Verification Code',
+      subject: 'Your Lavish Ladies Beauty Salon Verification Code',
       html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -284,7 +285,7 @@ router.post('/send-email-otp', async (req, res) => {
                     <td style="padding: 10px 32px 28px 32px;">
                       <div style="margin-top: 16px; padding: 16px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px; font-size: 13px; color: #7c2d12;">
                         <strong style="display: block; margin-bottom: 6px; color: #7c2d12;">Why you received this email</strong>
-                        A verification code was requested for this email address on Lavish Ladies Salon & Spa. If this wasn't you, ignore this message or contact us so we can help secure your account.
+                        A verification code was requested for this email address on Lavish Ladies Salon. If this wasn't you, ignore this message or contact us so we can help secure your account.
                       </div>
 
                       <div style="margin-top: 18px; text-align: center; font-size: 14px; color: #374151;">
@@ -301,7 +302,7 @@ router.post('/send-email-otp', async (req, res) => {
                         <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Terms of Service</a>
                         <a href="mailto:[redacted-email]" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Contact Support</a>
                       </div>
-                      <p style="margin: 6px 0 0 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon & Spa. All rights reserved.</p>
+                      <p style="margin: 6px 0 0 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                     </td>
                   </tr>
                 </table>

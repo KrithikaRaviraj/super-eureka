@@ -81,9 +81,9 @@ function generateGoogleCalendarUrl(appointment) {
     
     const params = new URLSearchParams({
       action: 'TEMPLATE',
-      text: `${appointment.service} - Lavish Ladies Salon`,
+      text: `${appointment.service} - Lavish Ladies Beauty Salon`,
       dates: `${formatDate(startDate)}/${formatDate(endDate)}`,
-      details: `Service: ${appointment.service}\\nSalon: Lavish Ladies Beauty Salon & Spa\\nAddress: Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117\\nPhone: +91 81476 27651`,
+      details: `Service: ${appointment.service}\\nSalon: Lavish Ladies Beauty Salon \\nAddress: Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117\\nPhone: +91 81476 27651`,
       location: 'Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117'
     });
     
@@ -197,14 +197,14 @@ router.put('/:id', async (req, res) => {
       const mailOptions = {
         from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
         to: appointment.userEmail,
-        subject: 'Appointment Confirmed - Lavish Ladies Salon',
+        subject: 'Appointment Confirmed - Lavish Ladies Beauty Salon',
         html: `
           <!DOCTYPE html>
           <html>
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Appointment Confirmed - Lavish Ladies Salon</title>
+            <title>Appointment Confirmed - Lavish Ladies Beauty Salon</title>
             <style>
               @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
             </style>
@@ -330,7 +330,7 @@ router.put('/:id', async (req, res) => {
                           <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Terms of Service</a>
                           <a href="mailto:[redacted-email]" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
                         </div>
-                        <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon & Spa. All rights reserved.</p>
+                        <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                         <p style="margin: 5px 0 0 0; font-size: 11px; color: #d1d5db;">Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</p>
                       </td>
                     </tr>
@@ -358,14 +358,14 @@ router.put('/:id', async (req, res) => {
       const feedbackMailOptions = {
         from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
         to: appointment.userEmail,
-        subject: 'Share Your Experience - Lavish Ladies Salon',
+        subject: 'Share Your Experience - Lavish Ladies Beauty Salon',
         html: `
           <!DOCTYPE html>
           <html>
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Share Your Experience - Lavish Ladies Salon</title>
+            <title>Share Your Experience - Lavish Ladies Beauty Salon</title>
             <style>
               @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
             </style>
@@ -476,7 +476,7 @@ router.put('/:id', async (req, res) => {
                         <!-- Compliance & Trust -->
                         <div style="margin: 30px 0; padding: 18px 20px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 12px; color: #6b7280; line-height: 1.7;">
                           <strong style="display: block; color: #374151; margin-bottom: 8px;">Why you received this email</strong>
-                          You are receiving this message because you recently completed a service with Lavish Ladies Beauty Salon & Spa using this email address. If this wasn't you, please reply to this email or call us at <a href="tel:+918147627651" style="color: #f59e0b; text-decoration: none;">+91 81476 27651</a> so we can assist.
+                          You are receiving this message because you recently completed a service with Lavish Ladies Beauty Salon using this email address. If this wasn't you, please reply to this email or call us at <a href="tel:+918147627651" style="color: #f59e0b; text-decoration: none;">+91 81476 27651</a> so we can assist.
                           <div style="margin-top: 12px;">
                             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #f59e0b; text-decoration: none; margin-right: 12px;">Privacy Policy</a>
                             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #f59e0b; text-decoration: none;">Terms of Service</a>
@@ -493,7 +493,7 @@ router.put('/:id', async (req, res) => {
                           <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Terms of Service</a>
                           <a href="mailto:[redacted-email]" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
                         </div>
-                        <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon & Spa. All rights reserved.</p>
+                        <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                         <p style="margin: 5px 0 0 0; font-size: 11px; color: #d1d5db;">Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</p>
                       </td>
                     </tr>
@@ -595,14 +595,14 @@ router.post('/feedback/:token', async (req, res) => {
         const approvalMailOptions = {
           from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
           to: email,
-          subject: 'New Testimonial for Review - Lavish Ladies Salon',
+          subject: 'New Testimonial for Review - Lavish Ladies Beauty Salon',
           html: `
             <!DOCTYPE html>
             <html>
             <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>New Testimonial Review - Lavish Ladies Salon</title>
+              <title>New Testimonial Review - Lavish Ladies Beauty Salon</title>
               <style>
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
               </style>
@@ -713,7 +713,7 @@ router.post('/feedback/:token', async (req, res) => {
                             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Terms of Service</a>
                             <a href="mailto:[redacted-email]" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
                           </div>
-                          <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon & Spa. All rights reserved.</p>
+                          <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                           <p style="margin: 5px 0 0 0; font-size: 11px; color: #d1d5db;">Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</p>
                         </td>
                       </tr>
