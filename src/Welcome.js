@@ -150,7 +150,7 @@ export default function Welcome() {
       
       // Send email confirmation if email was changed
       if (email && email !== originalEmail) {
-        await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/send-profile-update-email`, {
+        await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/users/send-profile-update-email`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, name }),
