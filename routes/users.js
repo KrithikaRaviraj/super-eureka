@@ -1,6 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
+
+// Email configuration
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER || 'your-email@gmail.com',
+    pass: process.env.EMAIL_PASS || 'your-app-password'
+  }
+});
 
 // Save or update user
 router.post('/', async (req, res) => {

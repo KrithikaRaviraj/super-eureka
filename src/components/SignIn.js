@@ -47,12 +47,9 @@ export default function SignIn({ onSuccess }) {
       setTimeout(() => {
         setLoginSuccess(false);
         if (onSuccess) onSuccess();
-        navigate("/welcome", {
-          state: {
-            name: result.user.displayName || "",
-            email: result.user.email || "",
-          },
-        });
+        // Navigate to home and refresh
+        navigate("/", { replace: true });
+        window.location.reload();
       }, 1500);
     } catch (error) {
       setError(error.message);
@@ -107,9 +104,12 @@ export default function SignIn({ onSuccess }) {
       const data = await response.json();
       
       if (data.success) {
+        // Extract name from email (before @)
+        const nameFromEmail = email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1);
+        
         await saveUserToBackend({
           uid: data.user.uid,
-          name: "Client",
+          name: nameFromEmail,
           email: email,
           phone: null,
           photoURL: "",
@@ -117,7 +117,7 @@ export default function SignIn({ onSuccess }) {
         
         localStorage.setItem('userSession', JSON.stringify({
           uid: data.user.uid,
-          name: "Client",
+          name: nameFromEmail,
           email: email,
           loginTime: Date.now()
         }));
@@ -126,12 +126,9 @@ export default function SignIn({ onSuccess }) {
         setTimeout(() => {
           setLoginSuccess(false);
           if (onSuccess) onSuccess();
-          navigate("/welcome", {
-            state: {
-              name: "Client",
-              email: email,
-            },
-          });
+          // Navigate to home and refresh
+          navigate("/", { replace: true });
+          window.location.reload();
         }, 1500);
       } else {
         setError(data.message || "Invalid OTP. Please try again.");
