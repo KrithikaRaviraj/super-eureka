@@ -22,6 +22,26 @@ function App() {
   const [modal, setModal] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  React.useEffect(() => {
+    document.title = "Lavish Ladies Beauty Salon";
+    
+    // Update favicon to remove React logo
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+    // Use a stylized 'L' as favicon to match the salon's branding
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+        <rect width="100" height="100" rx="20" fill="#fff1f2"/>
+        <text x="50" y="75" font-family="serif" font-size="70" fill="#e11d48" text-anchor="middle" font-weight="bold">L</text>
+      </svg>
+    `;
+    link.href = `data:image/svg+xml,${encodeURIComponent(svg.trim())}`;
+  }, []);
+
   return (
     <Router>
       <AppContent modal={modal} setModal={setModal} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
