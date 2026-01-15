@@ -12,6 +12,22 @@ export default function TestimonialApproval() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const processApproval = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/testimonial/${token}?action=${action}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          setResult(data);
+        } else {
+          setError(data.message);
+        }
+      } catch (error) {
+        setError('Failed to process testimonial approval');
+      }
+      setLoading(false);
+    };
+
     if (token && action) {
       processApproval();
     } else {
@@ -19,22 +35,6 @@ export default function TestimonialApproval() {
       setLoading(false);
     }
   }, [token, action]);
-
-  const processApproval = async () => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/testimonial/${token}?action=${action}`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setResult(data);
-      } else {
-        setError(data.message);
-      }
-    } catch (error) {
-      setError('Failed to process testimonial approval');
-    }
-    setLoading(false);
-  };
 
   if (loading) {
     return (

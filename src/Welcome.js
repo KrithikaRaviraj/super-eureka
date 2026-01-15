@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import SalonLogo from "./components/SalonLogo";
 
@@ -31,12 +31,37 @@ export default function Welcome() {
   const [uid, setUid] = useState("");
   const [phone, setPhone] = useState("");
   const [saved, setSaved] = useState(false);
-  const [showAppointments, setShowAppointments] = useState(true);
+  const [showAppointments] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [originalEmail, setOriginalEmail] = useState("");
   const [appointments, setAppointments] = useState([]);
-  const [showQuickActions, setShowQuickActions] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  const fetchAppointments = useCallback(async () => {
+    // Get email from multiple sources
+    let currentEmail = email || location.state?.email;
+    
+    // If no email, try to get from localStorage
+    if (!currentEmail) {
+      const userSession = localStorage.getItem('userSession');
+      if (userSession) {
+        const session = JSON.parse(userSession);
+        currentEmail = session.email;
+      }
+    }
+    
+    if (currentEmail) {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/user/${encodeURIComponent(currentEmail)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setAppointments(data.appointments || []);
+        }
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
+    }
+  }, [email, location.state]);
 
   // Update time every minute
   useEffect(() => {
@@ -86,6 +111,7 @@ export default function Welcome() {
     }
     fetchUser();
     fetchAppointments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   // Refresh appointments when component becomes visible (user returns from booking)
@@ -101,35 +127,8 @@ export default function Welcome() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [email]);
+  }, [email, fetchAppointments]);
   
-  const fetchAppointments = async () => {
-    // Get email from multiple sources
-    let currentEmail = email || location.state?.email;
-    
-    // If no email, try to get from localStorage
-    if (!currentEmail) {
-      const userSession = localStorage.getItem('userSession');
-      if (userSession) {
-        const session = JSON.parse(userSession);
-        currentEmail = session.email;
-      }
-    }
-    
-    if (currentEmail) {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/user/${encodeURIComponent(currentEmail)}`);
-        if (response.ok) {
-          const data = await response.json();
-          setAppointments(data.appointments || []);
-        }
-      } catch (error) {
-        console.error('Error fetching appointments:', error);
-      }
-    }
-  };
-
-
 
   // Save profile data to backend
   const handleSave = async (e) => {

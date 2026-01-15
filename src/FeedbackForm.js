@@ -22,24 +22,24 @@ export default function FeedbackForm() {
   const [hoveredRating, setHoveredRating] = useState({});
 
   useEffect(() => {
+    const fetchAppointment = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/feedback/${token}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          setAppointment(data.appointment);
+        } else {
+          setError(data.message);
+        }
+      } catch (error) {
+        setError('Failed to load feedback form');
+      }
+      setLoading(false);
+    };
+
     fetchAppointment();
   }, [token]);
-
-  const fetchAppointment = async () => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/feedback/${token}`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setAppointment(data.appointment);
-      } else {
-        setError(data.message);
-      }
-    } catch (error) {
-      setError('Failed to load feedback form');
-    }
-    setLoading(false);
-  };
 
   const handleRatingClick = (category, rating) => {
     setFeedback({ ...feedback, [category]: rating });
