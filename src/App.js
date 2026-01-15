@@ -317,9 +317,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         {/* Contact Options */}
                         <div className="space-y-4">
                           <a 
-                            href="https://mail.google.com/mail/?view=cm&fs=1&to=[redacted-email]&su=Inquiry%20from%20Website"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href="mailto:[redacted-email]?subject=Inquiry%20from%20Website&body=Hello%2C%20I%20would%20like%20to%20inquire%20about..."
                             className="flex items-center p-3 bg-white/80 rounded-lg hover:bg-white transition-all duration-200 group"
                           >
                             <div className="w-10 h-10 bg-rose-600 rounded-full flex items-center justify-center mr-3 group-hover:bg-rose-700 transition-colors">
@@ -433,7 +431,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         Your premier destination for beauty and wellness in Uchila. Experience personalized care that makes you look and feel your best.
                       </p>
                       <div className="flex space-x-3">
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=[redacted-email]&su=Inquiry%20from%20Website" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
+                        <a href="mailto:[redacted-email]?subject=Inquiry%20from%20Website&body=Hello%2C%20I%20would%20like%20to%20inquire%20about..." className="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
                           <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                           </svg>
