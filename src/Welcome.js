@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SalonLogo from "./components/SalonLogo";
 
 const link = document.createElement('link');
@@ -25,6 +25,7 @@ document.head.appendChild(style);
 
 export default function Welcome() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [name, setName] = useState(location.state?.name || "");
   const [email, setEmail] = useState(location.state?.email || "");
   const [userPhone] = useState(location.state?.phone || "");
@@ -36,6 +37,7 @@ export default function Welcome() {
   const [originalEmail, setOriginalEmail] = useState("");
   const [appointments, setAppointments] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [activeTab, setActiveTab] = useState('upcoming');
 
   const fetchAppointments = useCallback(async () => {
     // Get email from multiple sources
@@ -200,6 +202,11 @@ export default function Welcome() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('userSession');
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative overflow-hidden">
       {/* Floating Elements */}
@@ -239,7 +246,12 @@ export default function Welcome() {
           <h2 className="font-serif text-2xl sm:text-3xl font-light text-stone-800 mb-6">
             Good {currentTime.getHours() < 12 ? 'Morning' : currentTime.getHours() < 17 ? 'Afternoon' : 'Evening'}, {name?.split(' ')[0] || 'Valued Client'}
           </h2>
-          
+          <button
+            onClick={handleLogout}
+            className="text-stone-500 hover:text-rose-600 font-sans text-sm font-medium transition-colors border-b border-transparent hover:border-rose-600"
+          >
+            Sign Out
+          </button>
 
         </div>
 
@@ -379,12 +391,28 @@ export default function Welcome() {
                   <h3 className="font-serif text-xl sm:text-2xl font-light text-stone-800">
                     Appointment Schedule
                   </h3>
-                  <button
-                    onClick={fetchAppointments}
-                    className="bg-stone-600 hover:bg-stone-700 text-white px-3 py-1 rounded-lg font-sans text-xs transition-all duration-200"
-                  >
-                    Refresh
-                  </button>
+                  <div className="flex space-x-2 bg-white/50 p-1 rounded-lg">
+                    <button
+                      onClick={() => setActiveTab('upcoming')}
+                      className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                        activeTab === 'upcoming' 
+                          ? 'bg-white text-rose-600 shadow-sm' 
+                          : 'text-stone-500 hover:text-stone-700'
+                      }`}
+                    >
+                      Upcoming
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('history')}
+                      className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                        activeTab === 'history' 
+                          ? 'bg-white text-rose-600 shadow-sm' 
+                          : 'text-stone-500 hover:text-stone-700'
+                      }`}
+                    >
+                      History
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="p-6 sm:p-10">
@@ -397,8 +425,10 @@ export default function Welcome() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                       </div>
-                      <p className="font-sans text-stone-700 mb-2 text-base sm:text-lg font-semibold">No upcoming appointments</p>
-                      <p className="font-sans text-xs sm:text-sm text-stone-500 mb-8 uppercase tracking-wider">Schedule your next visit with us</p>
+                      <p className="font-sans text-stone-700 mb-2 text-base sm:text-lg font-semibold">No {activeTab} appointments</p>
+                      {activeTab === 'upcoming' && (
+                        <>
+                          <p className="font-sans text-xs sm:text-sm text-stone-500 mb-8 uppercase tracking-wider">Schedule your next visit with us</p>
                       <button 
                         onClick={() => {
                           window.location.href = '/services';
@@ -407,11 +437,18 @@ export default function Welcome() {
                       >
                         Book Appointment
                       </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {appointments.map((appointment, index) => (
+                    {appointments.filter(app => {
+                      const appDate = new Date(app.date);
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+                      return activeTab === 'upcoming' ? appDate >= today : appDate < today;
+                    }).map((appointment, index) => (
                       <div 
                         key={appointment._id} 
                         className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-stone-200/50 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group"

@@ -8,6 +8,7 @@ export default function StaffDashboard() {
   const [editingAppointment, setEditingAppointment] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editForm, setEditForm] = useState({});
+  const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
 
   const services = [
     "Hair Styling & Cuts",
@@ -210,6 +211,25 @@ export default function StaffDashboard() {
             </button>
           </div>
 
+          {/* Date Filter */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-sm border border-stone-200/50 mb-6 flex items-center gap-4">
+            <div className="flex-1 max-w-xs">
+              <label className="block font-sans text-xs font-semibold text-stone-500 mb-1 uppercase">Filter by Date</label>
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:border-rose-400 focus:outline-none text-sm"
+              />
+            </div>
+            <button 
+              onClick={() => setFilterDate('')}
+              className="mt-5 text-sm text-rose-600 hover:text-rose-700 font-medium underline"
+            >
+              Show All
+            </button>
+          </div>
+
           {(showAddForm || editingAppointment) && (
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-stone-200/50 mb-6">
               <h3 className="font-serif text-xl font-medium text-stone-800 mb-4">
@@ -347,7 +367,13 @@ export default function StaffDashboard() {
             </div>
           ) : (
             <div className="grid gap-6">
-              {appointments.map((appointment) => (
+              {appointments
+                .filter(app => {
+                  if (!filterDate) return true;
+                  const appDate = new Date(app.date).toISOString().split('T')[0];
+                  return appDate === filterDate;
+                })
+                .map((appointment) => (
                 <div key={appointment._id} className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-stone-200/50">
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div className="flex-1">
