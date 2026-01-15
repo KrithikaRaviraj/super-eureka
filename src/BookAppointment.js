@@ -47,11 +47,28 @@ export default function BookAppointment() {
   ];
   
   useEffect(() => {
-    // Simulate available slots based on selected date
-    if (selectedDate) {
-      const randomSlots = timeSlots.filter(() => Math.random() > 0.3);
-      setAvailableSlots(randomSlots);
-    }
+    const fetchAvailability = async () => {
+      if (!selectedDate) return;
+      
+      try {
+        // Fetch booked slots for the selected date
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/booked-slots?date=${selectedDate}`);
+        if (response.ok) {
+          const data = await response.json();
+          const bookedSlots = data.bookedSlots || []; // Expecting array of time strings ["9:00 AM", "10:00 AM"]
+          const available = timeSlots.filter(slot => !bookedSlots.includes(slot));
+          setAvailableSlots(available);
+        } else {
+          // Fallback: show all slots if API fails, or handle error appropriately
+          setAvailableSlots(timeSlots);
+        }
+      } catch (error) {
+        console.error("Failed to fetch availability:", error);
+        setAvailableSlots(timeSlots);
+      }
+    };
+
+    fetchAvailability();
   }, [selectedDate]);
   
   const nextStep = () => {

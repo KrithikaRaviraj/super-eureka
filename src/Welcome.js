@@ -179,6 +179,27 @@ export default function Welcome() {
     }
   };
 
+  const handleCancelAppointment = async (appointmentId) => {
+    if (!window.confirm("Are you sure you want to cancel this appointment?")) return;
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/${appointmentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'cancelled' })
+      });
+
+      if (response.ok) {
+        fetchAppointments(); // Refresh the list
+      } else {
+        alert("Failed to cancel appointment. Please contact support.");
+      }
+    } catch (error) {
+      console.error("Error cancelling appointment:", error);
+      alert("Network error. Please try again later.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative overflow-hidden">
       {/* Floating Elements */}
@@ -406,6 +427,14 @@ export default function Welcome() {
                           }`}>
                             {appointment.status.toUpperCase()}
                           </span>
+                          {(appointment.status === 'pending' || appointment.status === 'confirmed') && (
+                            <button
+                              onClick={() => handleCancelAppointment(appointment._id)}
+                              className="ml-2 text-xs text-red-500 hover:text-red-700 underline transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          )}
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm text-stone-600">
                           <p><span className="font-semibold">Date:</span> {new Date(appointment.date).toLocaleDateString()}</p>
