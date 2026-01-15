@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import SalonLogo from "./components/SalonLogo";
 
 const link = document.createElement('link');
@@ -25,7 +25,6 @@ document.head.appendChild(style);
 
 export default function Welcome() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [name, setName] = useState(location.state?.name || "");
   const [email, setEmail] = useState(location.state?.email || "");
   const [userPhone] = useState(location.state?.phone || "");
@@ -204,7 +203,7 @@ export default function Welcome() {
 
   const handleLogout = () => {
     localStorage.removeItem('userSession');
-    navigate('/');
+    window.location.href = '/';
   };
 
   return (
