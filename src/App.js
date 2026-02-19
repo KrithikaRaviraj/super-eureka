@@ -61,10 +61,14 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   React.useEffect(() => {
     fetchTestimonials();
     
+    // Force scroll to top on mount
+    window.scrollTo(0, 0);
+    
     // Refresh content when navigating back to home
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         fetchTestimonials();
+        window.scrollTo(0, 0);
       }
     };
     
@@ -122,6 +126,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
     <Routes>
       <Route
         path="/"
+        key={window.location.pathname}
         element={
           <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative">
             <div className="absolute inset-0 pointer-events-none opacity-30">
