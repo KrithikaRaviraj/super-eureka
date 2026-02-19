@@ -15,6 +15,7 @@ import CookieConsent from "./components/CookieConsent";
 import Header from "./components/Header";
 import Navigation from "./components/Navigation";
 import { useAuth } from "./hooks/useAuth";
+import { LanguageProvider, useLanguage } from "./contexts/LanguageContext";
 import React, { useState, useRef } from "react";
 import './styles.css';
 
@@ -43,15 +44,18 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <AppContent modal={modal} setModal={setModal} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-    </Router>
+    <LanguageProvider>
+      <Router>
+        <AppContent modal={modal} setModal={setModal} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      </Router>
+    </LanguageProvider>
   );
 }
 
 function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
   const { isLoggedIn, userInfo, logout, setIsLoggedIn, setUserInfo } = useAuth();
+  const { t, language, changeLanguage } = useLanguage();
   const [testimonials, setTestimonials] = useState([]);
   const [scrollY, setScrollY] = useState(0);
   const aboutRef = useRef(null);
@@ -121,7 +125,9 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               isLoggedIn={isLoggedIn} 
               userInfo={userInfo} 
               onLogin={() => setModal("signin")} 
-              onLogout={handleLogout} 
+              onLogout={handleLogout}
+              language={language}
+              changeLanguage={changeLanguage}
             />
 
             <Navigation 
@@ -136,7 +142,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               <section id="about" ref={aboutRef} className="py-16 px-4">
                 <div className="max-w-7xl mx-auto opacity-100 translate-y-0">
                   <div className="text-center mb-12">
-                    <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">About Us</h2>
+                    <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">{t('aboutUs')}</h2>
                     <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto"></div>
                   </div>
                   
