@@ -402,7 +402,10 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         </svg>
                       </div>
                       <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Hours</h3>
-                      <p className="font-sans text-stone-600">Mon-Sun: 9AM-8PM</p>
+                      <div className="font-sans text-stone-600 text-sm space-y-1">
+                        <p>Mon-Sat: 8:15AM-7:30PM</p>
+                        <p>Sun: 9AM-1PM</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -482,7 +485,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                           <svg className="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          <span className="text-stone-300">Mon-Sun: 9AM-8PM</span>
+                          <span className="text-stone-300">Mon-Sat: 8:15AM-7:30PM<br/>Sun: 9AM-1PM</span>
                         </div>
                       </div>
                     </div>
