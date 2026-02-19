@@ -381,7 +381,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         </svg>
                       </div>
                       <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Call Us</h3>
-                      <p className="font-sans text-stone-600">+91 8147627651</p>
+                      <a href="tel:+918147627651" className="font-sans text-stone-600">+91 8147627651</a>
                     </div>
                     
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
@@ -392,7 +392,14 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         </svg>
                       </div>
                       <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Visit Us</h3>
-                      <p className="font-sans text-stone-600">Uchila, Udupi District</p>
+                      <a 
+                        href="https://www.google.com/maps/dir/?api=1&destination=13.188771,74.7537917&destination_place_id=ChIJt6eKQkJxrjsRfpf4C9oZqZc"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-sans text-stone-600 hover:text-rose-600 transition-colors"
+                      >
+                        Uchila, Udupi District
+                      </a>
                     </div>
                     
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
@@ -404,7 +411,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                       <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Hours</h3>
                       <div className="font-sans text-stone-600 text-sm space-y-1">
                         <p>Mon-Sat: 8:15AM-7:30PM</p>
-                        <p>Sun: 9AM-1PM</p>
+                        <p>Sun: 9AM-1PM (Appointment Required)</p>
                       </div>
                     </div>
                   </div>
@@ -485,7 +492,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                           <svg className="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          <span className="text-stone-300">Mon-Sat: 8:15AM-7:30PM<br/>Sun: 9AM-1PM</span>
+                          <span className="text-stone-300">Mon-Sat: 8:15AM-7:30PM<br/>Sun: 9AM-1PM (Appointment Required)</span>
                         </div>
                       </div>
                     </div>
