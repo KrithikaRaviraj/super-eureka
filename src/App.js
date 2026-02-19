@@ -381,7 +381,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         </svg>
                       </div>
                       <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Call Us</h3>
-                      <a href="tel:+918147627651" className="font-sans text-stone-600">+91 8147627651</a>
+                      <p className="font-sans text-stone-600 mb-2">+91 8147627651</p>
+                      <a href="tel:+918147627651" className="text-rose-600 hover:text-rose-700 font-sans text-sm">Call Now</a>
                     </div>
                     
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
@@ -392,13 +393,14 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         </svg>
                       </div>
                       <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Visit Us</h3>
+                      <p className="font-sans text-stone-600 mb-2">Uchila, Udupi District</p>
                       <a 
                         href="https://www.google.com/maps/dir/?api=1&destination=13.188771,74.7537917&destination_place_id=ChIJt6eKQkJxrjsRfpf4C9oZqZc"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-sans text-stone-600 hover:text-rose-600 transition-colors"
+                        className="text-rose-600 hover:text-rose-700 font-sans text-sm"
                       >
-                        Uchila, Udupi District
+                        Get Directions
                       </a>
                     </div>
                     
