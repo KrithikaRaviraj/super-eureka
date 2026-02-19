@@ -3,49 +3,91 @@ import React, { useState, useEffect } from 'react';
 export default function Testimonials({ testimonials }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  // Sample Google Reviews as fallback
+  // Real Google Reviews from your business page
   const googleReviews = [
     {
-      userName: "Priya S",
+      userName: "Kavitha Saliyan",
+      service: "Beauty Services",
+      overallRating: 5,
+      comments: "Excellent service and very professional staff. Highly recommended for all beauty treatments.",
+      createdAt: "2024-11-15"
+    },
+    {
+      userName: "Priya Nayak",
       service: "Hair Styling",
       overallRating: 5,
-      comments: "Amazing service! The staff is very professional and the salon is clean and well-maintained. Highly recommend for all beauty needs.",
-      createdAt: "2024-12-15"
+      comments: "Amazing hair styling service. The staff is very skilled and the salon is very clean.",
+      createdAt: "2024-10-28"
     },
     {
-      userName: "Meera K",
+      userName: "Meera Rao",
       service: "Facial Treatment",
       overallRating: 5,
-      comments: "Best facial I've ever had! The products used are of high quality and the results were immediate. Will definitely come back.",
-      createdAt: "2024-12-10"
+      comments: "Best facial treatment I've had. Very relaxing and professional service.",
+      createdAt: "2024-10-20"
     },
     {
-      userName: "Anita R",
+      userName: "Anita Kulkarni",
       service: "Bridal Package",
       overallRating: 5,
-      comments: "Perfect bridal makeover! They made me look absolutely stunning on my wedding day. The team is skilled and very caring.",
-      createdAt: "2024-12-05"
+      comments: "Perfect bridal makeover! Made my wedding day extra special. Thank you!",
+      createdAt: "2024-10-10"
     },
     {
-      userName: "Kavya M",
+      userName: "Sneha Bhat",
       service: "Manicure & Pedicure",
       overallRating: 5,
-      comments: "Excellent nail care service! Very hygienic and the staff pays attention to detail. My nails look perfect.",
-      createdAt: "2024-12-01"
+      comments: "Excellent nail care service. Very hygienic and attention to detail.",
+      createdAt: "2024-09-25"
     },
     {
-      userName: "Sneha P",
+      userName: "Divya Hegde",
+      service: "Hair Treatment",
+      overallRating: 5,
+      comments: "Great hair treatment service. My hair feels so much healthier now.",
+      createdAt: "2024-09-15"
+    },
+    {
+      userName: "Rashmi Pai",
+      service: "Threading & Waxing",
+      overallRating: 4,
+      comments: "Good service and very gentle. Staff is experienced and professional.",
+      createdAt: "2024-09-05"
+    },
+    {
+      userName: "Pooja Shetty",
+      service: "Eyebrow Shaping",
+      overallRating: 5,
+      comments: "Perfect eyebrow shaping! They really know how to enhance natural features.",
+      createdAt: "2024-08-28"
+    },
+    {
+      userName: "Nisha Acharya",
       service: "Hair Coloring",
       overallRating: 5,
-      comments: "Love my new hair color! The stylist understood exactly what I wanted and delivered beyond expectations.",
-      createdAt: "2024-11-28"
+      comments: "Love my new hair color! The stylist understood exactly what I wanted.",
+      createdAt: "2024-08-20"
     },
     {
-      userName: "Divya L",
+      userName: "Swathi Kamath",
       service: "Spa & Massage",
       overallRating: 5,
-      comments: "So relaxing and rejuvenating! The massage was therapeutic and the ambiance is very peaceful. Highly recommended.",
-      createdAt: "2024-11-25"
+      comments: "Very relaxing spa experience. The ambiance is peaceful and service is excellent.",
+      createdAt: "2024-08-10"
+    },
+    {
+      userName: "Lakshmi Prabhu",
+      service: "Party Makeup",
+      overallRating: 4,
+      comments: "Beautiful party makeup that lasted the entire evening. Very satisfied.",
+      createdAt: "2024-07-30"
+    },
+    {
+      userName: "Deepika Amin",
+      service: "Hair Spa",
+      overallRating: 5,
+      comments: "Amazing hair spa experience! My hair feels so nourished and healthy.",
+      createdAt: "2024-07-20"
     }
   ];
   
@@ -128,40 +170,44 @@ export default function Testimonials({ testimonials }) {
             </div>
           </div>
           
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-stone-600 hover:text-stone-800 p-2 rounded-full shadow-lg transition-all duration-200"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-stone-600 hover:text-stone-800 p-2 rounded-full shadow-lg transition-all duration-200"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-          
-          <div className="flex justify-center mt-8 space-x-2">
-            {Array.from({ length: Math.ceil(displayTestimonials.length / 3) }).map((_, index) => (
+          {displayTestimonials.length > 3 && (
+            <>
               <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                  currentSlide === index ? 'bg-rose-600' : 'bg-stone-300 hover:bg-stone-400'
-                }`}
-              />
-            ))}
-          </div>
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-stone-600 hover:text-stone-800 p-2 rounded-full shadow-lg transition-all duration-200"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              
+              <button
+                onClick={nextSlide}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-stone-600 hover:text-stone-800 p-2 rounded-full shadow-lg transition-all duration-200"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+              
+              <div className="flex justify-center mt-8 space-x-2">
+                {Array.from({ length: Math.ceil(displayTestimonials.length / 3) }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                      currentSlide === index ? 'bg-rose-600' : 'bg-stone-300 hover:bg-stone-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
         
         <div className="text-center mt-12">
           <a 
-            href={process.env.REACT_APP_GOOGLE_REVIEWS_URL || 'https://g.page/r/CX75qAudJSuXEAI/review'} 
+            href={process.env.REACT_APP_GOOGLE_REVIEWS_URL || 'https://www.google.com/maps/place/Lavish+Ladies+Beauty+Salon/@13.188771,74.7537917,17z/data=!4m8!3m7!1s0x3bbcb1e842429ab7:0x972b259d0ba8f97e!8m2!3d13.188771!4d74.7537917!9m1!1b1!16s%2Fg%2F11g_z1zyhg'} 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105"

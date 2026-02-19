@@ -7,6 +7,7 @@ const otpRouter = require('./routes/otp');
 const appointmentsRouter = require('./routes/appointments');
 const revenueRouter = require('./routes/revenue');
 const servicesRouter = require('./routes/services');
+const googleReviewsRouter = require('./routes/googleReviews');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -23,6 +24,7 @@ app.use('/api', otpRouter);
 app.use('/api/appointments', appointmentsRouter);
 app.use('/api/revenue', revenueRouter);
 app.use('/api/services', servicesRouter);
+app.use('/api', googleReviewsRouter);
 
 // Serve testimonial approval page
 app.get('/approve-testimonial/:token', (req, res) => {
