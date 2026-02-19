@@ -495,6 +495,28 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Google Maps Section */}
+                  <div className="mt-12 pt-8 border-t border-stone-700">
+                    <div className="text-center mb-6">
+                      <h3 className="font-serif text-xl font-medium text-white mb-2">Find Us</h3>
+                      <p className="font-sans text-stone-300 text-sm">Visit our salon in Uchila, Udupi District</p>
+                    </div>
+                    <div className="flex justify-center">
+                      <div className="w-full max-w-4xl rounded-xl overflow-hidden shadow-lg">
+                        <iframe 
+                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3884.581424501807!2d74.75121677484537!3d13.18877098714698!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bbcb1e842429ab7%3A0x972b259d0ba8f97e!2sLavish%20Ladies%20Beauty%20Salon!5e0!3m2!1sen!2sin!4v1771523318807!5m2!1sen!2sin" 
+                          width="100%" 
+                          height="300" 
+                          style={{border: 0}} 
+                          allowFullScreen="" 
+                          loading="lazy" 
+                          referrerPolicy="no-referrer-when-downgrade"
+                          title="Lavish Ladies Beauty Salon Location"
+                        ></iframe>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
                 {/* Bottom Footer */}

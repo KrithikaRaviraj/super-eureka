@@ -34,60 +34,67 @@ export default function Testimonials({ testimonials }) {
       createdAt: "2024-09-05"
     },
     {
-      userName: "Priya Nayak",
-      service: "Hair Styling",
-      overallRating: 5,
-      comments: "Amazing hair styling service. The staff is very skilled and the salon is very clean.",
-      createdAt: "2024-10-28"
-    },
-    {
-      userName: "Meera Rao",
-      service: "Facial Treatment",
-      overallRating: 5,
-      comments: "Best facial treatment I've had. Very relaxing and professional service.",
-      createdAt: "2024-10-20"
-    },
-    {
-      userName: "Anita Kulkarni",
-      service: "Bridal Package",
-      overallRating: 5,
-      comments: "Perfect bridal makeover! Made my wedding day extra special. Thank you!",
-      createdAt: "2024-10-10"
-    },
-    {
-      userName: "Sneha Bhat",
-      service: "Manicure & Pedicure",
-      overallRating: 5,
-      comments: "Excellent nail care service. Very hygienic and attention to detail.",
-      createdAt: "2024-09-25"
-    },
-    {
-      userName: "Divya Hegde",
+      userName: "Shravya Kotian",
       service: "Hair Treatment",
       overallRating: 5,
-      comments: "Great hair treatment service. My hair feels so much healthier now.",
-      createdAt: "2024-09-15"
+      comments: "Thank you for giving me a good treatment. Amazing hair and beauty service. Staff is very friendly. I am literally happy for choosing this ladies beauty salon thank you mam.",
+      createdAt: "2024-07-15"
     },
     {
-      userName: "Rashmi Pai",
-      service: "Threading & Waxing",
-      overallRating: 4,
-      comments: "Good service and very gentle. Staff is experienced and professional.",
-      createdAt: "2024-09-05"
-    },
-    {
-      userName: "Pooja Shetty",
-      service: "Eyebrow Shaping",
+      userName: "Preethi Srinivasan",
+      service: "Multiple Services",
       overallRating: 5,
-      comments: "Perfect eyebrow shaping! They really know how to enhance natural features.",
-      createdAt: "2024-08-28"
+      comments: "One stop solution for all your beauty needs. I have been visiting many a times for hair cut, facials, threading and other services. Staff is really good, very polite and friendly and reasonable price. Good ambience. Overall good service. Thank you.",
+      createdAt: "2024-07-14"
     },
     {
-      userName: "Nisha Acharya",
-      service: "Hair Coloring",
+      userName: "Shreya Kotian",
+      service: "Hair & Beauty Services",
       overallRating: 5,
-      comments: "Love my new hair color! The stylist understood exactly what I wanted.",
-      createdAt: "2024-08-20"
+      comments: "Amazing hair and beauty services😍 Staff is very friendly. Prices are reasonable. Definitely recommend it!",
+      createdAt: "2024-07-14"
+    },
+    {
+      userName: "Amrutha Suvarna",
+      service: "Haircut",
+      overallRating: 5,
+      comments: "I'm so satisfied with the service. Mam had done very good haircut maintaining my hair length. I am literally happy for choosing this ladies beauty saloon thankyou mam.",
+      createdAt: "2024-07-13"
+    },
+    {
+      userName: "Amrutha Reddy",
+      service: "Beauty Services",
+      overallRating: 5,
+      comments: "I was on vacation from Bangalore, and I came across this saloon. The friendly person was so comfortable and the interior was so good. It was a very clean n tidy place at a very affordable price.",
+      createdAt: "2023-10-07"
+    },
+    {
+      userName: "Apoorva Rao",
+      service: "Beauty Services",
+      overallRating: 5,
+      comments: "This parlour is well maintained and clean. Beautician was very professional and nice.",
+      createdAt: "2022-02-26"
+    },
+    {
+      userName: "Shiyal B",
+      service: "Regular Services",
+      overallRating: 5,
+      comments: "Everytime I go here, the experience is very good. I have been going to this salon since the past 2 years and will continue to do so😍",
+      createdAt: "2021-07-15"
+    },
+    {
+      userName: "Nalini Uk",
+      service: "Makeup & Hairdo",
+      overallRating: 5,
+      comments: "Best ever makeover. Everyone appreciated the makeup and hairdo. Very punctual and good service. I would recommend this always.",
+      createdAt: "2019-05-21"
+    },
+    {
+      userName: "Harini UK",
+      service: "Event Makeup & Styling",
+      overallRating: 5,
+      comments: "Very professional and adaptable staff. Make up, hairstyle and saree was done with utmost care and the final look got a lot of appreciation from everyone. Worth the price!! Happy to have chosen for a big event!",
+      createdAt: "2019-05-20"
     }
   ];
   
