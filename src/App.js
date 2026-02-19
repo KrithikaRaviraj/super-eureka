@@ -54,11 +54,12 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const { isLoggedIn, userInfo, logout, setIsLoggedIn, setUserInfo } = useAuth();
   const [testimonials, setTestimonials] = useState([]);
   const [scrollY, setScrollY] = useState(0);
-  const [isVisible, setIsVisible] = useState({});
   const aboutRef = useRef(null);
   const servicesRef = useRef(null);
   
   React.useEffect(() => {
+    // Force immediate render
+    setIsVisible({ about: true, services: true });
     fetchTestimonials();
     
     // Force scroll to top on mount
@@ -153,9 +154,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
             <main className="relative z-10">
               {/* About Us Section */}
               <section id="about" ref={aboutRef} className="py-16 px-4">
-                <div className={`max-w-7xl mx-auto transition-all duration-1000 transform ${
-                  isVisible.about ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                }`}>
+                <div className="max-w-7xl mx-auto opacity-100 translate-y-0">
                   <div className="text-center mb-12">
                     <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">About Us</h2>
                     <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto"></div>
@@ -224,9 +223,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               
               {/* Services Section */}
               <section id="services" ref={servicesRef} className="py-16 px-4 bg-white/50">
-                <div className={`max-w-7xl mx-auto transition-all duration-1000 transform ${
-                  isVisible.services ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                }`}>
+                <div className="max-w-7xl mx-auto opacity-100 translate-y-0">
                   <div className="text-center mb-12">
                     <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">Our Services</h2>
                     <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-6"></div>
