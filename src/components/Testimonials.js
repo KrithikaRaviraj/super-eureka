@@ -6,11 +6,32 @@ export default function Testimonials({ testimonials }) {
   // Real Google Reviews from your business page
   const googleReviews = [
     {
-      userName: "Kavitha Saliyan",
+      userName: "Shamesh Ramesh",
+      service: "Haircut & Eyebrow Shaping",
+      overallRating: 5,
+      comments: "I had an excellent experience at Lavish Ladies Beauty Salon. The staff were courteous and skilled, ensuring that my haircut and eyebrow shaping were done with great precision. The salon maintained a clean and pleasant environment, and the service was prompt and professional. I would highly recommend Lavish Ladies Beauty Salon for anyone seeking quality beauty care and customer satisfaction.",
+      createdAt: "2024-08-15"
+    },
+    {
+      userName: "Nathania Joylyn Pais",
       service: "Beauty Services",
       overallRating: 5,
-      comments: "Excellent service and very professional staff. Highly recommended for all beauty treatments.",
-      createdAt: "2024-11-15"
+      comments: "The salon is well-maintained, clean, and run by a friendly lady who offers neat and professional work. 10/10 recommend.",
+      createdAt: "2024-09-20"
+    },
+    {
+      userName: "Jyothi Amarnath",
+      service: "Beauty Care",
+      overallRating: 5,
+      comments: "It was a great experience at a reasonable price. I'd definitely recommend Lavish Ladies Beauty Salon to anyone looking for professional beauty care and a little self-care time.",
+      createdAt: "2024-09-10"
+    },
+    {
+      userName: "Deepthi Bangera",
+      service: "Beauty Services",
+      overallRating: 5,
+      comments: "Excellent service, best parlour & best service ❤️",
+      createdAt: "2024-09-05"
     },
     {
       userName: "Priya Nayak",
@@ -67,27 +88,6 @@ export default function Testimonials({ testimonials }) {
       overallRating: 5,
       comments: "Love my new hair color! The stylist understood exactly what I wanted.",
       createdAt: "2024-08-20"
-    },
-    {
-      userName: "Swathi Kamath",
-      service: "Spa & Massage",
-      overallRating: 5,
-      comments: "Very relaxing spa experience. The ambiance is peaceful and service is excellent.",
-      createdAt: "2024-08-10"
-    },
-    {
-      userName: "Lakshmi Prabhu",
-      service: "Party Makeup",
-      overallRating: 4,
-      comments: "Beautiful party makeup that lasted the entire evening. Very satisfied.",
-      createdAt: "2024-07-30"
-    },
-    {
-      userName: "Deepika Amin",
-      service: "Hair Spa",
-      overallRating: 5,
-      comments: "Amazing hair spa experience! My hair feels so nourished and healthy.",
-      createdAt: "2024-07-20"
     }
   ];
   
