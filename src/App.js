@@ -61,6 +61,15 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   React.useEffect(() => {
     fetchTestimonials();
     
+    // Refresh content when navigating back to home
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchTestimonials();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
     // Scroll animations
     const handleScroll = () => {
       setScrollY(window.scrollY);
@@ -87,6 +96,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       observer.disconnect();
     };
   }, []);
