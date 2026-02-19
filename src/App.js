@@ -153,8 +153,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                           <span className="font-serif text-2xl font-bold text-stone-800">7+</span>
                         </div>
                         <div>
-                          <h3 className="font-serif text-2xl font-medium text-stone-800">Years in Business</h3>
-                          <p className="text-stone-600">Since March 2018</p>
+                          <h3 className="font-serif text-2xl font-medium text-stone-800">{t('yearsInBusiness')}</h3>
+                          <p className="text-stone-600">{t('sinceMarch2018')}</p>
                         </div>
                       </div>
                       
@@ -211,7 +211,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               <section id="services" ref={servicesRef} className="py-16 px-4 bg-white/50">
                 <div className="max-w-7xl mx-auto opacity-100 translate-y-0">
                   <div className="text-center mb-12">
-                    <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">Our Services</h2>
+                    <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">{t('ourServices')}</h2>
                     <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-6"></div>
                     <p className="font-sans text-lg text-stone-600 max-w-2xl mx-auto">Discover our range of premium beauty and wellness services designed to make you look and feel your best.</p>
                   </div>
@@ -377,7 +377,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               {/* Contact Section */}
               <section id="contact" className="py-16 px-4 bg-gradient-to-br from-stone-100 to-rose-100">
                 <div className="max-w-4xl mx-auto text-center">
-                  <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">Get In Touch</h2>
+                  <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">{t('getInTouch')}</h2>
                   <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-8"></div>
                   <div className="grid md:grid-cols-3 gap-8">
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
@@ -386,9 +386,9 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                         </svg>
                       </div>
-                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Call Us</h3>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">{t('callUs')}</h3>
                       <p className="font-sans text-stone-600 mb-2">+91 8147627651</p>
-                      <a href="tel:+918147627651" className="text-rose-600 hover:text-rose-700 font-sans text-sm">Call Now</a>
+                      <a href="tel:+918147627651" className="text-rose-600 hover:text-rose-700 font-sans text-sm">{t('callNow')}</a>
                     </div>
                     
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
@@ -398,7 +398,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                       </div>
-                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Visit Us</h3>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">{t('visitUs')}</h3>
                       <p className="font-sans text-stone-600 mb-2">Uchila, Udupi District</p>
                       <a 
                         href="https://www.google.com/maps/dir/?api=1&destination=13.188771,74.7537917&destination_place_id=ChIJt6eKQkJxrjsRfpf4C9oZqZc"
@@ -406,7 +406,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         rel="noopener noreferrer"
                         className="text-rose-600 hover:text-rose-700 font-sans text-sm"
                       >
-                        Get Directions
+                        {t('getDirections')}
                       </a>
                     </div>
                     
@@ -416,7 +416,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
-                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Hours</h3>
+                      <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">{t('hours')}</h3>
                       <div className="font-sans text-stone-600 text-sm space-y-1">
                         <p>Mon-Sat: 8:15AM-7:30PM</p>
                         <p>Sun: 9AM-1PM (Appointment Required)</p>
@@ -567,11 +567,11 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <h3 className="font-serif text-xl font-light text-stone-800">Navigation</h3>
                   </div>
                   <div className="flex-1 py-6">
-                    <a href="/" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Home</a>
-                    <a href="/services" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Services</a>
-                    <a href="/#about" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">About</a>
-                    <a href="/#services" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Our Services</a>
-                    <a href="#contact" onClick={() => setSidebarOpen(false)} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Contact</a>
+                    <a href="/" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">{t('home')}</a>
+                    <a href="/services" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">{t('services')}</a>
+                    <a href="/#about" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">{t('about')}</a>
+                    <a href="/#services" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">{t('ourServices')}</a>
+                    <a href="#contact" onClick={() => setSidebarOpen(false)} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">{t('contact')}</a>
                   </div>
                 </nav>
               </div>

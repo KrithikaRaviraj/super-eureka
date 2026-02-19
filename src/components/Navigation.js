@@ -1,6 +1,8 @@
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Navigation = ({ scrollY, aboutRef, servicesRef, setSidebarOpen }) => {
+  const { t } = useLanguage();
 
   return (
     <nav className={`relative z-10 flex items-center px-4 sm:px-8 py-4 transition-all duration-300 font-sans ${
@@ -26,27 +28,27 @@ const Navigation = ({ scrollY, aboutRef, servicesRef, setSidebarOpen }) => {
           href="/" 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          Home
+          {t('home')}
         </a>
         <a 
           href="/services" 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          Services
+          {t('services')}
         </a>
         <button 
           onClick={() => window.location.href = '/#about'} 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          About
+          {t('about')}
         </button>
         <button 
           onClick={() => window.location.href = '/#services'} 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          Our Services
+          {t('ourServices')}
         </button>
-        <a href="#contact" className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">Contact</a>
+        <a href="#contact" className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">{t('contact')}</a>
       </div>
     </nav>
   );
