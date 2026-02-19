@@ -471,11 +471,11 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <div className="space-y-4">
                       <h3 className="font-serif text-lg font-medium text-white mb-4">Quick Links</h3>
                       <ul className="space-y-2 font-sans text-sm">
-                        <li><button onClick={() => navigate('/')} className="text-stone-300 hover:text-rose-400 transition-colors text-left">Home</button></li>
-                        <li><button onClick={() => navigate('/services')} className="text-stone-300 hover:text-rose-400 transition-colors text-left">Services</button></li>
-                        <li><button onClick={() => aboutRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-stone-300 hover:text-rose-400 transition-colors text-left">About Us</button></li>
+                        <li><a href="/" className="text-stone-300 hover:text-rose-400 transition-colors text-left">Home</a></li>
+                        <li><a href="/services" className="text-stone-300 hover:text-rose-400 transition-colors text-left">Services</a></li>
+                        <li><a href="/#about" className="text-stone-300 hover:text-rose-400 transition-colors text-left">About Us</a></li>
                         <li><a href="#contact" className="text-stone-300 hover:text-rose-400 transition-colors">Contact</a></li>
-                        <li><button onClick={() => navigate('/staff-login')} className="text-stone-300 hover:text-rose-400 transition-colors text-left">Staff Login</button></li>
+                        <li><a href="/staff-login" className="text-stone-300 hover:text-rose-400 transition-colors text-left">Staff Login</a></li>
                       </ul>
                     </div>
                     
@@ -567,10 +567,10 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <h3 className="font-serif text-xl font-light text-stone-800">Navigation</h3>
                   </div>
                   <div className="flex-1 py-6">
-                    <button onClick={() => { navigate('/'); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2">Home</button>
-                    <button onClick={() => { navigate('/services'); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2">Services</button>
-                    <button onClick={() => { aboutRef.current?.scrollIntoView({ behavior: 'smooth' }); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2">About</button>
-                    <button onClick={() => { servicesRef.current?.scrollIntoView({ behavior: 'smooth' }); setSidebarOpen(false); }} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2">Our Services</button>
+                    <a href="/" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Home</a>
+                    <a href="/services" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Services</a>
+                    <a href="/#about" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">About</a>
+                    <a href="/#services" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Our Services</a>
                     <a href="#contact" onClick={() => setSidebarOpen(false)} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Contact</a>
                   </div>
                 </nav>
