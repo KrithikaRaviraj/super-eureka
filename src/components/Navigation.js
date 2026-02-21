@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Navigation = ({ scrollY, aboutRef, servicesRef, setSidebarOpen }) => {
+const Navigation = ({ scrollY, setSidebarOpen }) => {
   return (
     <nav className={`relative z-10 flex items-center px-4 sm:px-8 py-4 transition-all duration-300 font-sans ${
       scrollY > 100 ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white/60 backdrop-blur-sm'

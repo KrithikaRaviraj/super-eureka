@@ -17,7 +17,7 @@ import CookieConsent from "./components/CookieConsent";
 import Header from "./components/Header";
 import Navigation from "./components/Navigation";
 import { useAuth } from "./hooks/useAuth";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import './styles.css';
 
 function App() {
@@ -56,8 +56,6 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const { isLoggedIn, userInfo, logout, setIsLoggedIn, setUserInfo } = useAuth();
   const [testimonials, setTestimonials] = useState([]);
   const [scrollY, setScrollY] = useState(0);
-  const aboutRef = useRef(null);
-  const servicesRef = useRef(null);
   
   React.useEffect(() => {
     fetchTestimonials();
@@ -128,14 +126,12 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
 
             <Navigation 
               scrollY={scrollY} 
-              aboutRef={aboutRef} 
-              servicesRef={servicesRef} 
               setSidebarOpen={setSidebarOpen} 
             />
 
             <main className="relative z-10">
               {/* About Us Section */}
-              <section id="about" ref={aboutRef} className="py-16 px-4">
+              <section id="about" className="py-16 px-4">
                 <div className="max-w-7xl mx-auto opacity-100 translate-y-0">
                   <div className="text-center mb-12">
                     <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">{"About Us"}</h2>
@@ -204,7 +200,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               </section>
               
               {/* Services Section */}
-              <section id="services" ref={servicesRef} className="py-16 px-4 bg-white/50">
+              <section id="services" className="py-16 px-4 bg-white/50">
                 <div className="max-w-7xl mx-auto opacity-100 translate-y-0">
                   <div className="text-center mb-12">
                     <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">{"Our Services"}</h2>
