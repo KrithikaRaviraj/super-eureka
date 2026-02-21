@@ -551,7 +551,7 @@ router.get('/feedback/:token', async (req, res) => {
 router.post('/feedback/:token', async (req, res) => {
   try {
     const { token } = req.params;
-    const { serviceQuality, staffFriendliness, salonCleanliness, recommendation, comments, isAnonymous } = req.body;
+    const { serviceQuality, staffFriendliness, salonCleanliness, recommendation, comments } = req.body;
     
     const appointment = await Appointment.findOne({ feedbackToken: token });
     
