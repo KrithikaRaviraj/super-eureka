@@ -467,7 +467,15 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         <li><a href="/services" className="text-stone-300 hover:text-rose-400 transition-colors text-left">Services</a></li>
                         <li><a href="/#about" className="text-stone-300 hover:text-rose-400 transition-colors text-left">About Us</a></li>
                         <li><a href="#contact" className="text-stone-300 hover:text-rose-400 transition-colors">Contact</a></li>
-                        <li><a href="/staff-login" className="text-stone-300 hover:text-rose-400 transition-colors text-left">Staff Login</a></li>
+                        <li>
+                          <button
+                            type="button"
+                            onClick={() => navigate('/staff-login')}
+                            className="text-stone-300 hover:text-rose-400 transition-colors text-left"
+                          >
+                            Staff Login
+                          </button>
+                        </li>
                       </ul>
                     </div>
                     
@@ -602,6 +610,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
       <Route path="/feedback/:token" element={<FeedbackForm />} />
       <Route path="/approve-testimonial/:token" element={<TestimonialApproval />} />
       <Route path="/contact" element={<ContactForm />} />
+      <Route path="/privacy" element={<PrivacyPolicy onClose={() => navigate('/')} />} />
+      <Route path="/terms" element={<TermsOfService onClose={() => navigate('/')} />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

@@ -278,7 +278,7 @@ router.put('/:id', async (req, res) => {
                         
                         <!-- Contact Information -->
                         <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin: 30px 0;">
-                          <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937;">📍 Visit Us</h3>
+                          <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937;">Visit Us</h3>
                           <div style="color: #6b7280; font-size: 15px; line-height: 1.6;">
                             <p style="margin: 0 0 15px 0;"><strong>Address:</strong><br>Krishna Prasad Complex, NH66<br>Uchila, Udupi District, Karnataka - 574117</p>
                             <p style="margin: 0 0 15px 0;"><strong>Phone:</strong> <a href="tel:+918147627651" style="color: #667eea; text-decoration: none;">+91 81476 27651</a></p>
@@ -328,7 +328,7 @@ router.put('/:id', async (req, res) => {
                         <div style="margin-bottom: 20px;">
                           <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Privacy Policy</a>
                           <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Terms of Service</a>
-                          <a href="mailto:[redacted-email]" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
+                          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
                         </div>
                         <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                         <p style="margin: 5px 0 0 0; font-size: 11px; color: #d1d5db;">Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</p>
@@ -461,7 +461,7 @@ router.put('/:id', async (req, res) => {
                         
                         <!-- Contact Information -->
                         <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin: 30px 0;">
-                          <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937; text-align: center;">📍 Visit Us Again</h3>
+                          <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937; text-align: center;">Visit Us Again</h3>
                           <div style="color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
                             <p style="margin: 0 0 10px 0;">Krishna Prasad Complex, NH66<br>Uchila, Udupi District, Karnataka - 574117</p>
                             <p style="margin: 0;">Phone: <a href="tel:+918147627651" style="color: #f59e0b; text-decoration: none;">+91 81476 27651</a></p>
@@ -491,7 +491,7 @@ router.put('/:id', async (req, res) => {
                         <div style="margin-bottom: 20px;">
                           <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Privacy Policy</a>
                           <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Terms of Service</a>
-                          <a href="mailto:[redacted-email]" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
+                          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
                         </div>
                         <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                         <p style="margin: 5px 0 0 0; font-size: 11px; color: #d1d5db;">Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</p>
@@ -711,7 +711,7 @@ router.post('/feedback/:token', async (req, res) => {
                           <div style="margin-bottom: 20px;">
                             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Privacy Policy</a>
                             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Terms of Service</a>
-                            <a href="mailto:[redacted-email]" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
+                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
                           </div>
                           <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                           <p style="margin: 5px 0 0 0; font-size: 11px; color: #d1d5db;">Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</p>

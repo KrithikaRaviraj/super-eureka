@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SecurityAudit from './components/SecurityAudit';
 
 export default function StaffDashboard() {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ export default function StaffDashboard() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editForm, setEditForm] = useState({});
   const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
+  const [activeTab, setActiveTab] = useState('appointments');
 
   const services = [
     "Hair Styling & Cuts",
@@ -108,7 +110,7 @@ export default function StaffDashboard() {
     setEditingAppointment(appointment._id);
     setEditForm({
       service: appointment.service,
-      date: new Date(appointment.date).toISOString().spli('T')[0],
+      date: new Date(appointment.date).toISOString().split('T')[0],
       time: appointment.time,
       userName: appointment.userName,
       userEmail: appointment.userEmail,
@@ -177,7 +179,7 @@ export default function StaffDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50">
       <header className="bg-white/80 backdrop-blur-sm border-b border-stone-200/50 px-6 py-4">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-4">
           <h1 className="font-serif text-2xl font-light text-stone-800">Staff Dashboard</h1>
           <div className="flex items-center space-x-4">
             <button
@@ -194,10 +196,37 @@ export default function StaffDashboard() {
             </button>
           </div>
         </div>
+        
+        {/* Tab Navigation */}
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setActiveTab('appointments')}
+            className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
+              activeTab === 'appointments'
+                ? 'bg-rose-600 text-white'
+                : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
+            }`}
+          >
+            Appointments
+          </button>
+          <button
+            onClick={() => setActiveTab('security')}
+            className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
+              activeTab === 'security'
+                ? 'bg-rose-600 text-white'
+                : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
+            }`}
+          >
+            Security Audit
+          </button>
+        </div>
       </header>
 
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
+          {activeTab === 'appointments' ? (
+            <>
+              {/* Appointments Content */}
           <div className="mb-8 flex justify-between items-center">
             <div>
               <h2 className="font-serif text-3xl font-light text-stone-800 mb-2">All Appointments</h2>
@@ -370,7 +399,7 @@ export default function StaffDashboard() {
               {appointments
                 .filter(app => {
                   if (!filterDate) return true;
-                  const appDate = new Date(app.date).toISOString().spli('T')[0];
+                  const appDate = new Date(app.date).toISOString().split('T')[0];
                   return appDate === filterDate;
                 })
                 .map((appointment) => (
@@ -448,6 +477,10 @@ export default function StaffDashboard() {
                 </div>
               ))}
             </div>
+          )}
+            </>
+          ) : (
+            <SecurityAudit />
           )}
         </div>
       </div>

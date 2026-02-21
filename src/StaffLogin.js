@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const DEFAULT_ALLOWED_STAFF_EMAILS = [
+  '[redacted-email]',
+  '[redacted-email]',
+  '[redacted-email]'
+];
+
+const ALLOWED_STAFF_EMAILS = (
+  process.env.REACT_APP_AUTHORIZED_STAFF_EMAILS ||
+  DEFAULT_ALLOWED_STAFF_EMAILS.join(',')
+)
+  .split(',')
+  .map((value) => value.trim().toLowerCase())
+  .filter(Boolean);
+
 export default function StaffLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -14,11 +28,18 @@ export default function StaffLogin() {
     setLoading(true);
     setError('');
 
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!ALLOWED_STAFF_EMAILS.includes(normalizedEmail)) {
+      setError('Access denied. This email is not authorized for staff login.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/send-staff-otp`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/send-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email: normalizedEmail })
       });
 
       if (response.ok) {
@@ -39,16 +60,23 @@ export default function StaffLogin() {
     setLoading(true);
     setError('');
 
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!ALLOWED_STAFF_EMAILS.includes(normalizedEmail)) {
+      setError('Access denied. This email is not authorized for staff login.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/verify-staff-otp`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/verify-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp })
+        body: JSON.stringify({ email: normalizedEmail, otp })
       });
 
       if (response.ok) {
         localStorage.setItem('staffSession', JSON.stringify({
-          email,
+          email: normalizedEmail,
           loginTime: Date.now()
         }));
         navigate('/staff-dashboard');
@@ -121,9 +149,9 @@ export default function StaffLogin() {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   required
-                  maxLength={6}
+                  maxLength={4}
                   className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:outline-none font-sans text-center text-lg tracking-widest"
-                  placeholder="000000"
+                  placeholder="0000"
                 />
                 <p className="text-sm text-stone-600 mt-2">An OTP has been sent to your email {email}</p>
               </div>

@@ -153,7 +153,7 @@ router.post('/send-profile-update-email', async (req, res) => {
                       <div style="margin-bottom: 10px;">
                         <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Privacy Policy</a>
                         <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Terms of Service</a>
-                        <a href="mailto:[redacted-email]" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Contact Support</a>
+                        <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Contact Support</a>
                       </div>
                       <p style="margin: 6px 0 0 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon & Spa. All rights reserved.</p>
                     </td>

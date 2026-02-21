@@ -51,7 +51,7 @@ export default function Testimonials({ testimonials }) {
       userName: "Shreya Kotian",
       service: "Hair & Beauty Services",
       overallRating: 5,
-      comments: "Amazing hair and beauty services😍 Staff is very friendly. Prices are reasonable. Definitely recommend it!",
+      comments: "Amazing hair and beauty services! Staff is very friendly. Prices are reasonable. Definitely recommend it!",
       createdAt: "2024-07-14"
     },
     {
@@ -79,7 +79,7 @@ export default function Testimonials({ testimonials }) {
       userName: "Shiyal B",
       service: "Regular Services",
       overallRating: 5,
-      comments: "Everytime I go here, the experience is very good. I have been going to this salon since the past 2 years and will continue to do so😍",
+      comments: "Everytime I go here, the experience is very good. I have been going to this salon since the past 2 years and will continue to do so!",
       createdAt: "2021-07-15"
     },
     {
