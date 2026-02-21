@@ -108,7 +108,9 @@ export default function Welcome() {
             }
           }
         }
-      } catch {}
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
     }
     fetchUser();
     fetchAppointments();

@@ -110,8 +110,6 @@ export default function BookAppointment() {
       createdAt: new Date().toISOString()
     };
 
-    console.log('Booking appointment:', appointmentData);
-
     try {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments`, {
         method: 'POST',
@@ -120,7 +118,6 @@ export default function BookAppointment() {
       });
 
       const result = await response.json();
-      console.log('Server response:', result);
       
       if (response.ok && result.success) {
         setSuccess(true);

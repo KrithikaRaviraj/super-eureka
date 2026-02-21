@@ -147,10 +147,6 @@ export default function SignIn({ onSuccess }) {
       '[redacted-email],[redacted-email],[redacted-email]'
     ).split(',').map(email => email.trim().toLowerCase());
     
-    console.log('Env var:', process.env.REACT_APP_AUTHORIZED_STAFF_EMAILS);
-    console.log('Allowed emails:', allowedEmails);
-    console.log('Staff email entered:', staffEmail.toLowerCase());
-    
     if (!allowedEmails.includes(staffEmail.toLowerCase())) {
       setError('Access denied. Only authorized staff emails are allowed.');
       return;

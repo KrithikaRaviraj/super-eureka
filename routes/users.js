@@ -16,7 +16,6 @@ const transporter = nodemailer.createTransport({
 // Save or update user
 router.post('/', async (req, res) => {
   try {
-    console.log(req.body); 
     const { uid, name, email, phone, photoURL } = req.body;
     
     // Check if user exists by uid
