@@ -80,21 +80,21 @@ export default function StaffLogin() {
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
               </svg>
             </div>
-            <h1 className="font-serif text-3xl font-light text-stone-800 mb-2">Staff Login</h1>
-            <p className="font-sans text-stone-600">Access the staff dashboard</p>
+            <h1 className="font-serif text-3xl font-light text-stone-800 mb-2">{"Staff Login"}</h1>
+            <p className="font-sans text-stone-600">{"Access the staff dashboard"}</p>
           </div>
 
           {!otpSent ? (
             <form onSubmit={handleEmailSubmit} className="space-y-6">
               <div>
-                <label className="block font-sans text-sm font-semibold text-stone-700 mb-3">Staff Email</label>
+                <label className="block font-sans text-sm font-semibold text-stone-700 mb-3">{"Staff Email"}</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:outline-none font-sans"
-                  placeholder="Enter your staff email"
+                  placeholder={"Enter your staff email"}
                 />
               </div>
 
@@ -109,13 +109,13 @@ export default function StaffLogin() {
                 disabled={loading}
                 className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50"
               >
-                {loading ? 'Sending OTP...' : 'Send OTP'}
+                {loading ? `${"Send OTP"}...` : "Send OTP"}
               </button>
             </form>
           ) : (
             <form onSubmit={handleOtpSubmit} className="space-y-6">
               <div>
-                <label className="block font-sans text-sm font-semibold text-stone-700 mb-3">Enter OTP</label>
+                <label className="block font-sans text-sm font-semibold text-stone-700 mb-3">{"Enter OTP"}</label>
                 <input
                   type="text"
                   value={otp}
@@ -125,7 +125,7 @@ export default function StaffLogin() {
                   className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:outline-none font-sans text-center text-lg tracking-widest"
                   placeholder="000000"
                 />
-                <p className="text-sm text-stone-600 mt-2">OTP sent to {email}</p>
+                <p className="text-sm text-stone-600 mt-2">{"An OTP has been sent to your email"} {email}</p>
               </div>
 
               {error && (
@@ -140,14 +140,14 @@ export default function StaffLogin() {
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50"
                 >
-                  {loading ? 'Verifying...' : 'Verify OTP'}
+                  {loading ? `${"Verify OTP"}...` : "Verify OTP"}
                 </button>
                 <button
                   type="button"
                   onClick={() => { setOtpSent(false); setOtp(''); setError(''); }}
                   className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-sans font-semibold py-3 px-6 rounded-xl transition-all duration-300"
                 >
-                  Back to Email
+                  {"Back to Home"}
                 </button>
               </div>
             </form>

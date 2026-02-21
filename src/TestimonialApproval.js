@@ -5,7 +5,7 @@ export default function TestimonialApproval() {
   const { token } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const action = searchParams.get('action');
+  const action = searchParams.ge('action');
   
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState(null);

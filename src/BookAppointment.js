@@ -40,10 +40,10 @@ export default function BookAppointment() {
   ];
 
   const steps = [
-    { id: 1, title: 'Service', icon: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z' },
-    { id: 2, title: 'Date & Time', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
-    { id: 3, title: 'Details', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
-    { id: 4, title: 'Confirm', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' }
+    { id: 1, title: "Service", icon: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z' },
+    { id: 2, title: "Date & Time", icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
+    { id: 3, title: "Details", icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+    { id: 4, title: "Confirm", icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' }
   ];
   
   useEffect(() => {
@@ -164,9 +164,9 @@ export default function BookAppointment() {
       <div className="relative z-10 py-16 px-4">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">Book Appointment</h1>
+            <h1 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">{"Book Appointment"}</h1>
             <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-6"></div>
-            <p className="font-sans text-lg text-stone-600 mb-8">Schedule your beauty session with us</p>
+            <p className="font-sans text-lg text-stone-600 mb-8">{"Schedule your beauty session with us"}</p>
             
             {/* Progress Steps */}
             <div className="flex justify-center items-center space-x-4 mb-8">
@@ -266,7 +266,7 @@ export default function BookAppointment() {
                           handleChange(e);
                           setSelectedDate(e.target.value);
                         }}
-                        min={new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                        min={new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().spli('T')[0]}
                         className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:border-rose-400 focus:outline-none transition-all duration-300"
                       />
                     </div>

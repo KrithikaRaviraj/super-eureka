@@ -8,7 +8,7 @@ export default function StaffDashboard() {
   const [editingAppointment, setEditingAppointment] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editForm, setEditForm] = useState({});
-  const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
+  const [filterDate, setFilterDate] = useState(new Date().toISOString().spli('T')[0]);
 
   const services = [
     "Hair Styling & Cuts",
@@ -108,7 +108,7 @@ export default function StaffDashboard() {
     setEditingAppointment(appointment._id);
     setEditForm({
       service: appointment.service,
-      date: new Date(appointment.date).toISOString().split('T')[0],
+      date: new Date(appointment.date).toISOString().spli('T')[0],
       time: appointment.time,
       userName: appointment.userName,
       userEmail: appointment.userEmail,
@@ -370,7 +370,7 @@ export default function StaffDashboard() {
               {appointments
                 .filter(app => {
                   if (!filterDate) return true;
-                  const appDate = new Date(app.date).toISOString().split('T')[0];
+                  const appDate = new Date(app.date).toISOString().spli('T')[0];
                   return appDate === filterDate;
                 })
                 .map((appointment) => (

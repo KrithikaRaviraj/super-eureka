@@ -2,40 +2,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SalonHeader from './SalonHeader';
 
-const Header = ({ isLoggedIn, userInfo, onLogin, onLogout, language, changeLanguage }) => {
+const Header = ({ isLoggedIn, userInfo, onLogin, onLogout }) => {
   const navigate = useNavigate();
 
   return (
     <header className="relative z-10 px-4 sm:px-8 py-4 sm:py-6 bg-white/80 backdrop-blur-sm border-b border-stone-200/50 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
       <SalonHeader />
       <div className="flex items-center space-x-4">
-        {/* Language Switcher */}
-        <div className="flex items-center space-x-1 bg-white/60 rounded-lg p-1">
-          <button
-            onClick={() => changeLanguage('en')}
-            className={`px-2 py-1 rounded text-xs font-medium transition-all ${
-              language === 'en' ? 'bg-rose-600 text-white' : 'text-stone-600 hover:text-rose-600'
-            }`}
-          >
-            EN
-          </button>
-          <button
-            onClick={() => changeLanguage('kn')}
-            className={`px-2 py-1 rounded text-xs font-medium transition-all ${
-              language === 'kn' ? 'bg-rose-600 text-white' : 'text-stone-600 hover:text-rose-600'
-            }`}
-          >
-            ಕನ್ನಡ
-          </button>
-          <button
-            onClick={() => changeLanguage('hi')}
-            className={`px-2 py-1 rounded text-xs font-medium transition-all ${
-              language === 'hi' ? 'bg-rose-600 text-white' : 'text-stone-600 hover:text-rose-600'
-            }`}
-          >
-            हिंदी
-          </button>
-        </div>
         {!isLoggedIn ? (
           <button
             className="px-6 py-3 rounded-xl bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-sm uppercase tracking-wider transform hover:scale-105"

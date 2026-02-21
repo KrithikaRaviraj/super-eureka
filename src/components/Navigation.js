@@ -1,9 +1,6 @@
 import React from 'react';
-import { useLanguage } from '../contexts/LanguageContext';
 
 const Navigation = ({ scrollY, aboutRef, servicesRef, setSidebarOpen }) => {
-  const { t } = useLanguage();
-
   return (
     <nav className={`relative z-10 flex items-center px-4 sm:px-8 py-4 transition-all duration-300 font-sans ${
       scrollY > 100 ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white/60 backdrop-blur-sm'
@@ -28,27 +25,27 @@ const Navigation = ({ scrollY, aboutRef, servicesRef, setSidebarOpen }) => {
           href="/" 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          {t('home')}
+          {"Home"}
         </a>
         <a 
           href="/services" 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          {t('services')}
+          {"Services"}
         </a>
         <button 
           onClick={() => window.location.href = '/#about'} 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          {t('about')}
+          {"About"}
         </button>
         <button 
           onClick={() => window.location.href = '/#services'} 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          {t('ourServices')}
+          {"Our Services"}
         </button>
-        <a href="#contact" className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">{t('contact')}</a>
+        <a href="/contact" className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">{"Contact"}</a>
       </div>
     </nav>
   );
