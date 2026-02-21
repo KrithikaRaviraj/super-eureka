@@ -8,7 +8,7 @@ export default function StaffDashboard() {
   const [editingAppointment, setEditingAppointment] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editForm, setEditForm] = useState({});
-  const [filterDate, setFilterDate] = useState(new Date().toISOString().spli('T')[0]);
+  const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
 
   const services = [
     "Hair Styling & Cuts",
