@@ -161,9 +161,9 @@ export default function BookAppointment() {
       <div className="relative z-10 py-16 px-4">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">{"Book Appointment"}</h1>
+            <h1 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">Book Appointment</h1>
             <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-6"></div>
-            <p className="font-sans text-lg text-stone-600 mb-8">{"Schedule your beauty session with us"}</p>
+            <p className="font-sans text-lg text-stone-600 mb-8">Schedule your beauty session with us</p>
             
             {/* Progress Steps */}
             <div className="flex justify-center items-center space-x-4 mb-8">

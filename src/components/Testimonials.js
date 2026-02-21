@@ -119,9 +119,9 @@ export default function Testimonials({ testimonials }) {
     <section className="py-16 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">{"What Our Clients Say"}</h2>
+          <h2 className="font-serif text-4xl sm:text-5xl font-light text-stone-800 mb-4">What Our Clients Say</h2>
           <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto mb-6"></div>
-          <p className="font-sans text-lg text-stone-600 max-w-2xl mx-auto">{"Read what our valued clients have to say about their experience at Lavish Ladies."}</p>
+          <p className="font-sans text-lg text-stone-600 max-w-2xl mx-auto">Read what our valued clients have to say about their experience at Lavish Ladies.</p>
         </div>
         
         <div className="relative">
@@ -166,7 +166,7 @@ export default function Testimonials({ testimonials }) {
                         </div>
                         {testimonials.length === 0 && (
                           <div className="mt-2 text-xs text-blue-600 font-medium">
-                            {"Google Review"}
+                            Google Review
                           </div>
                         )}
                       </div>
@@ -222,7 +222,7 @@ export default function Testimonials({ testimonials }) {
             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
-            {"Leave a Google Review"}
+            Leave a Google Review
           </a>
         </div>
       </div>

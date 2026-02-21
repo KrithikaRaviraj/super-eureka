@@ -25,27 +25,27 @@ const Navigation = ({ scrollY, setSidebarOpen }) => {
           href="/" 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          {"Home"}
+          Home
         </a>
         <a 
           href="/services" 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          {"Services"}
+          Services
         </a>
         <button 
           onClick={() => window.location.href = '/#about'} 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          {"About"}
+          About
         </button>
         <button 
           onClick={() => window.location.href = '/#services'} 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
-          {"Our Services"}
+          Our Services
         </button>
-        <a href="/contact" className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">{"Contact"}</a>
+        <a href="/contact" className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform">Contact</a>
       </div>
     </nav>
   );
