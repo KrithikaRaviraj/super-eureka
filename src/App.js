@@ -307,7 +307,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         {/* Contact Options */}
                         <div className="space-y-4">
                           <a 
-                            href="mailto:[redacted-email]?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services."
+                            href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services."
                             className="flex items-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md border border-rose-100 transition-all duration-300 group transform hover:-translate-y-1"
                           >
                             <div className="w-10 h-10 bg-rose-600 rounded-full flex items-center justify-center mr-3 group-hover:bg-rose-700 transition-colors">
@@ -317,7 +317,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                             </div>
                             <div>
                               <p className="font-semibold text-stone-800 text-sm">Email Us</p>
-                              <p className="text-stone-600 text-xs">[redacted-email]</p>
+                              <p className="text-stone-600 text-xs">lavishladiessalonuchila@gmail.com</p>
                             </div>
                           </a>
                           
@@ -433,7 +433,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         Your premier destination for beauty and wellness in Uchila. Experience personalized care that makes you look and feel your best.
                       </p>
                       <div className="flex space-x-3">
-                        <a href="mailto:[redacted-email]?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
+                        <a href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
                           <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                           </svg>
@@ -586,7 +586,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                   setIsLoggedIn(true);
                   setUserInfo(session);
                 }
-              }} />
+              }} onClose={() => setModal(null)} />
             )}
             
             {modal === "privacy" && (
