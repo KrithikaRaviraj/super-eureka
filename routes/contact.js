@@ -76,11 +76,11 @@ router.post('/submit', async (req, res) => {
                         We have received your inquiry regarding <strong>${subject}</strong> and appreciate you contacting us. Our team will review your message and get back to you within 24 hours at the phone number or email address you provided.
                       </p>
 
-                      <div style="margin: 28px 0; padding: 20px; background: #fef3c7; border-left: 4px solid #f43f5e; border-radius: 8px;">
-                        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #92400e; font-weight: 600;">Your Contact Information</h3>
-                        <p style="margin: 0 0 6px 0; font-size: 13px; color: #92400e;"><strong>Email:</strong> ${email}</p>
-                        <p style="margin: 0 0 6px 0; font-size: 13px; color: #92400e;"><strong>Phone:</strong> ${phone}</p>
-                        <p style="margin: 0; font-size: 13px; color: #92400e;"><strong>Subject:</strong> ${subject}</p>
+                      <div style="margin: 28px 0; padding: 20px; background: #fff1f2; border-left: 4px solid #f43f5e; border-radius: 8px;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #9f1239; font-weight: 600;">Your Contact Information</h3>
+                        <p style="margin: 0 0 6px 0; font-size: 13px; color: #9f1239;"><strong>Email:</strong> ${email}</p>
+                        <p style="margin: 0 0 6px 0; font-size: 13px; color: #9f1239;"><strong>Phone:</strong> ${phone}</p>
+                        <p style="margin: 0; font-size: 13px; color: #9f1239;"><strong>Subject:</strong> ${subject}</p>
                       </div>
 
                       <p style="margin: 20px 0 0 0; font-size: 15px; color: #4b5563; line-height: 1.7;">
@@ -123,7 +123,7 @@ router.post('/submit', async (req, res) => {
     // Send admin notification
     const adminMailOptions = {
       from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
-      to: process.env.ADMIN_EMAIL || '[redacted-email]',
+      to: process.env.ADMIN_EMAIL || 'lavishladiessalonuchila@gmail.com',
       subject: `New Contact Form Submission: ${subject}`,
       html: `
         <!DOCTYPE html>
@@ -140,7 +140,7 @@ router.post('/submit', async (req, res) => {
                 <table width="600" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
                   <!-- Header -->
                   <tr>
-                    <td style="padding: 24px; background: #1f2937; color: white;">
+                    <td style="padding: 24px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: white;">
                       <h2 style="margin: 0; font-size: 20px;">NEW CONTACT MESSAGE</h2>
                     </td>
                   </tr>

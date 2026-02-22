@@ -119,12 +119,12 @@ router.post('/send-profile-update-email', async (req, res) => {
                         Hi ${name || 'there'},
                       </p>
                       <p style="margin: 0 0 16px 0; font-size: 15px; line-height: 1.6; color: #374151;">
-                        Your profile has been successfully updated. If you did not make these changes, please contact us immediately at <a href="mailto:[redacted-email]" style="color: #e11d48; text-decoration: none; font-weight: 600;">[redacted-email]</a>.
+                        Your profile has been successfully updated. If you did not make these changes, please contact us immediately at <a href="mailto:lavishladiessalonuchila@gmail.com" style="color: #e11d48; text-decoration: none; font-weight: 600;">lavishladiessalonuchila@gmail.com</a>.
                       </p>
 
-                      <div style="margin: 24px 0; padding: 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px;">
-                        <h3 style="margin: 0 0 8px 0; font-size: 14px; color: #065f46;">Updated Information</h3>
-                        <p style="margin: 0; font-size: 14px; color: #047857;">Email: <strong>${email}</strong></p>
+                      <div style="margin: 24px 0; padding: 16px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px;">
+                        <h3 style="margin: 0 0 8px 0; font-size: 14px; color: #9f1239;">Updated Information</h3>
+                        <p style="margin: 0; font-size: 14px; color: #be123c;">Email: <strong>${email}</strong></p>
                       </div>
 
                       <p style="margin: 24px 0 0 0; font-size: 14px; color: #6b7280;">
@@ -136,13 +136,13 @@ router.post('/send-profile-update-email', async (req, res) => {
                   <!-- Support + Compliance -->
                   <tr>
                     <td style="padding: 10px 32px 28px 32px;">
-                      <div style="margin-top: 16px; padding: 16px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px; font-size: 13px; color: #7c2d12;">
-                        <strong style="display: block; margin-bottom: 6px; color: #7c2d12;">Account Security</strong>
+                      <div style="margin-top: 16px; padding: 16px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; font-size: 13px; color: #9f1239;">
+                        <strong style="display: block; margin-bottom: 6px; color: #9f1239;">Account Security</strong>
                         Please review your account settings regularly. Your account is important to us, and we take security seriously.
                       </div>
 
                       <div style="margin-top: 18px; text-align: center; font-size: 14px; color: #374151;">
-                        Questions? Email us at <a href="mailto:[redacted-email]" style="color: #e11d48; text-decoration: none; font-weight: 600;">[redacted-email]</a>
+                        Questions? Email us at <a href="mailto:lavishladiessalonuchila@gmail.com" style="color: #e11d48; text-decoration: none; font-weight: 600;">lavishladiessalonuchila@gmail.com</a>
                       </div>
                     </td>
                   </tr>

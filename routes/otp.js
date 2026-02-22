@@ -283,13 +283,13 @@ router.post('/send-email-otp', async (req, res) => {
                   <!-- Support + Compliance -->
                   <tr>
                     <td style="padding: 10px 32px 28px 32px;">
-                      <div style="margin-top: 16px; padding: 16px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px; font-size: 13px; color: #7c2d12;">
-                        <strong style="display: block; margin-bottom: 6px; color: #7c2d12;">Why you received this email</strong>
+                      <div style="margin-top: 16px; padding: 16px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; font-size: 13px; color: #9f1239;">
+                        <strong style="display: block; margin-bottom: 6px; color: #9f1239;">Why you received this email</strong>
                         A verification code was requested for this email address on Lavish Ladies Beauty Salon. If this wasn't you, ignore this message or contact us so we can help secure your account.
                       </div>
 
                       <div style="margin-top: 18px; text-align: center; font-size: 14px; color: #374151;">
-                        Need help? Email us at <a href="mailto:[redacted-email]" style="color: #e11d48; text-decoration: none; font-weight: 600;">[redacted-email]</a>
+                        Need help? Email us at <a href="mailto:lavishladiessalonuchila@gmail.com" style="color: #e11d48; text-decoration: none; font-weight: 600;">lavishladiessalonuchila@gmail.com</a>
                       </div>
                     </td>
                   </tr>

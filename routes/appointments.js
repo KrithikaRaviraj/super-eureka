@@ -232,7 +232,7 @@ router.put('/:id', async (req, res) => {
                     <!-- Success Icon -->
                     <tr>
                       <td style="padding: 40px 40px 20px; text-align: center;">
-                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #e11d48, #be123c); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
+                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #e11d48, #be123c); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(225, 29, 72, 0.3);">
                           <svg width="50" height="50" fill="white" viewBox="0 0 24 24">
                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                           </svg>
@@ -262,14 +262,14 @@ router.put('/:id', async (req, res) => {
                         </div>
                         
                         <!-- Important Notice -->
-                        <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f43f5e; padding: 20px; border-radius: 8px; margin: 30px 0;">
+                        <div style="background: linear-gradient(135deg, #fff1f2, #ffe4e6); border-left: 4px solid #f43f5e; padding: 20px; border-radius: 8px; margin: 30px 0;">
                           <div style="display: flex; align-items: center; margin-bottom: 10px;">
                             <svg width="20" height="20" fill="#e11d48" viewBox="0 0 24 24" style="margin-right: 10px;">
                               <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
                             </svg>
-                            <strong style="color: #92400e; font-size: 16px;">Important Reminders</strong>
+                            <strong style="color: #9f1239; font-size: 16px;">Important Reminders</strong>
                           </div>
-                          <ul style="margin: 0; padding-left: 20px; color: #92400e; font-size: 14px;">
+                          <ul style="margin: 0; padding-left: 20px; color: #9f1239; font-size: 14px;">
                             <li>Please arrive 10 minutes before your scheduled time</li>
                             <li>Bring a valid ID for verification</li>
                             <li>For rescheduling, contact us at least 24 hours in advance</li>
@@ -282,7 +282,7 @@ router.put('/:id', async (req, res) => {
                           <div style="color: #6b7280; font-size: 15px; line-height: 1.6;">
                             <p style="margin: 0 0 15px 0;"><strong>Address:</strong><br>Krishna Prasad Complex, NH66<br>Uchila, Udupi District, Karnataka - 574117</p>
                             <p style="margin: 0 0 15px 0;"><strong>Phone:</strong> <a href="tel:+918147627651" style="color: #e11d48; text-decoration: none;">+91 81476 27651</a></p>
-                            <p style="margin: 0;"><strong>Email:</strong> <a href="mailto:[redacted-email]" style="color: #e11d48; text-decoration: none;">[redacted-email]</a></p>
+                            <p style="margin: 0;"><strong>Email:</strong> <a href="mailto:lavishladiessalonuchila@gmail.com" style="color: #e11d48; text-decoration: none;">lavishladiessalonuchila@gmail.com</a></p>
                           </div>
                         </div>
                         
@@ -393,7 +393,7 @@ router.put('/:id', async (req, res) => {
                     <!-- Feedback Icon -->
                     <tr>
                       <td style="padding: 40px 40px 20px; text-align: center;">
-                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #f43f5e, #e11d48); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);">
+                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #f43f5e, #e11d48); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(225, 29, 72, 0.3);">
                           <svg width="50" height="50" fill="white" viewBox="0 0 24 24">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                           </svg>
@@ -413,9 +413,9 @@ router.put('/:id', async (req, res) => {
                         <p style="font-size: 16px; color: #6b7280; margin-bottom: 30px;">Your feedback is incredibly valuable to us and helps us continuously improve our services. Could you spare just 2 minutes to share your thoughts?</p>
                         
                         <!-- Service Details Card -->
-                        <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f43f5e; border-radius: 12px; padding: 25px; margin: 30px 0;">
-                          <h3 style="margin: 0 0 15px 0; font-size: 16px; font-weight: 600; color: #92400e;">Your Recent Visit</h3>
-                          <div style="color: #92400e; font-size: 14px;">
+                        <div style="background: linear-gradient(135deg, #fff1f2, #ffe4e6); border: 1px solid #f43f5e; border-radius: 12px; padding: 25px; margin: 30px 0;">
+                          <h3 style="margin: 0 0 15px 0; font-size: 16px; font-weight: 600; color: #9f1239;">Your Recent Visit</h3>
+                          <div style="color: #9f1239; font-size: 14px;">
                             <p style="margin: 5px 0;"><strong>Service:</strong> ${appointment.service}</p>
                             <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                             <p style="margin: 5px 0;"><strong>Time:</strong> ${appointment.time}</p>
@@ -424,14 +424,14 @@ router.put('/:id', async (req, res) => {
                         
                         <!-- CTA Button -->
                         <div style="text-align: center; margin: 40px 0;">
-                          <a href="${feedbackUrl}" style="display: inline-block; background: linear-gradient(135deg, #f43f5e, #e11d48); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3); transition: all 0.3s ease;">
+                          <a href="${feedbackUrl}" style="display: inline-block; background: linear-gradient(135deg, #f43f5e, #e11d48); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; box-shadow: 0 8px 25px rgba(225, 29, 72, 0.3); transition: all 0.3s ease;">
                             Share Your Feedback
                           </a>
                           <p style="margin: 15px 0 0 0; font-size: 12px; color: #9ca3af;">Takes less than 2 minutes</p>
                         </div>
                         
                         <!-- Benefits Section -->
-                        <div style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1px solid #e11d48; border-radius: 12px; padding: 25px; margin: 30px 0;">
+                        <div style="background: linear-gradient(135deg, #fff1f2, #ffe4e6); border: 1px solid #e11d48; border-radius: 12px; padding: 25px; margin: 30px 0;">
                           <div style="text-align: center; margin-bottom: 20px;">
                             <div style="width: 60px; height: 60px; background: #e11d48; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
                               <svg width="30" height="30" fill="white" viewBox="0 0 24 24">
@@ -439,8 +439,8 @@ router.put('/:id', async (req, res) => {
                               </svg>
                             </div>
                           </div>
-                          <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #065f46; text-align: center;">Ready for Your Next Visit?</h3>
-                          <p style="margin: 0 0 20px 0; font-size: 14px; color: #047857; text-align: center;">Book your next appointment and continue your beauty journey with us!</p>
+                          <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #9f1239; text-align: center;">Ready for Your Next Visit?</h3>
+                          <p style="margin: 0 0 20px 0; font-size: 14px; color: #be123c; text-align: center;">Book your next appointment and continue your beauty journey with us!</p>
                           <div style="text-align: center;">
                             <div style="margin-bottom: 10px;">
                               <a href="tel:+918147627651" style="display: inline-flex; align-items: center; padding: 10px 20px; background: #e11d48; color: white; text-decoration: none; border-radius: 25px; font-weight: 500; font-size: 14px; margin: 5px;">
@@ -589,7 +589,7 @@ router.post('/feedback/:token', async (req, res) => {
       const approveUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/approve-testimonial/${approvalToken}?action=approve`;
       const rejectUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/approve-testimonial/${approvalToken}?action=reject`;
       
-      const approvalEmails = process.env.APPROVAL_EMAILS ? process.env.APPROVAL_EMAILS.split(',') : ['[redacted-email]', '[redacted-email]'];
+      const approvalEmails = process.env.APPROVAL_EMAILS ? process.env.APPROVAL_EMAILS.split(',') : ['lavishladiessalonuchila@gmail.com'];
       
       for (const email of approvalEmails) {
         const approvalMailOptions = {
@@ -631,7 +631,7 @@ router.post('/feedback/:token', async (req, res) => {
                       <tr>
                         <td style="padding: 40px;">
                           <div style="text-align: center; margin-bottom: 30px;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #e11d48, #be123c); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #e11d48, #be123c); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(225, 29, 72, 0.3);">
                               <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
                                 <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                               </svg>
@@ -676,7 +676,7 @@ router.post('/feedback/:token', async (req, res) => {
                           <div style="text-align: center; margin: 40px 0;">
                             <p style="font-size: 16px; color: #374151; margin-bottom: 25px; font-weight: 500;">Would you like to display this testimonial on your website?</p>
                             <div style="margin: 25px 0;">
-                              <a href="${approveUrl}" style="display: inline-block; background: linear-gradient(135deg, #e11d48, #be123c); color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; margin: 0 10px 10px 10px; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
+                              <a href="${approveUrl}" style="display: inline-block; background: linear-gradient(135deg, #e11d48, #be123c); color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; margin: 0 10px 10px 10px; box-shadow: 0 8px 25px rgba(225, 29, 72, 0.3);">
                                 Approve Testimonial
                               </a>
                               <a href="${rejectUrl}" style="display: inline-block; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; margin: 0 10px 10px 10px; box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);">
@@ -687,20 +687,20 @@ router.post('/feedback/:token', async (req, res) => {
                           </div>
                           
                           <!-- Info Notice -->
-                          <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f43f5e; border-radius: 12px; padding: 20px; margin: 30px 0;">
+                          <div style="background: linear-gradient(135deg, #fff1f2, #ffe4e6); border: 1px solid #f43f5e; border-radius: 12px; padding: 20px; margin: 30px 0;">
                             <div style="display: flex; align-items: center; margin-bottom: 10px;">
                               <svg width="20" height="20" fill="#e11d48" viewBox="0 0 24 24" style="margin-right: 10px;">
                                 <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                               </svg>
-                              <strong style="color: #92400e; font-size: 14px;">Quality Control</strong>
+                              <strong style="color: #9f1239; font-size: 14px;">Quality Control</strong>
                             </div>
-                            <p style="margin: 0; font-size: 13px; color: #92400e; line-height: 1.5;">Only approved testimonials will appear on your website. This helps maintain quality, relevance, and builds trust with potential customers.</p>
+                            <p style="margin: 0; font-size: 13px; color: #9f1239; line-height: 1.5;">Only approved testimonials will appear on your website. This helps maintain quality, relevance, and builds trust with potential customers.</p>
                           </div>
                           
                           <!-- Contact Info -->
                           <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 30px 0; text-align: center;">
                             <h3 style="margin: 0 0 15px 0; font-size: 16px; font-weight: 600; color: #1f2937;">Need Help?</h3>
-                            <p style="margin: 0; font-size: 14px; color: #6b7280;">Contact us at <a href="mailto:[redacted-email]" style="color: #e11d48; text-decoration: none;">[redacted-email]</a></p>
+                            <p style="margin: 0; font-size: 14px; color: #6b7280;">Contact us at <a href="mailto:lavishladiessalonuchila@gmail.com" style="color: #e11d48; text-decoration: none;">lavishladiessalonuchila@gmail.com</a></p>
                           </div>
                         </td>
                       </tr>
