@@ -307,7 +307,9 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         {/* Contact Options */}
                         <div className="space-y-4">
                           <a 
-                            href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services."
+                            href="https://mail.google.com/mail/?view=cm&fs=1&to=lavishladiessalonuchila@gmail.com&su=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services."
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="flex items-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md border border-rose-100 transition-all duration-300 group transform hover:-translate-y-1"
                           >
                             <div className="w-10 h-10 bg-rose-600 rounded-full flex items-center justify-center mr-3 group-hover:bg-rose-700 transition-colors">
@@ -338,15 +340,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                             </div>
                           </a>
                           
-                          <button 
-                            onClick={() => {
-                              if (navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i)) {
-                                window.location.href = 'tel:+918147627651';
-                              } else {
-                                navigator.clipboard.writeTex('8147627651');
-                                alert('Phone number copied to clipboard: 8147627651');
-                              }
-                            }}
+                          <a
+                            href="tel:+918147627651"
                             className="flex items-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md border border-rose-100 transition-all duration-300 group w-full text-left transform hover:-translate-y-1"
                           >
                             <div className="w-10 h-10 bg-rose-600 rounded-full flex items-center justify-center mr-3 group-hover:bg-rose-700 transition-colors">
@@ -358,7 +353,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                               <p className="font-semibold text-stone-800 text-sm">Call Us</p>
                               <p className="text-stone-600 text-xs">+91 8147627651</p>
                             </div>
-                          </button>
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -379,7 +374,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         </svg>
                       </div>
                       <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">Call Us</h3>
-                      <p className="font-sans text-stone-600 mb-2">+91 8147627651</p>
+                      <a href="tel:+918147627651" className="font-sans text-stone-600 mb-2 block hover:text-rose-700 transition-colors">+91 8147627651</a>
                       <a href="tel:+918147627651" className="text-rose-600 hover:text-rose-700 font-sans text-sm">Call Now</a>
                     </div>
                     
@@ -433,7 +428,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         Your premier destination for beauty and wellness in Uchila. Experience personalized care that makes you look and feel your best.
                       </p>
                       <div className="flex space-x-3">
-                        <a href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=lavishladiessalonuchila@gmail.com&su=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
                           <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                           </svg>
@@ -494,7 +489,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                           <svg className="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                           </svg>
-                          <span className="text-stone-300">+91 8147627651</span>
+                          <a href="tel:+918147627651" className="text-stone-300 hover:text-rose-400 transition-colors">+91 8147627651</a>
                         </div>
                         <div className="flex items-center space-x-3">
                           <svg className="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
