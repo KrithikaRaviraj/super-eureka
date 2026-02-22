@@ -244,15 +244,15 @@ router.post('/send-email-otp', async (req, res) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Verification Code</title>
         </head>
-        <body style="margin: 0; padding: 0; background: #f8fafc; font-family: 'Segoe UI', Arial, sans-serif; color: #111827;">
-          <table width="100%" cellpadding="0" cellspacing="0" style="background: #f8fafc;">
+        <body style="margin: 0; padding: 0; background: #fafaf9; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #111827;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9;">
             <tr>
               <td style="padding: 28px 16px;">
                 <table width="100%" style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); overflow: hidden; border: 1px solid #e5e7eb;">
                   <!-- Header -->
                   <tr>
-                    <td style="padding: 32px 32px 28px 32px; background: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%); color: #ffffff; text-align: left;">
-                      <div style="font-size: 13px; letter-spacing: 1.2px; opacity: 0.9; text-transform: uppercase;">Lavish Ladies Salon & Spa</div>
+                    <td style="padding: 32px 32px 28px 32px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: #ffffff; text-align: left;">
+                      <div style="font-size: 13px; letter-spacing: 1.2px; opacity: 0.9; text-transform: uppercase;">Lavish Ladies Beauty Salon</div>
                       <div style="font-size: 26px; font-weight: 700; margin-top: 6px;">Secure verification code</div>
                       <div style="font-size: 14px; opacity: 0.9; margin-top: 6px;">Use this one-time code to continue. Do not share it with anyone.</div>
                     </td>
@@ -269,12 +269,12 @@ router.post('/send-email-otp', async (req, res) => {
                         <p style="margin: 0; font-size: 13px; color: #6b7280;">If you did not request this, please ignore this email.</p>
                       </div>
 
-                      <div style="margin-top: 28px; padding: 18px 16px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px;">
+                      <div style="margin-top: 28px; padding: 18px 16px; background: #fafaf9; border: 1px solid #e5e7eb; border-radius: 12px;">
                         <h3 style="margin: 0 0 10px 0; font-size: 15px; color: #111827;">How to use your code</h3>
                         <ul style="margin: 0; padding-left: 18px; color: #4b5563; font-size: 14px; line-height: 1.6;">
                           <li>Enter this code on the verification screen within 10 minutes.</li>
                           <li>For your security, never share this code with anyone.</li>
-                          <li>If you did not request this code, your account is still safe—no action is needed.</li>
+                          <li>If you did not request this code, your account is still safe - no action is needed.</li>
                         </ul>
                       </div>
                     </td>
@@ -285,24 +285,24 @@ router.post('/send-email-otp', async (req, res) => {
                     <td style="padding: 10px 32px 28px 32px;">
                       <div style="margin-top: 16px; padding: 16px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px; font-size: 13px; color: #7c2d12;">
                         <strong style="display: block; margin-bottom: 6px; color: #7c2d12;">Why you received this email</strong>
-                        A verification code was requested for this email address on Lavish Ladies Salon. If this wasn't you, ignore this message or contact us so we can help secure your account.
+                        A verification code was requested for this email address on Lavish Ladies Beauty Salon. If this wasn't you, ignore this message or contact us so we can help secure your account.
                       </div>
 
                       <div style="margin-top: 18px; text-align: center; font-size: 14px; color: #374151;">
-                        Need help? Email us at <a href="mailto:[redacted-email]" style="color: #ec4899; text-decoration: none; font-weight: 600;">[redacted-email]</a>
+                        Need help? Email us at <a href="mailto:[redacted-email]" style="color: #e11d48; text-decoration: none; font-weight: 600;">[redacted-email]</a>
                       </div>
                     </td>
                   </tr>
 
                   <!-- Footer -->
                   <tr>
-                    <td style="padding: 22px 32px 26px 32px; background: #f8fafc; text-align: center; border-top: 1px solid #e5e7eb;">
+                    <td style="padding: 22px 32px 26px 32px; background: #fafaf9; text-align: center; border-top: 1px solid #e5e7eb;">
                       <div style="margin-bottom: 10px;">
                         <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Privacy Policy</a>
                         <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Terms of Service</a>
-                        <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Contact Support</a>
+                        <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Contact</a>
                       </div>
-                      <p style="margin: 6px 0 0 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
+                      <p style="margin: 6px 0 0 0; font-size: 12px; color: #9ca3af;">&copy; 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                     </td>
                   </tr>
                 </table>

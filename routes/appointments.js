@@ -209,14 +209,14 @@ router.put('/:id', async (req, res) => {
               @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
             </style>
           </head>
-          <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; line-height: 1.6;">
-            <table width="100%" cellpadding="0" cellspacing="0" style="background: #f8fafc; min-height: 100vh;">
+          <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafaf9; line-height: 1.6;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9; min-height: 100vh;">
               <tr>
                 <td style="padding: 40px 20px;">
                   <table width="600" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
                     <!-- Header -->
                     <tr>
-                      <td style="padding: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); text-align: center; position: relative;">
+                      <td style="padding: 0; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); text-align: center; position: relative;">
                         <div style="padding: 50px 40px; color: white;">
                           <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
                             <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
@@ -224,7 +224,7 @@ router.put('/:id', async (req, res) => {
                             </svg>
                           </div>
                           <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">LAVISH LADIES</h1>
-                          <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;">Beauty Salon & Spa</p>
+                          <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;">Beauty Salon</p>
                         </div>
                       </td>
                     </tr>
@@ -232,7 +232,7 @@ router.put('/:id', async (req, res) => {
                     <!-- Success Icon -->
                     <tr>
                       <td style="padding: 40px 40px 20px; text-align: center;">
-                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
+                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #e11d48, #be123c); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
                           <svg width="50" height="50" fill="white" viewBox="0 0 24 24">
                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                           </svg>
@@ -250,21 +250,21 @@ router.put('/:id', async (req, res) => {
                         <p style="font-size: 16px; color: #6b7280; margin-bottom: 30px;">We're excited to confirm your upcoming appointment. Here are your booking details:</p>
                         
                         <!-- Appointment Details Card -->
-                        <div style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; margin: 30px 0;">
+                        <div style="background: linear-gradient(135deg, #fafaf9, #f1f5f9); border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; margin: 30px 0;">
                           <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Appointment Details</h3>
                           <table style="width: 100%; font-size: 16px;">
                             <tr><td style="padding: 12px 0; font-weight: 600; color: #374151; width: 120px;">Service:</td><td style="padding: 12px 0; color: #6b7280;">${appointment.service}</td></tr>
                             <tr><td style="padding: 12px 0; font-weight: 600; color: #374151;">Date:</td><td style="padding: 12px 0; color: #6b7280;">${new Date(appointment.date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</td></tr>
                             <tr><td style="padding: 12px 0; font-weight: 600; color: #374151;">Time:</td><td style="padding: 12px 0; color: #6b7280;">${appointment.time}</td></tr>
-                            ${appointment.price ? `<tr><td style="padding: 12px 0; font-weight: 600; color: #374151;">Price:</td><td style="padding: 12px 0; color: #059669; font-weight: 600;">₹${appointment.price}</td></tr>` : ''}
+                            ${appointment.price ? `<tr><td style="padding: 12px 0; font-weight: 600; color: #374151;">Price:</td><td style="padding: 12px 0; color: #be123c; font-weight: 600;">Rs. ${appointment.price}</td></tr>` : ''}
                             ${appointment.notes ? `<tr><td style="padding: 12px 0; font-weight: 600; color: #374151; vertical-align: top;">Notes:</td><td style="padding: 12px 0; color: #6b7280;">${appointment.notes}</td></tr>` : ''}
                           </table>
                         </div>
                         
                         <!-- Important Notice -->
-                        <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 30px 0;">
+                        <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f43f5e; padding: 20px; border-radius: 8px; margin: 30px 0;">
                           <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                            <svg width="20" height="20" fill="#d97706" viewBox="0 0 24 24" style="margin-right: 10px;">
+                            <svg width="20" height="20" fill="#e11d48" viewBox="0 0 24 24" style="margin-right: 10px;">
                               <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
                             </svg>
                             <strong style="color: #92400e; font-size: 16px;">Important Reminders</strong>
@@ -281,16 +281,16 @@ router.put('/:id', async (req, res) => {
                           <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937;">Visit Us</h3>
                           <div style="color: #6b7280; font-size: 15px; line-height: 1.6;">
                             <p style="margin: 0 0 15px 0;"><strong>Address:</strong><br>Krishna Prasad Complex, NH66<br>Uchila, Udupi District, Karnataka - 574117</p>
-                            <p style="margin: 0 0 15px 0;"><strong>Phone:</strong> <a href="tel:+918147627651" style="color: #667eea; text-decoration: none;">+91 81476 27651</a></p>
-                            <p style="margin: 0;"><strong>Email:</strong> <a href="mailto:[redacted-email]" style="color: #667eea; text-decoration: none;">[redacted-email]</a></p>
+                            <p style="margin: 0 0 15px 0;"><strong>Phone:</strong> <a href="tel:+918147627651" style="color: #e11d48; text-decoration: none;">+91 81476 27651</a></p>
+                            <p style="margin: 0;"><strong>Email:</strong> <a href="mailto:[redacted-email]" style="color: #e11d48; text-decoration: none;">[redacted-email]</a></p>
                           </div>
                         </div>
                         
                         <!-- Social Media -->
-                        <div style="text-align: center; margin: 30px 0; padding: 25px; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-radius: 12px;">
+                        <div style="text-align: center; margin: 30px 0; padding: 25px; background: linear-gradient(135deg, #fafaf9, #f1f5f9); border-radius: 12px;">
                           <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937;">Stay Connected</h3>
                           <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                            <a href="https://www.instagram.com/lavish_ladies_salon_n_spa/" style="display: inline-flex; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, #e1306c, #fd1d1d); color: white; text-decoration: none; border-radius: 25px; font-weight: 500; font-size: 14px;">
+                            <a href="https://www.instagram.com/lavish_ladies_beauty_salon/" style="display: inline-flex; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, #e1306c, #fd1d1d); color: white; text-decoration: none; border-radius: 25px; font-weight: 500; font-size: 14px;">
                               <svg width="18" height="18" fill="white" viewBox="0 0 24 24" style="margin-right: 8px;">
                                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                               </svg>
@@ -307,16 +307,16 @@ router.put('/:id', async (req, res) => {
                         
                         <div style="text-align: center; margin: 40px 0 20px;">
                           <p style="font-size: 18px; color: #374151; font-weight: 500;">Thank you for choosing Lavish Ladies!</p>
-                          <p style="font-size: 14px; color: #9ca3af; margin-top: 10px;">We can't wait to pamper you ✨</p>
+                          <p style="font-size: 14px; color: #9ca3af; margin-top: 10px;">We can't wait to pamper you.</p>
                         </div>
 
                         <!-- Compliance & Trust -->
-                        <div style="margin: 30px 0; padding: 18px 20px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 12px; color: #6b7280; line-height: 1.7;">
+                        <div style="margin: 30px 0; padding: 18px 20px; background: #fafaf9; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 12px; color: #6b7280; line-height: 1.7;">
                           <strong style="display: block; color: #374151; margin-bottom: 8px;">Why you received this email</strong>
-                          You are receiving this confirmation because an appointment was scheduled with Lavish Ladies Beauty Salon & Spa using this email address. If this wasn't you, please reply to this email or call us at <a href="tel:+918147627651" style="color: #667eea; text-decoration: none;">+91 81476 27651</a> so we can help.
+                          You are receiving this confirmation because an appointment was scheduled with Lavish Ladies Beauty Salon using this email address. If this wasn't you, please reply to this email or call us at <a href="tel:+918147627651" style="color: #e11d48; text-decoration: none;">+91 81476 27651</a> so we can help.
                           <div style="margin-top: 12px;">
-                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #667eea; text-decoration: none; margin-right: 12px;">Privacy Policy</a>
-                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #667eea; text-decoration: none;">Terms of Service</a>
+                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #e11d48; text-decoration: none; margin-right: 12px;">Privacy Policy</a>
+                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #e11d48; text-decoration: none;">Terms of Service</a>
                           </div>
                         </div>
                       </td>
@@ -324,13 +324,13 @@ router.put('/:id', async (req, res) => {
                     
                     <!-- Footer -->
                     <tr>
-                      <td style="background: #f8fafc; padding: 30px 40px; text-align: center; border-top: 1px solid #e2e8f0;">
+                      <td style="background: #fafaf9; padding: 30px 40px; text-align: center; border-top: 1px solid #e2e8f0;">
                         <div style="margin-bottom: 20px;">
                           <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Privacy Policy</a>
                           <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Terms of Service</a>
-                          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
+                          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact</a>
                         </div>
-                        <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
+                        <p style="margin: 0; font-size: 12px; color: #9ca3af;">&copy; 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                         <p style="margin: 5px 0 0 0; font-size: 11px; color: #d1d5db;">Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</p>
                       </td>
                     </tr>
@@ -370,14 +370,14 @@ router.put('/:id', async (req, res) => {
               @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
             </style>
           </head>
-          <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; line-height: 1.6;">
-            <table width="100%" cellpadding="0" cellspacing="0" style="background: #f8fafc; min-height: 100vh;">
+          <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafaf9; line-height: 1.6;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9; min-height: 100vh;">
               <tr>
                 <td style="padding: 40px 20px;">
                   <table width="600" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
                     <!-- Header -->
                     <tr>
-                      <td style="padding: 0; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); text-align: center; position: relative;">
+                      <td style="padding: 0; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); text-align: center; position: relative;">
                         <div style="padding: 50px 40px; color: white;">
                           <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
                             <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
@@ -385,7 +385,7 @@ router.put('/:id', async (req, res) => {
                             </svg>
                           </div>
                           <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">LAVISH LADIES</h1>
-                          <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;">Beauty Salon & Spa</p>
+                          <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;">Beauty Salon</p>
                         </div>
                       </td>
                     </tr>
@@ -393,7 +393,7 @@ router.put('/:id', async (req, res) => {
                     <!-- Feedback Icon -->
                     <tr>
                       <td style="padding: 40px 40px 20px; text-align: center;">
-                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);">
+                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #f43f5e, #e11d48); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);">
                           <svg width="50" height="50" fill="white" viewBox="0 0 24 24">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                           </svg>
@@ -408,12 +408,12 @@ router.put('/:id', async (req, res) => {
                       <td style="padding: 0 40px 40px;">
                         <p style="font-size: 16px; color: #374151; margin-bottom: 30px;">Dear <strong>${appointment.userName}</strong>,</p>
                         
-                        <p style="font-size: 16px; color: #6b7280; margin-bottom: 20px;">Thank you for visiting us for your <strong style="color: #f59e0b;">${appointment.service}</strong> appointment. We hope you had a wonderful and relaxing experience!</p>
+                        <p style="font-size: 16px; color: #6b7280; margin-bottom: 20px;">Thank you for visiting us for your <strong style="color: #f43f5e;">${appointment.service}</strong> appointment. We hope you had a wonderful and relaxing experience!</p>
                         
                         <p style="font-size: 16px; color: #6b7280; margin-bottom: 30px;">Your feedback is incredibly valuable to us and helps us continuously improve our services. Could you spare just 2 minutes to share your thoughts?</p>
                         
                         <!-- Service Details Card -->
-                        <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f59e0b; border-radius: 12px; padding: 25px; margin: 30px 0;">
+                        <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f43f5e; border-radius: 12px; padding: 25px; margin: 30px 0;">
                           <h3 style="margin: 0 0 15px 0; font-size: 16px; font-weight: 600; color: #92400e;">Your Recent Visit</h3>
                           <div style="color: #92400e; font-size: 14px;">
                             <p style="margin: 5px 0;"><strong>Service:</strong> ${appointment.service}</p>
@@ -424,16 +424,16 @@ router.put('/:id', async (req, res) => {
                         
                         <!-- CTA Button -->
                         <div style="text-align: center; margin: 40px 0;">
-                          <a href="${feedbackUrl}" style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3); transition: all 0.3s ease;">
-                            ⭐ Share Your Feedback
+                          <a href="${feedbackUrl}" style="display: inline-block; background: linear-gradient(135deg, #f43f5e, #e11d48); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3); transition: all 0.3s ease;">
+                            Share Your Feedback
                           </a>
                           <p style="margin: 15px 0 0 0; font-size: 12px; color: #9ca3af;">Takes less than 2 minutes</p>
                         </div>
                         
                         <!-- Benefits Section -->
-                        <div style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1px solid #10b981; border-radius: 12px; padding: 25px; margin: 30px 0;">
+                        <div style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1px solid #e11d48; border-radius: 12px; padding: 25px; margin: 30px 0;">
                           <div style="text-align: center; margin-bottom: 20px;">
-                            <div style="width: 60px; height: 60px; background: #10b981; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 60px; height: 60px; background: #e11d48; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
                               <svg width="30" height="30" fill="white" viewBox="0 0 24 24">
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                               </svg>
@@ -443,7 +443,7 @@ router.put('/:id', async (req, res) => {
                           <p style="margin: 0 0 20px 0; font-size: 14px; color: #047857; text-align: center;">Book your next appointment and continue your beauty journey with us!</p>
                           <div style="text-align: center;">
                             <div style="margin-bottom: 10px;">
-                              <a href="tel:+918147627651" style="display: inline-flex; align-items: center; padding: 10px 20px; background: #10b981; color: white; text-decoration: none; border-radius: 25px; font-weight: 500; font-size: 14px; margin: 5px;">
+                              <a href="tel:+918147627651" style="display: inline-flex; align-items: center; padding: 10px 20px; background: #e11d48; color: white; text-decoration: none; border-radius: 25px; font-weight: 500; font-size: 14px; margin: 5px;">
                                 <svg width="16" height="16" fill="white" viewBox="0 0 24 24" style="margin-right: 8px;">
                                   <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                 </svg>
@@ -464,22 +464,22 @@ router.put('/:id', async (req, res) => {
                           <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #1f2937; text-align: center;">Visit Us Again</h3>
                           <div style="color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
                             <p style="margin: 0 0 10px 0;">Krishna Prasad Complex, NH66<br>Uchila, Udupi District, Karnataka - 574117</p>
-                            <p style="margin: 0;">Phone: <a href="tel:+918147627651" style="color: #f59e0b; text-decoration: none;">+91 81476 27651</a></p>
+                            <p style="margin: 0;">Phone: <a href="tel:+918147627651" style="color: #f43f5e; text-decoration: none;">+91 81476 27651</a></p>
                           </div>
                         </div>
                         
                         <div style="text-align: center; margin: 40px 0 20px;">
                           <p style="font-size: 16px; color: #374151; font-weight: 500;">Thank you for choosing Lavish Ladies!</p>
-                          <p style="font-size: 14px; color: #9ca3af; margin-top: 10px;">Your satisfaction is our priority ❤️</p>
+                          <p style="font-size: 14px; color: #9ca3af; margin-top: 10px;">Your satisfaction is our priority.</p>
                         </div>
 
                         <!-- Compliance & Trust -->
-                        <div style="margin: 30px 0; padding: 18px 20px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 12px; color: #6b7280; line-height: 1.7;">
+                        <div style="margin: 30px 0; padding: 18px 20px; background: #fafaf9; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 12px; color: #6b7280; line-height: 1.7;">
                           <strong style="display: block; color: #374151; margin-bottom: 8px;">Why you received this email</strong>
-                          You are receiving this message because you recently completed a service with Lavish Ladies Beauty Salon using this email address. If this wasn't you, please reply to this email or call us at <a href="tel:+918147627651" style="color: #f59e0b; text-decoration: none;">+91 81476 27651</a> so we can assist.
+                          You are receiving this message because you recently completed a service with Lavish Ladies Beauty Salon using this email address. If this wasn't you, please reply to this email or call us at <a href="tel:+918147627651" style="color: #f43f5e; text-decoration: none;">+91 81476 27651</a> so we can assist.
                           <div style="margin-top: 12px;">
-                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #f59e0b; text-decoration: none; margin-right: 12px;">Privacy Policy</a>
-                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #f59e0b; text-decoration: none;">Terms of Service</a>
+                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #f43f5e; text-decoration: none; margin-right: 12px;">Privacy Policy</a>
+                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #f43f5e; text-decoration: none;">Terms of Service</a>
                           </div>
                         </div>
                       </td>
@@ -487,13 +487,13 @@ router.put('/:id', async (req, res) => {
                     
                     <!-- Footer -->
                     <tr>
-                      <td style="background: #f8fafc; padding: 30px 40px; text-align: center; border-top: 1px solid #e2e8f0;">
+                      <td style="background: #fafaf9; padding: 30px 40px; text-align: center; border-top: 1px solid #e2e8f0;">
                         <div style="margin-bottom: 20px;">
                           <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Privacy Policy</a>
                           <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Terms of Service</a>
-                          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
+                          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact</a>
                         </div>
-                        <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
+                        <p style="margin: 0; font-size: 12px; color: #9ca3af;">&copy; 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                         <p style="margin: 5px 0 0 0; font-size: 11px; color: #d1d5db;">Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</p>
                       </td>
                     </tr>
@@ -607,14 +607,14 @@ router.post('/feedback/:token', async (req, res) => {
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
               </style>
             </head>
-            <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; line-height: 1.6;">
-              <table width="100%" cellpadding="0" cellspacing="0" style="background: #f8fafc; min-height: 100vh;">
+            <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafaf9; line-height: 1.6;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9; min-height: 100vh;">
                 <tr>
                   <td style="padding: 40px 20px;">
                     <table width="600" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
                       <!-- Header -->
                       <tr>
-                        <td style="padding: 0; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); text-align: center; position: relative;">
+                        <td style="padding: 0; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); text-align: center; position: relative;">
                           <div style="padding: 50px 40px; color: white;">
                             <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
                               <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
@@ -622,7 +622,7 @@ router.post('/feedback/:token', async (req, res) => {
                               </svg>
                             </div>
                             <h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">TESTIMONIAL REVIEW</h1>
-                            <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;">Lavish Ladies Beauty Salon & Spa</p>
+                            <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;">Lavish Ladies Beauty Salon</p>
                           </div>
                         </td>
                       </tr>
@@ -631,7 +631,7 @@ router.post('/feedback/:token', async (req, res) => {
                       <tr>
                         <td style="padding: 40px;">
                           <div style="text-align: center; margin-bottom: 30px;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #e11d48, #be123c); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
                               <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
                                 <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                               </svg>
@@ -643,9 +643,9 @@ router.post('/feedback/:token', async (req, res) => {
                           <p style="font-size: 16px; color: #374151; margin-bottom: 30px;">A new customer feedback has been submitted with excellent ratings and is ready for your review:</p>
                           
                           <!-- Customer Details Card -->
-                          <div style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; margin: 30px 0;">
+                          <div style="background: linear-gradient(135deg, #fafaf9, #f1f5f9); border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; margin: 30px 0;">
                             <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                              <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                              <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #e11d48, #be123c); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
                                 <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
                                   <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
@@ -659,14 +659,14 @@ router.post('/feedback/:token', async (req, res) => {
                             <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0;">
                               <table style="width: 100%; font-size: 14px;">
                                 <tr><td style="padding: 8px 0; font-weight: 600; color: #374151; width: 100px;">Service:</td><td style="padding: 8px 0; color: #6b7280;">${feedback.service}</td></tr>
-                                <tr><td style="padding: 8px 0; font-weight: 600; color: #374151;">Rating:</td><td style="padding: 8px 0;"><span style="color: #f59e0b; font-weight: 600; font-size: 16px;">${feedback.overallRating}/5 ⭐</span></td></tr>
+                                <tr><td style="padding: 8px 0; font-weight: 600; color: #374151;">Rating:</td><td style="padding: 8px 0;"><span style="color: #f43f5e; font-weight: 600; font-size: 16px;">${feedback.overallRating}/5 stars</span></td></tr>
                                 <tr><td style="padding: 8px 0; font-weight: 600; color: #374151;">Date:</td><td style="padding: 8px 0; color: #6b7280;">${new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</td></tr>
                               </table>
                             </div>
                             
                             <div style="margin-top: 20px;">
                               <h4 style="margin: 0 0 10px 0; font-size: 16px; font-weight: 600; color: #1f2937;">Customer Comments:</h4>
-                              <div style="background: white; border-left: 4px solid #10b981; padding: 20px; border-radius: 8px; font-style: italic; color: #374151; line-height: 1.6;">
+                              <div style="background: white; border-left: 4px solid #e11d48; padding: 20px; border-radius: 8px; font-style: italic; color: #374151; line-height: 1.6;">
                                 "${comments}"
                               </div>
                             </div>
@@ -676,20 +676,20 @@ router.post('/feedback/:token', async (req, res) => {
                           <div style="text-align: center; margin: 40px 0;">
                             <p style="font-size: 16px; color: #374151; margin-bottom: 25px; font-weight: 500;">Would you like to display this testimonial on your website?</p>
                             <div style="margin: 25px 0;">
-                              <a href="${approveUrl}" style="display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; margin: 0 10px 10px 10px; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
-                                ✓ Approve Testimonial
+                              <a href="${approveUrl}" style="display: inline-block; background: linear-gradient(135deg, #e11d48, #be123c); color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; margin: 0 10px 10px 10px; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
+                                Approve Testimonial
                               </a>
                               <a href="${rejectUrl}" style="display: inline-block; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; margin: 0 10px 10px 10px; box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);">
-                                ✗ Reject Testimonial
+                                Reject Testimonial
                               </a>
                             </div>
                             <p style="margin: 20px 0 0 0; font-size: 12px; color: #9ca3af;">Click the buttons above to make your decision</p>
                           </div>
                           
                           <!-- Info Notice -->
-                          <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f59e0b; border-radius: 12px; padding: 20px; margin: 30px 0;">
+                          <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f43f5e; border-radius: 12px; padding: 20px; margin: 30px 0;">
                             <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                              <svg width="20" height="20" fill="#d97706" viewBox="0 0 24 24" style="margin-right: 10px;">
+                              <svg width="20" height="20" fill="#e11d48" viewBox="0 0 24 24" style="margin-right: 10px;">
                                 <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                               </svg>
                               <strong style="color: #92400e; font-size: 14px;">Quality Control</strong>
@@ -700,20 +700,20 @@ router.post('/feedback/:token', async (req, res) => {
                           <!-- Contact Info -->
                           <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 30px 0; text-align: center;">
                             <h3 style="margin: 0 0 15px 0; font-size: 16px; font-weight: 600; color: #1f2937;">Need Help?</h3>
-                            <p style="margin: 0; font-size: 14px; color: #6b7280;">Contact us at <a href="mailto:[redacted-email]" style="color: #8b5cf6; text-decoration: none;">[redacted-email]</a></p>
+                            <p style="margin: 0; font-size: 14px; color: #6b7280;">Contact us at <a href="mailto:[redacted-email]" style="color: #e11d48; text-decoration: none;">[redacted-email]</a></p>
                           </div>
                         </td>
                       </tr>
                       
                       <!-- Footer -->
                       <tr>
-                        <td style="background: #f8fafc; padding: 30px 40px; text-align: center; border-top: 1px solid #e2e8f0;">
+                        <td style="background: #fafaf9; padding: 30px 40px; text-align: center; border-top: 1px solid #e2e8f0;">
                           <div style="margin-bottom: 20px;">
                             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Privacy Policy</a>
                             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Terms of Service</a>
-                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact Support</a>
+                            <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/contact" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 15px;">Contact</a>
                           </div>
-                          <p style="margin: 0; font-size: 12px; color: #9ca3af;">© 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
+                          <p style="margin: 0; font-size: 12px; color: #9ca3af;">&copy; 2026 Lavish Ladies Beauty Salon. All rights reserved.</p>
                           <p style="margin: 5px 0 0 0; font-size: 11px; color: #d1d5db;">Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117</p>
                         </td>
                       </tr>
