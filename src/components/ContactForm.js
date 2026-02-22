@@ -100,12 +100,14 @@ const ContactForm = () => {
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-rose-100">
                   <svg className="h-6 w-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 00.948.684l1.498 7.985a1 1 0 00.502.756l4.038 2.19a1 1 0 00.956-1.748L15.5 13.5m-5 5l-5-5" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                 </div>
                 <div>
                   <h3 className="mb-1 font-serif text-lg font-semibold text-stone-900">Phone</h3>
-                  <p className="font-sans text-stone-600">+91-XXXX-XXXX-XX</p>
+                  <a href="tel:+918147627651" className="font-sans text-stone-600 hover:text-rose-600 transition-colors">
+                    +91 8147627651
+                  </a>
                 </div>
               </div>
             </div>
@@ -119,7 +121,14 @@ const ContactForm = () => {
                 </div>
                 <div>
                   <h3 className="mb-1 font-serif text-lg font-semibold text-stone-900">Email</h3>
-                  <p className="break-all font-sans text-stone-600">info@lavishladies.com</p>
+                  <a
+                    href="https://mail.google.com/mail/?view=cm&fs=1&to=lavishladiessalonuchila@gmail.com&su=Inquiry%20from%20Website"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all font-sans text-stone-600 hover:text-rose-600 transition-colors"
+                  >
+                    lavishladiessalonuchila@gmail.com
+                  </a>
                 </div>
               </div>
             </div>
