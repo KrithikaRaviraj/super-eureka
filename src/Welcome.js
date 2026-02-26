@@ -210,13 +210,6 @@ export default function Welcome() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative overflow-hidden">
-      {/* Floating Elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-2 h-2 bg-rose-300 rounded-full animate-ping" style={{ animationDelay: '0s' }}></div>
-        <div className="absolute top-40 right-20 w-1 h-1 bg-pink-400 rounded-full animate-ping" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-40 left-20 w-1.5 h-1.5 bg-rose-400 rounded-full animate-ping" style={{ animationDelay: '4s' }}></div>
-        <div className="absolute bottom-20 right-10 w-2 h-2 bg-pink-300 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
-      </div>
       <div className="absolute inset-0 pointer-events-none opacity-40">
         <div className="absolute top-0 left-0 w-full h-full" style={{
           backgroundImage: `radial-gradient(circle at 25% 25%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), 
