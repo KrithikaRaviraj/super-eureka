@@ -75,7 +75,8 @@ const SecurityAudit = () => {
       contact_form_submitted: 'bg-cyan-50 text-cyan-700 border-cyan-200',
       appointment_created: 'bg-green-50 text-green-700 border-green-200',
       appointment_modified: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-      appointment_cancelled: 'bg-gray-50 text-gray-700 border-gray-200'
+      appointment_cancelled: 'bg-gray-50 text-gray-700 border-gray-200',
+      cookie_consent_updated: 'bg-indigo-50 text-indigo-700 border-indigo-200'
     };
     return colors[event] || 'bg-gray-50 text-gray-700 border-gray-200';
   };
@@ -205,6 +206,7 @@ const SecurityAudit = () => {
             <option value="staff_logout">Staff Logout</option>
             <option value="rate_limit_exceeded">Rate Limit Exceeded</option>
             <option value="suspicious_activity">Suspicious Activity</option>
+            <option value="cookie_consent_updated">Cookie Consent Updated</option>
           </select>
         </div>
 

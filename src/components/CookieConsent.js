@@ -1,55 +1,22 @@
 import React, { useEffect, useState } from 'react';
-
-const CONSENT_COOKIE_NAME = 'll_cookie_consent';
-const CONSENT_VERSION = 1;
-const COOKIE_MAX_AGE_SECONDS = 180 * 24 * 60 * 60; // 180 days
-
-const defaultConsent = {
-  version: CONSENT_VERSION,
-  essential: true,
-  analytics: false,
-  personalization: false,
-  marketing: false,
-  timestamp: null
-};
-
-const getCookie = (name) => {
-  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-};
-
-const setCookie = (name, value, maxAgeSeconds) => {
-  const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
-  document.cookie = `${name}=${encodeURIComponent(value)}; Max-Age=${maxAgeSeconds}; Path=/; SameSite=Lax${secureFlag}`;
-};
-
-const parseConsent = () => {
-  try {
-    const raw = getCookie(CONSENT_COOKIE_NAME);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed || parsed.version !== CONSENT_VERSION) return null;
-    return {
-      ...defaultConsent,
-      ...parsed,
-      essential: true
-    };
-  } catch {
-    return null;
-  }
-};
+import {
+  DEFAULT_CONSENT,
+  applyConsentPolicy,
+  getSavedConsent,
+  persistConsent
+} from '../utils/cookieConsent';
 
 const CookieConsent = ({ onPrivacyClick }) => {
   const [showBanner, setShowBanner] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
   const [hasSavedConsent, setHasSavedConsent] = useState(false);
-  const [draftConsent, setDraftConsent] = useState(defaultConsent);
+  const [draftConsent, setDraftConsent] = useState(DEFAULT_CONSENT);
 
   useEffect(() => {
-    const storedConsent = parseConsent();
+    const storedConsent = getSavedConsent();
     if (storedConsent) {
       setDraftConsent(storedConsent);
+      applyConsentPolicy(storedConsent);
       setHasSavedConsent(true);
       setShowBanner(false);
       return;
@@ -58,40 +25,51 @@ const CookieConsent = ({ onPrivacyClick }) => {
     setHasSavedConsent(false);
   }, []);
 
-  const persistConsent = (consent) => {
-    const payload = {
-      ...defaultConsent,
-      ...consent,
-      essential: true,
-      version: CONSENT_VERSION,
-      timestamp: new Date().toISOString()
-    };
-    setCookie(CONSENT_COOKIE_NAME, JSON.stringify(payload), COOKIE_MAX_AGE_SECONDS);
-    window.dispatchEvent(new CustomEvent('cookieConsentUpdated', { detail: payload }));
+  const auditConsent = async (payload, action) => {
+    try {
+      await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/consent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          version: payload.version,
+          analytics: payload.analytics,
+          personalization: payload.personalization,
+          marketing: payload.marketing,
+          action
+        })
+      });
+    } catch (error) {
+      console.error('Consent audit log failed:', error);
+    }
+  };
+
+  const applyAndPersistConsent = (consent, action) => {
+    const payload = persistConsent(consent);
     setDraftConsent(payload);
     setHasSavedConsent(true);
     setShowBanner(false);
     setShowPreferences(false);
+    auditConsent(payload, action);
   };
 
   const acceptAll = () => {
-    persistConsent({
+    applyAndPersistConsent({
       analytics: true,
       personalization: true,
       marketing: true
-    });
+    }, 'accept_all');
   };
 
   const rejectNonEssential = () => {
-    persistConsent({
+    applyAndPersistConsent({
       analytics: false,
       personalization: false,
       marketing: false
-    });
+    }, 'reject_non_essential');
   };
 
   const saveCustomPreferences = () => {
-    persistConsent(draftConsent);
+    applyAndPersistConsent(draftConsent, 'save_custom');
   };
 
   return (

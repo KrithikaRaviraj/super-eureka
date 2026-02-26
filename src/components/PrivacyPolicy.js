@@ -141,13 +141,15 @@ const PrivacyPolicy = ({ onClose }) => {
 
           <section>
             <h3 className="text-lg font-semibold mb-3 text-stone-800">10. Cookies and Tracking Technologies</h3>
-            <p className="mb-2">Our website uses:</p>
+            <p className="mb-2">Our website uses the following cookie categories:</p>
             <ul className="list-disc pl-6 space-y-1 mb-4">
-              <li><strong>Essential Cookies:</strong> For website functionality</li>
-              <li><strong>Analytics Cookies:</strong> To understand website usage (anonymized)</li>
-              <li><strong>Preference Cookies:</strong> To remember your settings</li>
+              <li><strong>Essential Cookies:</strong> Required for secure authentication, fraud prevention, and core website functionality (always enabled)</li>
+              <li><strong>Analytics Cookies:</strong> Optional cookies used to measure traffic and performance (enabled only with your consent)</li>
+              <li><strong>Personalization Cookies:</strong> Optional cookies used to remember user preferences such as saved favorites (enabled only with your consent)</li>
+              <li><strong>Marketing Cookies:</strong> Optional cookies used for campaign measurement and relevance (enabled only with your consent)</li>
             </ul>
-            <p className="text-xs text-stone-600 italic">You can control cookies through your browser settings.</p>
+            <p className="mb-2">Cookie consent choices are stored for up to 180 days and can be changed any time through the Cookie Settings control on the website. We use consent versioning and may request fresh consent when material changes are made.</p>
+            <p className="text-xs text-stone-600 italic">You can also control cookies through your browser settings, but disabling essential cookies may impact core functionality.</p>
           </section>
 
           <section>

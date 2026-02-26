@@ -16,7 +16,8 @@ const securityLogSchema = new mongoose.Schema(
         'contact_form_submitted',
         'appointment_created',
         'appointment_modified',
-        'appointment_cancelled'
+        'appointment_cancelled',
+        'cookie_consent_updated'
       ],
       required: true
     },

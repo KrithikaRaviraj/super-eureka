@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import Toast from './components/Toast';
 import { ICONS } from './constants/icons';
+import { hasConsent } from './utils/cookieConsent';
 import './styles.css';
 
 const staticServices = [
@@ -84,6 +85,26 @@ export default function Services() {
   const [authMessage, setAuthMessage] = useState('');
   const modalRef = useRef(null);
   const closeButtonRef = useRef(null);
+  const favoritesStorageKey = `serviceFavorites_${userInfo?.id || 'guest'}`;
+
+  const loadFavoritesFromStorage = useMemo(() => () => {
+    if (!hasConsent('personalization')) {
+      setFavorites([]);
+      return;
+    }
+
+    try {
+      const savedFavorites = localStorage.getItem(favoritesStorageKey);
+      if (savedFavorites) {
+        setFavorites(JSON.parse(savedFavorites));
+      } else {
+        setFavorites([]);
+      }
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+      setFavorites([]);
+    }
+  }, [favoritesStorageKey]);
   
   useEffect(() => {
     const fetchServices = async () => {
@@ -104,17 +125,24 @@ export default function Services() {
     };
     
     fetchServices();
-    
-    try {
-      const savedFavorites = localStorage.getItem(`serviceFavorites_${userInfo?.id || 'guest'}`);
-      if (savedFavorites) {
-        setFavorites(JSON.parse(savedFavorites));
+    loadFavoritesFromStorage();
+  }, [loadFavoritesFromStorage]);
+
+  useEffect(() => {
+    const handleConsentUpdate = () => {
+      if (!hasConsent('personalization')) {
+        try {
+          localStorage.removeItem(favoritesStorageKey);
+        } catch (error) {
+          console.error('Error clearing favorites:', error);
+        }
       }
-    } catch (error) {
-      console.error('Error loading favorites:', error);
-      setFavorites([]);
-    }
-  }, [userInfo?.id]);
+      loadFavoritesFromStorage();
+    };
+
+    window.addEventListener('cookieConsentUpdated', handleConsentUpdate);
+    return () => window.removeEventListener('cookieConsentUpdated', handleConsentUpdate);
+  }, [favoritesStorageKey, loadFavoritesFromStorage]);
   
   // Focus trapping for modal
   useEffect(() => {
@@ -159,12 +187,17 @@ export default function Services() {
   }, [services, searchTerm, sortBy]);
   
   const toggleFavorite = (serviceId) => {
+    if (!hasConsent('personalization')) {
+      setAuthMessage('Enable personalization cookies to save favorites.');
+      return;
+    }
+
     const newFavorites = favorites.includes(serviceId)
       ? favorites.filter(id => id !== serviceId)
       : [...favorites, serviceId];
     setFavorites(newFavorites);
     try {
-      localStorage.setItem(`serviceFavorites_${userInfo?.id || 'guest'}`, JSON.stringify(newFavorites));
+      localStorage.setItem(favoritesStorageKey, JSON.stringify(newFavorites));
     } catch (error) {
       console.error('Error saving favorites:', error);
     }

@@ -1,6 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
 const SecurityLog = require('../models/SecurityLog');
+
+function normalizeIP(req) {
+  const forwarded = req.get('x-forwarded-for') || req.get('x-real-ip');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  return req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '127.0.0.1';
+}
+
+function hashIdentifier(identifier) {
+  const salt = process.env.LOG_SALT || 'default-log-salt';
+  return crypto.createHash('sha256').update(`${identifier}:${salt}`).digest('hex').slice(0, 16);
+}
 
 // Get all security events
 router.get('/events', async (req, res) => {
@@ -146,6 +160,56 @@ router.post('/log', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to log security event'
+    });
+  }
+});
+
+// Log cookie consent updates for audit/compliance tracking
+router.post('/consent', async (req, res) => {
+  try {
+    const { version, analytics, personalization, marketing, action } = req.body || {};
+
+    if (
+      typeof version !== 'number' ||
+      typeof analytics !== 'boolean' ||
+      typeof personalization !== 'boolean' ||
+      typeof marketing !== 'boolean'
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid consent payload'
+      });
+    }
+
+    const ip = normalizeIP(req);
+    const userAgent = req.get('user-agent') || null;
+
+    const log = new SecurityLog({
+      event: 'cookie_consent_updated',
+      severity: 'info',
+      status: 'success',
+      ipHash: ip ? hashIdentifier(ip) : null,
+      userAgent,
+      details: {
+        version,
+        analytics,
+        personalization,
+        marketing,
+        action: typeof action === 'string' ? action : 'unknown'
+      }
+    });
+
+    await log.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Consent event logged'
+    });
+  } catch (error) {
+    console.error('Error logging consent event:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to log consent event'
     });
   }
 });

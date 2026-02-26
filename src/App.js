@@ -104,8 +104,9 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   };
 
   return (
-    <Routes>
-      <Route
+    <>
+      <Routes>
+        <Route
         path="/"
         key={window.location.pathname}
         element={
@@ -597,23 +598,24 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               <TermsOfService onClose={() => setModal(null)} />
             )}
             
-            <CookieConsent onPrivacyClick={() => setModal("privacy")} />
           </div>
         }
       />
-      <Route path="/welcome" element={<Welcome />} />
-      <Route path="/services" element={<Services />} />
-      <Route path="/book-appointment" element={<BookAppointment />} />
-      <Route path="/staff-login" element={<StaffLogin />} />
-      <Route path="/staff-dashboard" element={<StaffDashboard />} />
-      <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
-      <Route path="/feedback/:token" element={<FeedbackForm />} />
-      <Route path="/approve-testimonial/:token" element={<TestimonialApproval />} />
-      <Route path="/contact" element={<ContactForm />} />
-      <Route path="/privacy" element={<PrivacyPolicy onClose={() => navigate('/')} />} />
-      <Route path="/terms" element={<TermsOfService onClose={() => navigate('/')} />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/book-appointment" element={<BookAppointment />} />
+        <Route path="/staff-login" element={<StaffLogin />} />
+        <Route path="/staff-dashboard" element={<StaffDashboard />} />
+        <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
+        <Route path="/feedback/:token" element={<FeedbackForm />} />
+        <Route path="/approve-testimonial/:token" element={<TestimonialApproval />} />
+        <Route path="/contact" element={<ContactForm />} />
+        <Route path="/privacy" element={<PrivacyPolicy onClose={() => navigate('/')} />} />
+        <Route path="/terms" element={<TermsOfService onClose={() => navigate('/')} />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <CookieConsent onPrivacyClick={() => navigate('/privacy')} />
+    </>
   );
 }
 
