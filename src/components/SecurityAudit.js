@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const SecurityAudit = () => {
   const [events, setEvents] = useState([]);
@@ -11,17 +11,7 @@ const SecurityAudit = () => {
 
   const limit = 50;
 
-  useEffect(() => {
-    fetchSecurityData();
-    const interval = setInterval(fetchSecurityData, 30000); // Refresh every 30 seconds
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    fetchEvents();
-  }, [filter, severity, page]);
-
-  const fetchSecurityData = async () => {
+  const fetchSecurityData = useCallback(async () => {
     try {
       const [summaryRes, suspiciousRes] = await Promise.all([
         fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/summary`),
@@ -40,9 +30,9 @@ const SecurityAudit = () => {
     } catch (error) {
       console.error('Error fetching security data:', error);
     }
-  };
+  }, []);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
       let url = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/events?limit=${limit}&skip=${(page - 1) * limit}`;
@@ -60,7 +50,17 @@ const SecurityAudit = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter, severity, page, limit]);
+
+  useEffect(() => {
+    fetchSecurityData();
+    const interval = setInterval(fetchSecurityData, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, [fetchSecurityData]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   const getEventColor = (event) => {
     const colors = {

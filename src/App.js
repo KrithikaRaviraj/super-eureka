@@ -278,7 +278,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         },
                         {
                           question: "What are your operating hours?",
-                          answer: "We are open Monday to Sunday from 9:00 AM to 8:00 PM. We're here to serve you throughout the week."
+                          answer: "Mon-Sat: 8:15 AM-7:30 PM. Sun: 9:00 AM-1:00 PM (appointment required)."
                         },
                         {
                           question: "Do you offer bridal packages?",
