@@ -86,6 +86,16 @@ router.post('/submit', async (req, res) => {
                       <p style="margin: 20px 0 0 0; font-size: 15px; color: #4b5563; line-height: 1.7;">
                         If you have any urgent concerns, please don't hesitate to call us directly.
                       </p>
+
+                      <div style="margin: 20px 0 0 0; padding: 16px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 10px;">
+                        <p style="margin: 0 0 8px 0; font-size: 13px; color: #9f1239; font-weight: 600;">Direct Salon Contact</p>
+                        <p style="margin: 0 0 6px 0; font-size: 13px; color: #9f1239;">
+                          Email: <a href="mailto:lavishladiessalonuchila@gmail.com" style="color: #e11d48; text-decoration: none; font-weight: 600;">lavishladiessalonuchila@gmail.com</a>
+                        </p>
+                        <p style="margin: 0; font-size: 13px; color: #9f1239;">
+                          Phone: <a href="tel:+918147627651" style="color: #e11d48; text-decoration: none; font-weight: 600;">+91 8147627651</a>
+                        </p>
+                      </div>
                     </td>
                   </tr>
 
@@ -141,7 +151,8 @@ router.post('/submit', async (req, res) => {
                   <!-- Header -->
                   <tr>
                     <td style="padding: 24px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: white;">
-                      <h2 style="margin: 0; font-size: 20px;">NEW CONTACT MESSAGE</h2>
+                      <h2 style="margin: 0; font-size: 20px; letter-spacing: 0.3px;">NEW CONTACT MESSAGE</h2>
+                      <p style="margin: 6px 0 0 0; font-size: 12px; opacity: 0.9;">Lavish Ladies Beauty Salon</p>
                     </td>
                   </tr>
 
