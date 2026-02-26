@@ -1,27 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const DailyRevenue = require('../models/DailyRevenue');
+const { requireRole } = require('../middleware/auth');
+
+router.use(requireRole('staff'));
 
 // Add/Update daily revenue
 router.post('/daily', async (req, res) => {
   try {
     const { cashRevenue, onlineRevenue, enteredBy } = req.body;
+    const cash = Number(cashRevenue);
+    const online = Number(onlineRevenue);
+    if (!Number.isFinite(cash) || !Number.isFinite(online) || cash < 0 || online < 0) {
+      return res.status(400).json({ success: false, message: 'Invalid revenue values' });
+    }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const existingRevenue = await DailyRevenue.findOne({ date: today });
     
     if (existingRevenue) {
-      existingRevenue.cashRevenue = cashRevenue;
-      existingRevenue.onlineRevenue = onlineRevenue;
+      existingRevenue.cashRevenue = cash;
+      existingRevenue.onlineRevenue = online;
       existingRevenue.enteredBy = enteredBy;
       await existingRevenue.save();
       res.json({ success: true, revenue: existingRevenue });
     } else {
       const newRevenue = new DailyRevenue({
         date: today,
-        cashRevenue,
-        onlineRevenue,
+        cashRevenue: cash,
+        onlineRevenue: online,
         enteredBy
       });
       await newRevenue.save();

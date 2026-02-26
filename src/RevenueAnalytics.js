@@ -15,12 +15,30 @@ export default function RevenueAnalytics() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetchRevenueData();
+    const init = async () => {
+      try {
+        const authResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+          credentials: 'include'
+        });
+        const authData = await authResponse.json();
+        if (!authData?.authenticated || authData?.user?.role !== 'staff') {
+          navigate('/staff-login');
+          return;
+        }
+        fetchRevenueData();
+      } catch (error) {
+        navigate('/staff-login');
+      }
+    };
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchRevenueData = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/revenue/analytics`);
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/revenue/analytics`, {
+        credentials: 'include'
+      });
       const data = await response.json();
       if (data.success) {
         setRevenueData(data.analytics);
@@ -37,14 +55,18 @@ export default function RevenueAnalytics() {
   const saveRevenue = async () => {
     setSaving(true);
     try {
-      const staffSession = JSON.parse(localStorage.getItem('staffSession'));
+      const authResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+        credentials: 'include'
+      });
+      const authData = await authResponse.json();
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/revenue/daily`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           cashRevenue: parseFloat(cashAmount) || 0,
           onlineRevenue: parseFloat(onlineAmount) || 0,
-          enteredBy: staffSession?.email || 'staff'
+          enteredBy: authData?.user?.email || 'staff'
         })
       });
       

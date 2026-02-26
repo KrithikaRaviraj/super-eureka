@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const Appointment = require('../models/Appointment');
 const Feedback = require('../models/Feedback');
 const servicePricing = require('../config/servicePricing');
+const { requireAuth, requireRole } = require('../middleware/auth');
 
 // Email configuration
 const transporter = nodemailer.createTransport({
@@ -25,6 +26,22 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ 
         success: false, 
         message: "All required fields must be provided" 
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const parsedDate = new Date(date);
+    if (!emailRegex.test(String(userEmail)) || Number.isNaN(parsedDate.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid appointment input"
+      });
+    }
+
+    if (String(service).length > 120 || String(userName).length > 120 || String(notes || '').length > 2000) {
+      return res.status(400).json({
+        success: false,
+        message: "Input exceeds allowed length"
       });
     }
 
@@ -131,9 +148,13 @@ function convertTo24Hour(time12h) {
 }
 
 // Get user appointments
-router.get('/user/:email', async (req, res) => {
+router.get('/user/:email', requireAuth, async (req, res) => {
   try {
     const { email } = req.params;
+    const isStaff = req.auth?.role === 'staff';
+    if (!isStaff && req.auth?.email !== email) {
+      return res.status(403).json({ success: false, message: "Forbidden" });
+    }
     const userAppointments = await Appointment.find({ userEmail: email }).sort({ createdAt: -1 });
     
     res.json({
@@ -148,7 +169,7 @@ router.get('/user/:email', async (req, res) => {
 });
 
 // Get all appointments (for staff)
-router.get('/all', async (req, res) => {
+router.get('/all', requireRole('staff'), async (req, res) => {
   try {
     const appointments = await Appointment.find().sort({ createdAt: -1 });
     
@@ -164,7 +185,7 @@ router.get('/all', async (req, res) => {
 });
 
 // Update appointment (full edit)
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireRole('staff'), async (req, res) => {
   try {
     const { id } = req.params;
     const { status, service, date, time, userName, userEmail, userPhone, notes, price } = req.body;
@@ -743,7 +764,7 @@ router.post('/feedback/:token', async (req, res) => {
 });
 
 // Get all feedback (for staff)
-router.get('/feedback', async (req, res) => {
+router.get('/feedback', requireRole('staff'), async (req, res) => {
   try {
     const feedback = await Feedback.find().sort({ createdAt: -1 });
     res.json({ success: true, feedback });
@@ -818,7 +839,7 @@ router.get('/testimonials', async (req, res) => {
 });
 
 // Revenue Analytics
-router.get('/revenue-analytics', async (req, res) => {
+router.get('/revenue-analytics', requireRole('staff'), async (req, res) => {
   try {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

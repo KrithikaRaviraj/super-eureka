@@ -92,21 +92,32 @@ export default function BookAppointment() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const userSession = localStorage.getItem('userSession');
-    if (!userSession) {
+    let authUser = null;
+    try {
+      const authResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+        credentials: 'include'
+      });
+      const authData = await authResponse.json();
+      if (authData?.authenticated) {
+        authUser = authData.user;
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+    }
+
+    if (!authUser) {
       sessionStorage.setItem('postLoginReturnPath', `${location.pathname}${location.search}${location.hash}`);
       sessionStorage.setItem('postLoginScrollY', String(window.scrollY));
       alert('Please login to book an appointment');
       navigate('/');
+      setIsSubmitting(false);
       return;
     }
-
-    const user = JSON.parse(userSession);
     
     const appointmentData = {
       ...formData,
-      userEmail: user.email,
-      userName: user.name,
+      userEmail: authUser.email,
+      userName: authUser.name,
       userPhone: formData.phone,
       status: 'pending',
       createdAt: new Date().toISOString()

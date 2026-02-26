@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
 const ContactMessage = require('../models/ContactMessage');
+const { requireRole } = require('../middleware/auth');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -21,6 +22,14 @@ router.post('/submit', async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'All fields are required'
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email) || String(name).length > 100 || String(subject).length > 150 || String(message).length > 5000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid contact form input'
       });
     }
 
@@ -209,7 +218,7 @@ router.post('/submit', async (req, res) => {
 });
 
 // Get all contact messages (for admin)
-router.get('/messages', async (req, res) => {
+router.get('/messages', requireRole('staff'), async (req, res) => {
   try {
     const messages = await ContactMessage.find().sort({ createdAt: -1 });
     res.status(200).json({

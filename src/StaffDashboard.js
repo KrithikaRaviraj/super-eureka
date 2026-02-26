@@ -32,18 +32,30 @@ export default function StaffDashboard() {
   ];
 
   useEffect(() => {
-    const staffSession = localStorage.getItem('staffSession');
-    if (!staffSession) {
-      navigate('/staff-login');
-      return;
-    }
-    fetchAppointments();
+    const init = async () => {
+      try {
+        const authResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+          credentials: 'include'
+        });
+        const authData = await authResponse.json();
+        if (!authData?.authenticated || authData?.user?.role !== 'staff') {
+          navigate('/staff-login');
+          return;
+        }
+        fetchAppointments();
+      } catch (error) {
+        navigate('/staff-login');
+      }
+    };
+    init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchAppointments = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/all`);
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/all`, {
+        credentials: 'include'
+      });
       if (response.ok) {
         const data = await response.json();
         setAppointments(data.appointments || []);
@@ -59,6 +71,7 @@ export default function StaffDashboard() {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ status })
       });
       
@@ -75,6 +88,7 @@ export default function StaffDashboard() {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(data)
       });
       
@@ -93,6 +107,7 @@ export default function StaffDashboard() {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(data)
       });
       
@@ -152,7 +167,10 @@ export default function StaffDashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('staffSession');
+    fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/logout-any`, {
+      method: 'POST',
+      credentials: 'include'
+    }).catch(() => {});
     navigate('/');
   };
 

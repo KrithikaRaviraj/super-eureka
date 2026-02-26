@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 const SecurityLog = require('../models/SecurityLog');
+const { requireRole } = require('../middleware/auth');
 
 function normalizeIP(req) {
   const forwarded = req.get('x-forwarded-for') || req.get('x-real-ip');
@@ -17,7 +18,7 @@ function hashIdentifier(identifier) {
 }
 
 // Get all security events
-router.get('/events', async (req, res) => {
+router.get('/events', requireRole('staff'), async (req, res) => {
   try {
     const { limit = 100, skip = 0, event, severity, startDate, endDate } = req.query;
 
@@ -56,7 +57,7 @@ router.get('/events', async (req, res) => {
 });
 
 // Get security summary
-router.get('/summary', async (req, res) => {
+router.get('/summary', requireRole('staff'), async (req, res) => {
   try {
     const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
@@ -99,7 +100,7 @@ router.get('/summary', async (req, res) => {
 });
 
 // Get suspicious IPs/emails (with multiple failed attempts)
-router.get('/suspicious', async (req, res) => {
+router.get('/suspicious', requireRole('staff'), async (req, res) => {
   try {
     const last7days = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
@@ -134,7 +135,7 @@ router.get('/suspicious', async (req, res) => {
 });
 
 // Log a security event (called from other routes)
-router.post('/log', async (req, res) => {
+router.post('/log', requireRole('staff'), async (req, res) => {
   try {
     const { event, severity, emailHash, ipHash, details, duration, status, userAgent } = req.body;
 

@@ -4,6 +4,7 @@ const router = express.Router();
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+const { createSession } = require('../middleware/auth');
 
 // HTTPS enforcement with strict validation
 router.use((req, res, next) => {
@@ -148,6 +149,16 @@ function isAuthorizedStaff(req) {
   const currentKey = process.env.STAFF_SECRET_KEY;
   const rotatedKey = process.env.STAFF_SECRET_KEY_ROTATED;
   return authHeader === currentKey || (rotatedKey && authHeader === rotatedKey);
+}
+
+function isAuthorizedStaffEmail(email) {
+  const configured =
+    process.env.AUTHORIZED_STAFF_EMAILS ||
+    process.env.REACT_APP_AUTHORIZED_STAFF_EMAILS ||
+    process.env.ADMIN_EMAIL ||
+    '';
+  const allowed = configured.split(',').map((item) => item.trim().toLowerCase()).filter(Boolean);
+  return allowed.includes(String(email || '').toLowerCase());
 }
 
 function normalizeIP(req) {
@@ -341,13 +352,21 @@ router.post('/verify-email-otp', async (req, res) => {
   const clientIP = normalizeIP(req);
   
   try {
-    const { email, otp } = req.body;
+    const { email, otp, asStaff } = req.body;
     
     if (!email || !otp) {
       return res.status(400).json({ success: false, message: "Email and OTP required" });
     }
+
+    const otpRegex = /^\d{4}$/;
+    if (!otpRegex.test(String(otp))) {
+      return res.status(400).json({ success: false, message: "Invalid OTP format" });
+    }
     
     const normalizedEmail = email.toLowerCase().trim();
+    if (!validateEmail(normalizedEmail)) {
+      return res.status(400).json({ success: false, message: "Invalid email address" });
+    }
     
     // Simple non-transactional OTP verification for reliability
     let isValid = false;
@@ -402,11 +421,26 @@ router.post('/verify-email-otp', async (req, res) => {
     }
     
     logSecurityEvent('otp_verified', { ip: clientIP, email: normalizedEmail, duration: Date.now() - startTime });
+
+    const role = asStaff === true ? 'staff' : 'customer';
+    if (role === 'staff' && !isAuthorizedStaffEmail(normalizedEmail)) {
+      logSecurityEvent('unauthorized_staff_access', { ip: clientIP, email: normalizedEmail });
+      return res.status(403).json({ success: false, message: "Unauthorized staff login attempt" });
+    }
+
+    const generatedUid = generateUID();
+    const safeName = normalizedEmail.split('@')[0] || 'Client';
+    await createSession(req, res, {
+      uid: generatedUid,
+      email: normalizedEmail,
+      name: safeName.charAt(0).toUpperCase() + safeName.slice(1),
+      role
+    });
     
     res.json({ 
       success: true, 
       message: "OTP verified successfully",
-      user: { uid: generateUID(), email: normalizedEmail }
+      user: { uid: generatedUid, email: normalizedEmail, role }
     });
     
   } catch (error) {

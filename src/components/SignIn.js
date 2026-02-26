@@ -47,13 +47,17 @@ export default function SignIn({ onSuccess, onClose }) {
         phone: null,
         photoURL: result.user.photoURL || "",
       });
-      
-      localStorage.setItem('userSession', JSON.stringify({
-        uid: result.user.uid,
-        name: result.user.displayName || "",
-        email: result.user.email || "",
-        loginTime: Date.now()
-      }));
+
+      await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          uid: result.user.uid,
+          name: result.user.displayName || "",
+          email: result.user.email || ""
+        })
+      });
       
       setLoginSuccess(true);
       setTimeout(() => {
@@ -108,6 +112,7 @@ export default function SignIn({ onSuccess, onClose }) {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/verify-email-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify({ email, otp }),
       });
       
@@ -124,13 +129,6 @@ export default function SignIn({ onSuccess, onClose }) {
           phone: null,
           photoURL: "",
         });
-        
-        localStorage.setItem('userSession', JSON.stringify({
-          uid: data.user.uid,
-          name: nameFromEmail,
-          email: email,
-          loginTime: Date.now()
-        }));
         
         setLoginSuccess(true);
         setTimeout(() => {
@@ -192,13 +190,13 @@ export default function SignIn({ onSuccess, onClose }) {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/verify-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: staffEmail, otp: staffOtp })
+        credentials: 'include',
+        body: JSON.stringify({ email: staffEmail, otp: staffOtp, asStaff: true })
       });
       
       const data = await response.json();
       
       if (data.success) {
-        localStorage.setItem('staffSession', JSON.stringify({ email: staffEmail, loginTime: Date.now() }));
         setLoginSuccess(true);
         setTimeout(() => {
           setLoginSuccess(false);

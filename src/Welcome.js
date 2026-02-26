@@ -42,18 +42,11 @@ export default function Welcome() {
     // Get email from multiple sources
     let currentEmail = email || location.state?.email;
     
-    // If no email, try to get from localStorage
-    if (!currentEmail) {
-      const userSession = localStorage.getItem('userSession');
-      if (userSession) {
-        const session = JSON.parse(userSession);
-        currentEmail = session.email;
-      }
-    }
-    
     if (currentEmail) {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/user/${encodeURIComponent(currentEmail)}`);
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/user/${encodeURIComponent(currentEmail)}`, {
+          credentials: 'include'
+        });
         if (response.ok) {
           const data = await response.json();
           setAppointments(data.appointments || []);
@@ -74,17 +67,21 @@ export default function Welcome() {
   
   // Fetch user data on mount
   useEffect(() => {
-    // First, try to get name from localStorage session
-    const userSession = localStorage.getItem('userSession');
-    if (userSession) {
-      const session = JSON.parse(userSession);
-      if (session.name && session.name !== 'Client') {
-        setName(session.name);
+    const hydrateFromAuth = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        if (data?.authenticated && data?.user) {
+          if (data.user.name) setName(data.user.name);
+          if (data.user.email) setEmail(data.user.email);
+        }
+      } catch (error) {
+        console.error('Failed to load auth profile:', error);
       }
-      if (session.email) {
-        setEmail(session.email);
-      }
-    }
+    };
+    hydrateFromAuth();
     
     async function fetchUser() {
       try {
@@ -159,18 +156,6 @@ export default function Welcome() {
         });
       }
       
-      // Update localStorage session
-      const userSession = localStorage.getItem('userSession');
-      if (userSession) {
-        const session = JSON.parse(userSession);
-        session.name = name;
-        session.email = email;
-        localStorage.setItem('userSession', JSON.stringify(session));
-        
-        // Dispatch custom event for real-time updates
-        window.dispatchEvent(new CustomEvent('userUpdated', { detail: session }));
-      }
-      
       setOriginalEmail(email);
       setSaved(true);
       setIsEditing(false);
@@ -204,7 +189,10 @@ export default function Welcome() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('userSession');
+    fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/logout-any`, {
+      method: 'POST',
+      credentials: 'include'
+    }).catch(() => {});
     window.location.href = '/';
   };
 

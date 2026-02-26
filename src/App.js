@@ -579,13 +579,19 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
             )}
 
             {modal === "signin" && (
-              <SignIn onSuccess={() => {
+              <SignIn onSuccess={async () => {
                 setModal(null);
-                const userSession = localStorage.getItem('userSession');
-                if (userSession) {
-                  const session = JSON.parse(userSession);
-                  setIsLoggedIn(true);
-                  setUserInfo(session);
+                try {
+                  const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+                    credentials: 'include'
+                  });
+                  const data = await response.json();
+                  if (data?.authenticated && data?.user) {
+                    setIsLoggedIn(true);
+                    setUserInfo(data.user);
+                  }
+                } catch (error) {
+                  console.error('Failed to refresh auth state:', error);
                 }
               }} onClose={() => setModal(null)} />
             )}

@@ -14,8 +14,8 @@ const SecurityAudit = () => {
   const fetchSecurityData = useCallback(async () => {
     try {
       const [summaryRes, suspiciousRes] = await Promise.all([
-        fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/summary`),
-        fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/suspicious`)
+        fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/summary`, { credentials: 'include' }),
+        fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/suspicious`, { credentials: 'include' })
       ]);
 
       if (summaryRes.ok) {
@@ -40,7 +40,7 @@ const SecurityAudit = () => {
       if (filter !== 'all') url += `&event=${filter}`;
       if (severity !== 'all') url += `&severity=${severity}`;
 
-      const response = await fetch(url);
+      const response = await fetch(url, { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
         setEvents(data.events || []);

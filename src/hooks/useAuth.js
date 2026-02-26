@@ -5,30 +5,42 @@ export const useAuth = () => {
   const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    try {
-      const userSession = localStorage.getItem('userSession');
-      if (userSession) {
-        const session = JSON.parse(userSession);
-        if (Date.now() - session.loginTime < 7 * 24 * 60 * 60 * 1000) {
+    let mounted = true;
+    const loadAuth = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        if (!mounted) return;
+        if (data?.authenticated && data?.user) {
           setIsLoggedIn(true);
-          setUserInfo(session);
+          setUserInfo(data.user);
         } else {
-          localStorage.removeItem('userSession');
+          setIsLoggedIn(false);
+          setUserInfo(null);
+        }
+      } catch (error) {
+        console.error('Error loading auth session:', error);
+        if (mounted) {
           setIsLoggedIn(false);
           setUserInfo(null);
         }
       }
-    } catch (error) {
-      console.error('Error reading user session:', error);
-      localStorage.removeItem('userSession');
-      setIsLoggedIn(false);
-      setUserInfo(null);
-    }
+    };
+
+    loadAuth();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  const logout = () => {
+  const logout = async () => {
     try {
-      localStorage.removeItem('userSession');
+      await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/logout-any`, {
+        method: 'POST',
+        credentials: 'include'
+      });
       setIsLoggedIn(false);
       setUserInfo(null);
     } catch (error) {

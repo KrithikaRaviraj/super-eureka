@@ -39,6 +39,7 @@ export default function StaffLogin() {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/send-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email: normalizedEmail })
       });
 
@@ -71,14 +72,11 @@ export default function StaffLogin() {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/verify-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: normalizedEmail, otp })
+        credentials: 'include',
+        body: JSON.stringify({ email: normalizedEmail, otp, asStaff: true })
       });
 
       if (response.ok) {
-        localStorage.setItem('staffSession', JSON.stringify({
-          email: normalizedEmail,
-          loginTime: Date.now()
-        }));
         navigate('/staff-dashboard');
       } else {
         const data = await response.json().catch(() => ({}));
