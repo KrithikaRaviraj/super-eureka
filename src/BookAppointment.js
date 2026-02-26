@@ -94,6 +94,8 @@ export default function BookAppointment() {
 
     const userSession = localStorage.getItem('userSession');
     if (!userSession) {
+      sessionStorage.setItem('postLoginReturnPath', `${location.pathname}${location.search}${location.hash}`);
+      sessionStorage.setItem('postLoginScrollY', String(window.scrollY));
       alert('Please login to book an appointment');
       navigate('/');
       return;

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Welcome from "./Welcome";
 import Services from "./Services";
 import BookAppointment from "./BookAppointment";
@@ -53,6 +53,7 @@ function App() {
 
 function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isLoggedIn, userInfo, logout, setIsLoggedIn, setUserInfo } = useAuth();
   const [testimonials, setTestimonials] = useState([]);
   const [scrollY, setScrollY] = useState(0);
@@ -67,7 +68,6 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         fetchTestimonials();
-        window.scrollTo(0, 0);
       }
     };
     
@@ -120,7 +120,12 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
             <Header 
               isLoggedIn={isLoggedIn} 
               userInfo={userInfo} 
-              onLogin={() => setModal("signin")} 
+              onLogin={() => {
+                const returnPath = `${location.pathname}${location.search}${location.hash}`;
+                sessionStorage.setItem('postLoginReturnPath', returnPath);
+                sessionStorage.setItem('postLoginScrollY', String(window.scrollY));
+                setModal("signin");
+              }} 
               onLogout={handleLogout}
             />
 

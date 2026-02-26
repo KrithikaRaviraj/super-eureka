@@ -23,6 +23,18 @@ export default function SignIn({ onSuccess, onClose }) {
   const [staffEmail, setStaffEmail] = useState('');
   const [staffOtp, setStaffOtp] = useState('');
   const [staffOtpSent, setStaffOtpSent] = useState(false);
+  
+  const restoreUserLocation = () => {
+    const returnPath = sessionStorage.getItem('postLoginReturnPath') || '/';
+    const savedScrollY = Number(sessionStorage.getItem('postLoginScrollY') || '0');
+    sessionStorage.removeItem('postLoginReturnPath');
+    sessionStorage.removeItem('postLoginScrollY');
+
+    navigate(returnPath, { replace: true });
+    window.setTimeout(() => {
+      window.scrollTo(0, Number.isFinite(savedScrollY) ? savedScrollY : 0);
+    }, 0);
+  };
 
   const handleGoogleSignIn = async () => {
     try {
@@ -47,9 +59,7 @@ export default function SignIn({ onSuccess, onClose }) {
       setTimeout(() => {
         setLoginSuccess(false);
         if (onSuccess) onSuccess();
-        // Navigate to home and refresh
-        navigate("/", { replace: true });
-        window.location.reload();
+        restoreUserLocation();
       }, 1500);
     } catch (error) {
       setError(error.message);
@@ -126,9 +136,7 @@ export default function SignIn({ onSuccess, onClose }) {
         setTimeout(() => {
           setLoginSuccess(false);
           if (onSuccess) onSuccess();
-          // Navigate to home and refresh
-          navigate("/", { replace: true });
-          window.location.reload();
+          restoreUserLocation();
         }, 1500);
       } else {
         setError(data.message || "Invalid OTP. Please try again.");
