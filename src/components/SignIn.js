@@ -8,6 +8,7 @@ async function saveUserToBackend(user) {
   await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/users`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: 'include',
     body: JSON.stringify(user),
   });
 }
@@ -48,7 +49,7 @@ export default function SignIn({ onSuccess, onClose }) {
         photoURL: result.user.photoURL || "",
       });
 
-      await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/login`, {
+      const sessionResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -58,6 +59,10 @@ export default function SignIn({ onSuccess, onClose }) {
           email: result.user.email || ""
         })
       });
+      if (!sessionResponse.ok) {
+        const sessionData = await sessionResponse.json().catch(() => ({}));
+        throw new Error(sessionData?.message || 'Unable to create login session. Please try again.');
+      }
       
       setLoginSuccess(true);
       setTimeout(() => {

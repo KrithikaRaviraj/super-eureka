@@ -4,6 +4,7 @@ const Session = require('../models/Session');
 const SESSION_COOKIE_NAME = 'll_sid';
 const SESSION_TTL_MS = Number(process.env.SESSION_TTL_MS || 24 * 60 * 60 * 1000); // 24h
 const SESSION_HASH_SALT = process.env.SESSION_HASH_SALT || 'default-session-salt';
+const SESSION_COOKIE_SAMESITE = (process.env.SESSION_COOKIE_SAMESITE || 'Lax').trim();
 
 function parseCookies(header) {
   if (!header) return {};
@@ -22,14 +23,18 @@ function hashSessionId(sid) {
 }
 
 function createSessionCookieHeader(sid, maxAgeMs) {
-  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  const sameSiteValue = SESSION_COOKIE_SAMESITE;
+  const shouldSecure = process.env.NODE_ENV === 'production' || sameSiteValue.toLowerCase() === 'none';
+  const secure = shouldSecure ? '; Secure' : '';
   const maxAgeSeconds = Math.floor(maxAgeMs / 1000);
-  return `${SESSION_COOKIE_NAME}=${encodeURIComponent(sid)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAgeSeconds}${secure}`;
+  return `${SESSION_COOKIE_NAME}=${encodeURIComponent(sid)}; Path=/; HttpOnly; SameSite=${sameSiteValue}; Max-Age=${maxAgeSeconds}${secure}`;
 }
 
 function createClearSessionCookieHeader() {
-  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
-  return `${SESSION_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`;
+  const sameSiteValue = SESSION_COOKIE_SAMESITE;
+  const shouldSecure = process.env.NODE_ENV === 'production' || sameSiteValue.toLowerCase() === 'none';
+  const secure = shouldSecure ? '; Secure' : '';
+  return `${SESSION_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=${sameSiteValue}; Max-Age=0${secure}`;
 }
 
 async function getSessionFromRequest(req) {
