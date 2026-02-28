@@ -216,7 +216,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                   
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                     {[
-                      { name: "Hair Styling & Cuts", desc: "Professional haircuts, styling, and treatments for all hair types. From classic cuts to modern trends.", icon: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" },
+                      { name: "Hair Styling & Cuts", desc: "Professional haircuts, styling, and treatments for all hair types. From classic cuts to modern trends.", icon: "M9.64 7.64a2.5 2.5 0 1 1-3.54 3.54 2.5 2.5 0 0 1 3.54-3.54zm0 5.72L12 15.72l2.36-2.36a2.5 2.5 0 1 1 1.41 1.41L13.41 17.13l2.36 2.36a1 1 0 0 1-1.41 1.41L12 18.54l-2.36 2.36a1 1 0 0 1-1.41-1.41l2.36-2.36-2.36-2.36a2.5 2.5 0 1 1 1.41-1.41zM7.87 9.41a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm8.26 4.18a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z" },
                       { name: "Facial Treatments", desc: "Rejuvenating facials, deep cleansing for glowing, healthy skin.", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" },
                       { name: "Spa & Massage", desc: "Relaxing massages and spa treatments to rejuvenate your body and mind.", icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z" },
                       { name: "Manicure & Pedicure", desc: "Complete nail care services including manicures and pedicures.", icon: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" },
