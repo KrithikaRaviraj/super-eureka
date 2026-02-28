@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Toast from './components/Toast';
 
 const timeSlots = [
   "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
@@ -26,6 +27,7 @@ export default function BookAppointment() {
   const [currentStep, setCurrentStep] = useState(1);
   const [availableSlots, setAvailableSlots] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
+  const [toast, setToast] = useState(null);
 
   const services = [
     "Hair Styling & Cuts",
@@ -88,6 +90,11 @@ export default function BookAppointment() {
     }
   };
 
+  const showToast = (type, message) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 3500);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -108,8 +115,8 @@ export default function BookAppointment() {
     if (!authUser) {
       sessionStorage.setItem('postLoginReturnPath', `${location.pathname}${location.search}${location.hash}`);
       sessionStorage.setItem('postLoginScrollY', String(window.scrollY));
-      alert('Please login to book an appointment');
-      navigate('/');
+      showToast('error', 'Please login to book an appointment');
+      setTimeout(() => navigate('/'), 1200);
       setIsSubmitting(false);
       return;
     }
@@ -135,15 +142,16 @@ export default function BookAppointment() {
       if (response.ok && result.success) {
         setSuccess(true);
         setGoogleCalendarUrl(result.googleCalendarUrl || '');
+        showToast('success', 'Appointment booked successfully.');
         setTimeout(() => {
           navigate('/welcome');
         }, 3000);
       } else {
-        alert(result.message || 'Failed to book appointment');
+        showToast('error', result.message || 'Failed to book appointment');
       }
     } catch (error) {
       console.error('Booking error:', error);
-      alert(`Network error: ${error.message}. Please check if the server is running on port 5000.`);
+      showToast('error', `Network error: ${error.message}. Please try again.`);
     }
     
     setIsSubmitting(false);
@@ -155,6 +163,13 @@ export default function BookAppointment() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative">
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
       <style jsx>{`
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(20px); }

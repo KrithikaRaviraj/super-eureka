@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Toast from './components/Toast';
 
 export default function RevenueAnalytics() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function RevenueAnalytics() {
   const [cashAmount, setCashAmount] = useState('');
   const [onlineAmount, setOnlineAmount] = useState('');
   const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     const init = async () => {
@@ -50,6 +52,11 @@ export default function RevenueAnalytics() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const showToast = (type, message) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 3000);
   };
 
   const saveRevenue = async () => {
