@@ -25,6 +25,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:ci": "react-scripts test --watchAll=false --passWithNoTests",
+    "lint": "eslint \"src/**/*.{js,jsx}\" --max-warnings=0",
+    "backup:check": "node scripts/checkMongoBackupRestore.js",
     "eject": "react-scripts eject",
     "server": "node server.js"
   },

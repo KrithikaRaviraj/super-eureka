@@ -17,7 +17,9 @@ const securityLogSchema = new mongoose.Schema(
         'appointment_created',
         'appointment_modified',
         'appointment_cancelled',
-        'cookie_consent_updated'
+        'cookie_consent_updated',
+        'client_runtime_error',
+        'server_error'
       ],
       required: true
     },

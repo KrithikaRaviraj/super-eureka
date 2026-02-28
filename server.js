@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const crypto = require('crypto');
 const usersRouter = require('./routes/users');
 const otpRouter = require('./routes/otp');
 const appointmentsRouter = require('./routes/appointments');
@@ -11,6 +12,7 @@ const googleReviewsRouter = require('./routes/googleReviews');
 const contactRouter = require('./routes/contact');
 const securityRouter = require('./routes/security');
 const authRouter = require('./routes/auth');
+const SecurityLog = require('./models/SecurityLog');
 const { attachAuth } = require('./middleware/auth');
 const { sanitizeRequest } = require('./middleware/sanitize');
 
@@ -20,6 +22,17 @@ app.set('trust proxy', 1);
 const RATE_WINDOW_MS = 15 * 60 * 1000;
 const RATE_MAX_REQUESTS = 300;
 const requestBuckets = new Map();
+
+function normalizeIP(req) {
+  const forwarded = req.get('x-forwarded-for') || req.get('x-real-ip');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '127.0.0.1';
+}
+
+function hashIdentifier(identifier) {
+  const salt = process.env.LOG_SALT || 'default-log-salt';
+  return crypto.createHash('sha256').update(`${identifier}:${salt}`).digest('hex').slice(0, 16);
+}
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,
@@ -103,6 +116,24 @@ app.use((err, req, res, next) => {
   if (res.headersSent) {
     return next(err);
   }
+  const ip = normalizeIP(req);
+  SecurityLog.create({
+    event: 'server_error',
+    severity: 'critical',
+    status: 'failed',
+    ipHash: ip ? hashIdentifier(ip) : null,
+    userAgent: req.get('user-agent') || null,
+    details: {
+      method: req.method,
+      path: req.originalUrl,
+      message: err?.message || 'Unknown server error'
+    },
+    metadata: {
+      status: err?.status || 500
+    }
+  }).catch((logError) => {
+    console.error('Failed to persist server error log:', logError);
+  });
   console.error('Unhandled server error:', err);
   return res.status(err.status || 500).json({
     success: false,

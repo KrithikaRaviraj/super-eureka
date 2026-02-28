@@ -215,4 +215,48 @@ router.post('/consent', async (req, res) => {
   }
 });
 
+// Log client runtime errors (frontend monitoring)
+router.post('/client-error', async (req, res) => {
+  try {
+    const { message, source, stack, type, status = 'failed', severity = 'warning', details = {} } = req.body || {};
+    const ip = normalizeIP(req);
+    const userAgent = req.get('user-agent') || null;
+
+    if (!message || typeof message !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid client error payload'
+      });
+    }
+
+    const log = new SecurityLog({
+      event: 'client_runtime_error',
+      severity: ['info', 'warning', 'critical'].includes(severity) ? severity : 'warning',
+      status: ['success', 'failed', 'attempted'].includes(status) ? status : 'failed',
+      ipHash: ip ? hashIdentifier(ip) : null,
+      userAgent,
+      details: {
+        type: typeof type === 'string' ? type : 'runtime',
+        source: typeof source === 'string' ? source : null,
+        message,
+        stack: typeof stack === 'string' ? stack.slice(0, 4000) : null,
+        ...details
+      }
+    });
+
+    await log.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Client error logged'
+    });
+  } catch (error) {
+    console.error('Error logging client runtime error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to log client runtime error'
+    });
+  }
+});
+
 module.exports = router;
