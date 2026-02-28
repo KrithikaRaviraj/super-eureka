@@ -122,9 +122,7 @@ const ContactForm = () => {
                 <div>
                   <h3 className="mb-1 font-serif text-lg font-semibold text-stone-900">Email</h3>
                   <a
-                    href="https://mail.google.com/mail/?view=cm&fs=1&to=lavishladiessalonuchila@gmail.com&su=Inquiry%20from%20Website"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website"
                     className="break-all font-sans text-stone-600 hover:text-rose-600 transition-colors"
                   >
                     lavishladiessalonuchila@gmail.com

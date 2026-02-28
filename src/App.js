@@ -154,7 +154,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                           <h3 className="font-serif text-2xl font-medium text-stone-800">Years in Business</h3>
                           <p className="text-stone-600">Since March 2018</p>
                         </div>
-                      </div>
+                      </button>
                       
                       <p className="font-sans text-lg text-stone-600 leading-relaxed">
                         Lavish Ladies Beauty Salon in Uchila has been dedicated to personalized beauty care in a warm and inviting atmosphere. We offer a variety of services, including stylish haircuts, vibrant hair coloring, rejuvenating facials, soothing massages, and beautiful manicures and pedicures.
@@ -223,9 +223,9 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                       { name: "Hair Coloring", desc: "Professional hair coloring, highlights, and color correction services.", icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" },
                       { name: "Bridal Packages", desc: "Complete bridal makeover packages for your special day.", icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z" }
                     ].map((service, index) => (
-                      <div 
+                      <button type="button"
                         key={index}
-                        className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50 transform hover:scale-105 hover:-translate-y-2 cursor-pointer group"
+                        className="w-full text-left bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50 transform hover:scale-105 hover:-translate-y-2 cursor-pointer group"
                         style={{ animationDelay: `${index * 150}ms` }}
                         onClick={() => navigate('/services')}
                       >
@@ -237,7 +237,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         <h3 className="font-serif text-xl font-medium text-stone-800 mb-3 group-hover:text-rose-600 transition-colors duration-300">{service.name}</h3>
                         <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">{service.desc}</p>
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <span className="text-rose-600 font-semibold text-sm">Click to explore →</span>
+                          <span className="text-rose-600 font-semibold text-sm">Click to explore -&gt;</span>
                         </div>
                       </div>
                     ))}
@@ -313,9 +313,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         {/* Contact Options */}
                         <div className="space-y-4">
                           <a 
-                            href="https://mail.google.com/mail/?view=cm&fs=1&to=lavishladiessalonuchila@gmail.com&su=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services."
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services."
                             className="flex items-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md border border-rose-100 transition-all duration-300 group transform hover:-translate-y-1"
                           >
                             <div className="w-10 h-10 bg-rose-600 rounded-full flex items-center justify-center mr-3 group-hover:bg-rose-700 transition-colors">
@@ -434,7 +432,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         Your premier destination for beauty and wellness in Uchila. Experience personalized care that makes you look and feel your best.
                       </p>
                       <div className="flex space-x-3">
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=lavishladiessalonuchila@gmail.com&su=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
+                        <a href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="w-8 h-8 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
                           <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                           </svg>
@@ -626,3 +624,4 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
 }
 
 export default App;
+
