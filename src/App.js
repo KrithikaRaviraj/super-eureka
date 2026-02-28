@@ -271,23 +271,23 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                       {[
                         {
                           question: "What services do you offer?",
-                          answer: "We offer a complete range of beauty services including haircuts, hair coloring, facials, massages, manicures, pedicures, and bridal packages."
+                          answer: "We offer a full range of beauty services, including haircuts, hair coloring, facials, massages, manicures, pedicures, and bridal packages."
                         },
                         {
                           question: "Do I need to book an appointment?",
-                          answer: "Yes, we recommend booking an appointment to ensure availability. You can book online through our website or call us directly."
+                          answer: "We recommend booking an appointment in advance to ensure availability. You can book online through our website or call us directly."
                         },
                         {
                           question: "What are your operating hours?",
-                          answer: "Mon-Sat: 8:15 AM-7:30 PM. Sun: 9:00 AM-1:00 PM (appointment required)."
+                          answer: "Our hours are Monday to Saturday, 8:15 AM to 7:30 PM. On Sunday, we are open from 9:00 AM to 1:00 PM by appointment only."
                         },
                         {
                           question: "Do you offer bridal packages?",
-                          answer: "Yes, we offer comprehensive bridal packages including hair styling, makeup, facials, and nail services for your special day."
+                          answer: "Yes, we offer comprehensive bridal packages that include hair styling, makeup, facials, and nail services for your special day."
                         },
                         {
                           question: "What safety measures do you follow?",
-                          answer: "We maintain the highest hygiene standards with sanitized tools, clean workstations, and follow all health and safety protocols."
+                          answer: "We maintain high hygiene standards by sanitizing tools, keeping workstations clean, and following all health and safety protocols."
                         }
                       ].map((faq, index) => (
                         <div key={index} className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
