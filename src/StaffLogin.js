@@ -112,7 +112,7 @@ export default function StaffLogin() {
             />
           </div>
 
-          <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sm:p-10 border border-stone-200/50 min-h-[640px] flex flex-col justify-center">
+          <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-10 border border-stone-200/50 min-h-[520px] lg:min-h-[640px] flex flex-col justify-center">
             <div className="mb-6">
               <SalonHeader />
             </div>
