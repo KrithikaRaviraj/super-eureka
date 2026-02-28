@@ -26,7 +26,7 @@ const PrivacyPolicy = ({ onClose }) => {
               <p><strong>Data Controller:</strong> Lavish Ladies Beauty Salon</p>
               <p><strong>Business Type:</strong> Proprietorship</p>
               <p><strong>Address:</strong> Uchila, Udupi District, Karnataka 576101, India</p>
-              <p><strong>Email:</strong> <a href="mailto:lavishladiessalonuchila@gmail.com" className="text-stone-700 hover:text-stone-900 underline decoration-stone-300 underline-offset-2 hover:decoration-stone-500">lavishladiessalonuchila@gmail.com</a></p>
+              <p><strong>Email:</strong> <a href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="text-stone-700 hover:text-stone-900 underline decoration-stone-300 underline-offset-2 hover:decoration-stone-500">lavishladiessalonuchila@gmail.com</a></p>
               <p><strong>Phone:</strong> <a href="tel:+918147627651" className="text-rose-600 hover:text-rose-700">+91 8147627651</a></p>
               <p><strong>Privacy Officer:</strong> Available upon request (as per DPDP Act, 2023)</p>
             </div>
@@ -126,7 +126,7 @@ const PrivacyPolicy = ({ onClose }) => {
               <li><strong>Data Portability:</strong> Request transfer of your data</li>
               <li><strong>Grievance Redressal:</strong> File complaints regarding data handling</li>
             </ul>
-              <p className="text-xs text-stone-600 italic">To exercise these rights, contact us at <a href="mailto:lavishladiessalonuchila@gmail.com" className="text-stone-700 hover:text-stone-900 underline decoration-stone-300 underline-offset-2 hover:decoration-stone-500">lavishladiessalonuchila@gmail.com</a> with proper identification.</p>
+              <p className="text-xs text-stone-600 italic">To exercise these rights, contact us at <a href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="text-stone-700 hover:text-stone-900 underline decoration-stone-300 underline-offset-2 hover:decoration-stone-500">lavishladiessalonuchila@gmail.com</a> with proper identification.</p>
           </section>
 
           <section>
@@ -134,7 +134,7 @@ const PrivacyPolicy = ({ onClose }) => {
             <div className="bg-stone-50 p-4 rounded-lg mb-4">
               <p><strong>Grievance Officer:</strong> [To be appointed as per IT Rules 2011 and DPDP Act, 2023]</p>
               <p><strong>Response Time:</strong> Within 30 days of complaint receipt</p>
-              <p><strong>Contact:</strong> <a href="mailto:lavishladiessalonuchila@gmail.com" className="text-stone-700 hover:text-stone-900 underline decoration-stone-300 underline-offset-2 hover:decoration-stone-500">lavishladiessalonuchila@gmail.com</a></p>
+              <p><strong>Contact:</strong> <a href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="text-stone-700 hover:text-stone-900 underline decoration-stone-300 underline-offset-2 hover:decoration-stone-500">lavishladiessalonuchila@gmail.com</a></p>
               <p><strong>Escalation:</strong> Data Protection Board of India (under DPDP Act, 2023) or Cyber Crime Cell, Karnataka Police</p>
             </div>
           </section>
