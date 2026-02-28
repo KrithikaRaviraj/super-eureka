@@ -235,7 +235,7 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
             <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9; min-height: 100vh;">
               <tr>
                 <td style="padding: 40px 20px;">
-                  <table width="600" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
+                  <table width="600" style="max-width: 760px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
                     <!-- Header -->
                     <tr>
                       <td style="padding: 0; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); text-align: center; position: relative;">
@@ -392,7 +392,7 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
             <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9; min-height: 100vh;">
               <tr>
                 <td style="padding: 40px 20px;">
-                  <table width="600" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
+                  <table width="600" style="max-width: 760px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
                     <!-- Header -->
                     <tr>
                       <td style="padding: 0; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); text-align: center; position: relative;">
@@ -625,7 +625,7 @@ router.post('/feedback/:token', async (req, res) => {
               <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9; min-height: 100vh;">
                 <tr>
                   <td style="padding: 40px 20px;">
-                    <table width="600" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
+                    <table width="600" style="max-width: 760px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
                       <!-- Header -->
                       <tr>
                         <td style="padding: 0; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); text-align: center; position: relative;">

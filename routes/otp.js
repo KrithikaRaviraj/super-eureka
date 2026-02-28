@@ -256,34 +256,34 @@ router.post('/send-email-otp', async (req, res) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Verification Code</title>
         </head>
-        <body style="margin: 0; padding: 0; background: #fafaf9; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #111827;">
-          <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9;">
+        <body style="margin: 0; padding: 0; background: #f8fafc; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1f2937;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background: #f8fafc;">
             <tr>
-              <td style="padding: 28px 16px;">
-                <table width="100%" style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); overflow: hidden; border: 1px solid #e5e7eb;">
+              <td style="padding: 24px 12px;">
+                <table width="100%" style="max-width: 760px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden;">
                   <!-- Header -->
                   <tr>
-                    <td style="padding: 32px 32px 28px 32px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: #ffffff; text-align: left;">
-                      ${getEmailLogoHtml(64, 14)}
-                      <div style="font-size: 13px; letter-spacing: 1.2px; opacity: 0.9; text-transform: uppercase;">Lavish Ladies Beauty Salon</div>
-                      <div style="font-size: 26px; font-weight: 700; margin-top: 6px;">Secure verification code</div>
-                      <div style="font-size: 14px; opacity: 0.9; margin-top: 6px;">Use this one-time code to continue. Do not share it with anyone.</div>
+                    <td style="padding: 28px 30px 18px 30px; background: #fff1f2; color: #1f2937; text-align: left; border-bottom: 1px solid #f1f5f9;">
+                      ${getEmailLogoHtml(68, 12)}
+                      <div style="font-size: 12px; letter-spacing: 1.1px; color: #6b7280; text-transform: uppercase;">Lavish Ladies Beauty Salon</div>
+                      <div style="font-size: 24px; font-weight: 700; margin-top: 6px; color: #111827;">Security Code</div>
+                      <div style="font-size: 14px; color: #4b5563; margin-top: 6px;">Use this one-time code to continue. Please do not share it.</div>
                     </td>
                   </tr>
 
                   <!-- Code Block -->
                   <tr>
-                    <td style="padding: 32px 32px 10px 32px;">
+                    <td style="padding: 26px 30px 8px 30px;">
                       <div style="text-align: center; margin-bottom: 20px;">
-                        <div style="display: inline-block; padding: 26px 44px; background: #fdf2f8; border: 1px solid #fbcfe8; border-radius: 12px;">
-                          <span style="font-size: 46px; font-weight: 700; letter-spacing: 12px; font-family: 'Courier New', monospace; color: #be185d;">${otp}</span>
+                        <div style="display: inline-block; padding: 24px 42px; background: #f9fafb; border-radius: 12px;">
+                          <span style="font-size: 44px; font-weight: 700; letter-spacing: 10px; font-family: 'Courier New', monospace; color: #b91c1c;">${otp}</span>
                         </div>
-                        <p style="margin: 18px 0 6px 0; font-size: 14px; color: #4b5563;">This code expires in 10 minutes.</p>
-                        <p style="margin: 0; font-size: 13px; color: #6b7280;">If you did not request this, please ignore this email.</p>
+                        <p style="margin: 16px 0 6px 0; font-size: 14px; color: #4b5563;">This code expires in 10 minutes.</p>
+                        <p style="margin: 0; font-size: 13px; color: #6b7280;">If you did not request this, you can safely ignore this email.</p>
                       </div>
 
-                      <div style="margin-top: 28px; padding: 18px 16px; background: #fafaf9; border: 1px solid #e5e7eb; border-radius: 12px;">
-                        <h3 style="margin: 0 0 10px 0; font-size: 15px; color: #111827;">How to use your code</h3>
+                      <div style="margin-top: 24px; padding: 0;">
+                        <h3 style="margin: 0 0 8px 0; font-size: 15px; color: #111827;">How to use your code</h3>
                         <ul style="margin: 0; padding-left: 18px; color: #4b5563; font-size: 14px; line-height: 1.6;">
                           <li>Enter this code on the verification screen within 10 minutes.</li>
                           <li>For your security, never share this code with anyone.</li>
@@ -295,21 +295,21 @@ router.post('/send-email-otp', async (req, res) => {
 
                   <!-- Support + Compliance -->
                   <tr>
-                    <td style="padding: 10px 32px 28px 32px;">
-                      <div style="margin-top: 16px; padding: 16px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; font-size: 13px; color: #9f1239;">
-                        <strong style="display: block; margin-bottom: 6px; color: #9f1239;">Why you received this email</strong>
+                    <td style="padding: 8px 30px 24px 30px;">
+                      <div style="margin-top: 12px; padding: 14px; background: #f9fafb; border-radius: 10px; font-size: 13px; color: #4b5563;">
+                        <strong style="display: block; margin-bottom: 6px; color: #111827;">Why you received this email</strong>
                         A verification code was requested for this email address on Lavish Ladies Beauty Salon. If this wasn't you, ignore this message or contact us so we can help secure your account.
                       </div>
 
-                      <div style="margin-top: 18px; text-align: center; font-size: 14px; color: #374151;">
-                        Need help? Email us at <a href="mailto:lavishladiessalonuchila@gmail.com" style="color: #e11d48; text-decoration: none; font-weight: 600;">lavishladiessalonuchila@gmail.com</a>
+                      <div style="margin-top: 16px; text-align: center; font-size: 14px; color: #374151;">
+                        Need help? Email us at <a href="mailto:lavishladiessalonuchila@gmail.com" style="color: #9f1239; text-decoration: none; font-weight: 600;">lavishladiessalonuchila@gmail.com</a>
                       </div>
                     </td>
                   </tr>
 
                   <!-- Footer -->
                   <tr>
-                    <td style="padding: 22px 32px 26px 32px; background: #fafaf9; text-align: center; border-top: 1px solid #e5e7eb;">
+                    <td style="padding: 18px 30px 22px 30px; background: #f8fafc; text-align: center;">
                       <div style="margin-bottom: 10px;">
                         <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/privacy" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Privacy Policy</a>
                         <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/terms" style="color: #6b7280; text-decoration: none; font-size: 12px; margin: 0 10px;">Terms of Service</a>

@@ -66,7 +66,7 @@ router.post('/submit', async (req, res) => {
           <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9; min-height: 100vh;">
             <tr>
               <td style="padding: 40px 20px;">
-                <table width="600" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
+                <table width="600" style="max-width: 760px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;">
                   <!-- Header -->
                   <tr>
                     <td style="padding: 40px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: white; text-align: center;">
@@ -158,7 +158,7 @@ router.post('/submit', async (req, res) => {
           <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9;">
             <tr>
               <td style="padding: 20px;">
-                <table width="600" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
+                <table width="600" style="max-width: 760px; margin: 0 auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
                   <!-- Header -->
                   <tr>
                     <td style="padding: 24px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: white;">

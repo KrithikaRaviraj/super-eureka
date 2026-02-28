@@ -103,7 +103,7 @@ router.post('/send-profile-update-email', async (req, res) => {
           <table width="100%" cellpadding="0" cellspacing="0" style="background: #fafaf9;">
             <tr>
               <td style="padding: 28px 16px;">
-                <table width="100%" style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); overflow: hidden; border: 1px solid #e5e7eb;">
+                <table width="100%" style="max-width: 760px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); overflow: hidden; border: 1px solid #e5e7eb;">
                   <!-- Header -->
                   <tr>
                     <td style="padding: 32px 32px 28px 32px; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); color: #ffffff; text-align: left;">
