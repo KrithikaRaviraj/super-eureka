@@ -2,7 +2,6 @@
 const servicePricing = {
   "Hair Styling & Cuts": 500,
   "Facial Treatments": 800,
-  "Spa & Massage": 1200,
   "Manicure & Pedicure": 600,
   "Hair Coloring": 1500,
   "Bridal Packages": 5000,
