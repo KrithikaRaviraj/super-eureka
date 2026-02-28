@@ -23,7 +23,7 @@ const staticServices = [
   {
     id: 4,
     name: "Manicure & Pedicure",
-    description: "Complete nail care services including manicures, pedicures, and nail art.",
+    description: "Complete nail care services including manicures and pedicures.",
     duration: "45-75 mins",
     icon: "M8 2c.6 0 1 .4 1 1v6a1 1 0 1 1-2 0V3c0-.6.4-1 1-1zm4 0c.6 0 1 .4 1 1v7a1 1 0 1 1-2 0V3c0-.6.4-1 1-1zm4 1c.6 0 1 .4 1 1v6a1 1 0 1 1-2 0V4c0-.6.4-1 1-1zM6 12h12l-1.2 7.1A3 3 0 0 1 13.8 22h-3.6a3 3 0 0 1-3-2.9L6 12zm3 3a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9z"
   },

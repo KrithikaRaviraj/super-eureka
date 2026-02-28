@@ -27,7 +27,7 @@ const serviceDetails = {
     icon: "Facial Treatments"
   },
   "Manicure & Pedicure": {
-    description: "Complete nail care services including manicures, pedicures, and nail art.",
+    description: "Complete nail care services including manicures and pedicures.",
     duration: "45-75 mins",
     icon: "Manicure & Pedicure"
   },
