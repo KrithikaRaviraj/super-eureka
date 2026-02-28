@@ -7,7 +7,7 @@ const TermsOfService = ({ onClose }) => {
         <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center">
           <h2 className="text-2xl font-serif font-semibold text-stone-800">Terms of Service</h2>
           <button onClick={onClose} className="text-stone-500 hover:text-stone-700">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -173,7 +173,7 @@ const TermsOfService = ({ onClose }) => {
             <p className="mb-2">For questions about these Terms of Service, please contact us:</p>
             <div className="bg-stone-50 p-4 rounded-lg">
               <p><strong>Lavish Ladies Beauty Salon</strong></p>
-              <p>Email: <a href="mailto:lavishladiessalonuchila@gmail.com" className="text-rose-600 hover:text-rose-700">lavishladiessalonuchila@gmail.com</a></p>
+              <p>Email: <a href="mailto:lavishladiessalonuchila@gmail.com" className="text-stone-700 hover:text-stone-900 underline decoration-stone-300 underline-offset-2 hover:decoration-stone-500">lavishladiessalonuchila@gmail.com</a></p>
               <p>Phone: <a href="tel:+918147627651" className="text-rose-600 hover:text-rose-700">+91 8147627651</a></p>
               <p>Address: Uchila, Udupi District, Karnataka, India</p>
             </div>
