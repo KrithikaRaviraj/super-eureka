@@ -79,11 +79,11 @@ export default function RevenueAnalytics() {
       
       if (response.ok) {
         fetchRevenueData();
-        alert('Revenue saved successfully!');
+        showToast('success', 'Revenue saved successfully.');
       }
     } catch (error) {
       console.error('Failed to save revenue:', error);
-      alert('Failed to save revenue');
+      showToast('error', 'Failed to save revenue');
     } finally {
       setSaving(false);
     }
@@ -105,6 +105,13 @@ export default function RevenueAnalytics() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50">
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
       <div className="py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-8">

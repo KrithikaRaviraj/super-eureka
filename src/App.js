@@ -154,7 +154,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                           <h3 className="font-serif text-2xl font-medium text-stone-800">Years in Business</h3>
                           <p className="text-stone-600">Since March 2018</p>
                         </div>
-                      </button>
+                      </div>
                       
                       <p className="font-sans text-lg text-stone-600 leading-relaxed">
                         Lavish Ladies Beauty Salon in Uchila has been dedicated to personalized beauty care in a warm and inviting atmosphere. We offer a variety of services, including stylish haircuts, vibrant hair coloring, rejuvenating facials, soothing massages, and beautiful manicures and pedicures.
@@ -239,7 +239,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <span className="text-rose-600 font-semibold text-sm">Click to explore -&gt;</span>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                   

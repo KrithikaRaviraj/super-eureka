@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import SalonLogo from "./components/SalonLogo";
+import Toast from "./components/Toast";
 
 const link = document.createElement('link');
 link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap';
@@ -37,6 +38,12 @@ export default function Welcome() {
   const [appointments, setAppointments] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeTab, setActiveTab] = useState('upcoming');
+  const [toast, setToast] = useState(null);
+
+  const showToast = (type, message) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const fetchAppointments = useCallback(async () => {
     // Get email from multiple sources
@@ -163,7 +170,7 @@ export default function Welcome() {
         setSaved(false);
       }, 3000);
     } catch (err) {
-      alert("Failed to save.");
+      showToast("error", "Failed to save.");
     }
   };
 
@@ -180,11 +187,11 @@ export default function Welcome() {
       if (response.ok) {
         fetchAppointments(); // Refresh the list
       } else {
-        alert("Failed to cancel appointment. Please contact support.");
+        showToast("error", "Failed to cancel appointment. Please contact support.");
       }
     } catch (error) {
       console.error("Error cancelling appointment:", error);
-      alert("Network error. Please try again later.");
+      showToast("error", "Network error. Please try again later.");
     }
   };
 
@@ -198,6 +205,13 @@ export default function Welcome() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-stone-50 to-rose-50 relative overflow-hidden">
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
       <div className="absolute inset-0 pointer-events-none opacity-40">
         <div className="absolute top-0 left-0 w-full h-full" style={{
           backgroundImage: `radial-gradient(circle at 25% 25%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), 

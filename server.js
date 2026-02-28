@@ -17,6 +17,10 @@ const { sanitizeRequest } = require('./middleware/sanitize');
 const app = express();
 app.set('trust proxy', 1);
 
+const RATE_WINDOW_MS = 15 * 60 * 1000;
+const RATE_MAX_REQUESTS = 300;
+const requestBuckets = new Map();
+
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:3000',
@@ -34,12 +38,37 @@ app.use(cors({
 }));
 
 app.use((req, res, next) => {
+  const now = Date.now();
+  const ip = req.ip || req.socket?.remoteAddress || 'unknown';
+  const entry = requestBuckets.get(ip) || { count: 0, resetAt: now + RATE_WINDOW_MS };
+
+  if (now > entry.resetAt) {
+    entry.count = 0;
+    entry.resetAt = now + RATE_WINDOW_MS;
+  }
+
+  entry.count += 1;
+  requestBuckets.set(ip, entry);
+
+  if (entry.count > RATE_MAX_REQUESTS) {
+    res.setHeader('Retry-After', Math.ceil((entry.resetAt - now) / 1000));
+    return res.status(429).json({ success: false, message: 'Too many requests. Please try again later.' });
+  }
+
+  return next();
+});
+
+app.use((req, res, next) => {
   if (process.env.NODE_ENV === 'production' && !req.secure) {
     return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`);
   }
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-DNS-Prefetch-Control', 'off');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
   if (process.env.NODE_ENV === 'production') {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   }
@@ -70,6 +99,19 @@ app.get('/approve-testimonial/:token', (req, res) => {
   res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/approve-testimonial/${req.params.token}?action=${req.query.action}`);
 });
 
-app.listen(5000, () => {
-  console.log('Backend running on http://localhost:5000');
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+  console.error('Unhandled server error:', err);
+  return res.status(err.status || 500).json({
+    success: false,
+    message: err.expose ? err.message : 'Internal server error'
+  });
+});
+
+const PORT = Number(process.env.PORT) || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Backend running on http://localhost:${PORT}`);
 });
