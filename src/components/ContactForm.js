@@ -89,8 +89,24 @@ const ContactForm = () => {
           </p>
         </div>
 
-        <div className="mb-12 grid gap-8 md:grid-cols-3">
-          <div className="space-y-6 md:col-span-1">
+        <div className="mb-8 grid gap-8 lg:grid-cols-3">
+          <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-xl lg:col-span-2 md:p-5">
+            <h2 className="mb-4 font-serif text-2xl font-semibold text-stone-900">Find Us</h2>
+            <div className="overflow-hidden rounded-xl border border-stone-200">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3884.581424501807!2d74.75121677484537!3d13.18877098714698!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bbcb1e842429ab7%3A0x972b259d0ba8f97e!2sLavish%20Ladies%20Beauty%20Salon!5e0!3m2!1sen!2sin!4v1771523318807!5m2!1sen!2sin"
+                width="100%"
+                height="320"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Lavish Ladies Beauty Salon Location"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
             <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
               <p className="font-sans text-sm font-medium text-stone-700">Typical response time</p>
               <p className="mt-1 font-serif text-2xl font-semibold text-stone-900">Under 24 hours</p>
@@ -146,8 +162,9 @@ const ContactForm = () => {
               </div>
             </div>
           </div>
+        </div>
 
-          <form onSubmit={handleSubmit} className="rounded-2xl border border-stone-200 bg-white p-6 shadow-xl md:col-span-2 md:p-8">
+        <form onSubmit={handleSubmit} className="mb-12 rounded-2xl border border-stone-200 bg-white p-6 shadow-xl md:p-8">
             <div className="mb-6">
               <h2 className="font-serif text-2xl font-semibold text-stone-900">Send a Message</h2>
               <p className="mt-1 font-sans text-sm text-stone-600">
@@ -243,7 +260,6 @@ const ContactForm = () => {
               </button>
             </div>
           </form>
-        </div>
 
         {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
       </div>

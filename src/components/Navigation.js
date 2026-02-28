@@ -27,20 +27,14 @@ const Navigation = ({ scrollY, setSidebarOpen }) => {
         >
           Home
         </a>
-        <a 
-          href="/services" 
-          className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
-        >
-          Services
-        </a>
         <button 
-          onClick={() => window.location.href = '/#about'} 
+          onClick={() => window.location.href = '/about'} 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
           About
         </button>
         <button 
-          onClick={() => window.location.href = '/#services'} 
+          onClick={() => window.location.href = '/services'} 
           className="text-stone-700 hover:text-rose-600 transition-all duration-200 font-medium text-sm uppercase tracking-wider hover:scale-105 transform"
         >
           Our Services

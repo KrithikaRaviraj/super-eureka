@@ -13,6 +13,7 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import TermsOfService from "./components/TermsOfService";
 import NotFound from "./components/NotFound";
 import ContactForm from "./components/ContactForm";
+import AboutPage from "./components/AboutPage";
 import CookieConsent from "./components/CookieConsent";
 import Header from "./components/Header";
 import Navigation from "./components/Navigation";
@@ -484,7 +485,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                       <ul className="space-y-2 font-sans text-sm">
                         <li><a href="/" className="text-stone-300 hover:text-rose-400 transition-colors text-left">Home</a></li>
                         <li><a href="/services" className="text-stone-300 hover:text-rose-400 transition-colors text-left">Services</a></li>
-                        <li><a href="/#about" className="text-stone-300 hover:text-rose-400 transition-colors text-left">About Us</a></li>
+                        <li><a href="/about" className="text-stone-300 hover:text-rose-400 transition-colors text-left">About Us</a></li>
                         <li><a href="#contact" className="text-stone-300 hover:text-rose-400 transition-colors">Contact</a></li>
                         <li>
                           <button
@@ -587,9 +588,8 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                   </div>
                   <div className="flex-1 py-6">
                     <a href="/" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Home</a>
-                    <a href="/services" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Services</a>
-                    <a href="/#about" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">About</a>
-                    <a href="/#services" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Our Services</a>
+                    <a href="/about" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">About</a>
+                    <a href="/services" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Our Services</a>
                     <a href="#contact" onClick={() => setSidebarOpen(false)} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Contact</a>
                   </div>
                 </nav>
@@ -627,6 +627,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
       />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/book-appointment" element={<BookAppointment />} />
         <Route path="/staff-login" element={<StaffLogin />} />
         <Route path="/staff-dashboard" element={<StaffDashboard />} />
