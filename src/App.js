@@ -20,6 +20,15 @@ import { useAuth } from "./hooks/useAuth";
 import React, { useState } from "react";
 import './styles.css';
 
+const fallbackHomepageServices = [
+  { name: "Hair Styling & Cuts", description: "Professional haircuts, styling, and treatments for all hair types. From classic cuts to modern trends.", icon: "M9.64 7.64a2.5 2.5 0 1 1-3.54 3.54 2.5 2.5 0 0 1 3.54-3.54zm0 5.72L12 15.72l2.36-2.36a2.5 2.5 0 1 1 1.41 1.41L13.41 17.13l2.36 2.36a1 1 0 0 1-1.41 1.41L12 18.54l-2.36 2.36a1 1 0 0 1-1.41-1.41l2.36-2.36-2.36-2.36a2.5 2.5 0 1 1 1.41-1.41zM7.87 9.41a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm8.26 4.18a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z" },
+  { name: "Facial Treatments", description: "Rejuvenating facials, deep cleansing, and anti-aging treatments for glowing, healthy skin.", icon: "M12 2C8.14 2 5 5.14 5 9v2c0 2.97 1.61 5.57 4 6.96V21h6v-3.04c2.39-1.39 4-3.99 4-6.96V9c0-3.86-3.14-7-7-7zm-3 8a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm6 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm-6.5 3h7a3.5 3.5 0 0 1-7 0z" },
+  { name: "Manicure & Pedicure", description: "Complete nail care services including manicures and pedicures.", icon: "M8 2c.6 0 1 .4 1 1v6a1 1 0 1 1-2 0V3c0-.6.4-1 1-1zm4 0c.6 0 1 .4 1 1v7a1 1 0 1 1-2 0V3c0-.6.4-1 1-1zm4 1c.6 0 1 .4 1 1v6a1 1 0 1 1-2 0V4c0-.6.4-1 1-1zM6 12h12l-1.2 7.1A3 3 0 0 1 13.8 22h-3.6a3 3 0 0 1-3-2.9L6 12zm3 3a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9z" },
+  { name: "Hair Coloring", description: "Professional hair coloring, highlights, and color correction services.", icon: "M12 2c2.4 3.6 5 7.2 5 10.3A5 5 0 0 1 12 17a5 5 0 0 1-5-4.7C7 9.2 9.6 5.6 12 2zm0 17c3.9 0 7 1.6 7 3H5c0-1.4 3.1-3 7-3zm-2-6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" },
+  { name: "Bridal Packages", description: "Complete bridal makeover packages for your special day.", icon: "M12 2l2.3 4.7 5.2.8-3.8 3.7.9 5.3L12 14.8 7.4 16.5l.9-5.3L4.5 7.5l5.2-.8L12 2zm-6 18a6 6 0 0 1 12 0H6z" },
+  { name: "Threading & Waxing", description: "Professional threading and waxing services for smooth, hair-free skin.", icon: "M4 6h16l-3 5v7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-7L4 6zm5 7a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9zm-2-9h10l1.5 2h-13L7 4z" }
+];
+
 function App() {
   const [modal, setModal] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -56,10 +65,12 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
   const { isLoggedIn, userInfo, logout, setIsLoggedIn, setUserInfo } = useAuth();
   const [testimonials, setTestimonials] = useState([]);
+  const [homepageServices, setHomepageServices] = useState([]);
   const [scrollY, setScrollY] = useState(0);
   
   React.useEffect(() => {
     fetchTestimonials();
+    fetchHomepageServices();
     
     // Force scroll to top on mount
     window.scrollTo(0, 0);
@@ -101,6 +112,21 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const fetchHomepageServices = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/services`);
+      const data = await response.json();
+      if (data?.success && Array.isArray(data.services) && data.services.length > 0) {
+        setHomepageServices(data.services.slice(0, 6));
+      } else {
+        setHomepageServices(fallbackHomepageServices);
+      }
+    } catch (error) {
+      console.error('Failed to fetch homepage services:', error);
+      setHomepageServices(fallbackHomepageServices);
+    }
   };
 
   return (
@@ -215,13 +241,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                   </div>
                   
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                    {[
-                      { name: "Hair Styling & Cuts", desc: "Professional haircuts, styling, and treatments for all hair types. From classic cuts to modern trends.", icon: "M9.64 7.64a2.5 2.5 0 1 1-3.54 3.54 2.5 2.5 0 0 1 3.54-3.54zm0 5.72L12 15.72l2.36-2.36a2.5 2.5 0 1 1 1.41 1.41L13.41 17.13l2.36 2.36a1 1 0 0 1-1.41 1.41L12 18.54l-2.36 2.36a1 1 0 0 1-1.41-1.41l2.36-2.36-2.36-2.36a2.5 2.5 0 1 1 1.41-1.41zM7.87 9.41a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm8.26 4.18a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z" },
-                      { name: "Facial Treatments", desc: "Rejuvenating facials, deep cleansing for glowing, healthy skin.", icon: "M12 2C8.14 2 5 5.14 5 9v2c0 2.97 1.61 5.57 4 6.96V21h6v-3.04c2.39-1.39 4-3.99 4-6.96V9c0-3.86-3.14-7-7-7zm-3 8a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm6 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm-6.5 3h7a3.5 3.5 0 0 1-7 0z" },
-                      { name: "Manicure & Pedicure", desc: "Complete nail care services including manicures and pedicures.", icon: "M8 2c.6 0 1 .4 1 1v6a1 1 0 1 1-2 0V3c0-.6.4-1 1-1zm4 0c.6 0 1 .4 1 1v7a1 1 0 1 1-2 0V3c0-.6.4-1 1-1zm4 1c.6 0 1 .4 1 1v6a1 1 0 1 1-2 0V4c0-.6.4-1 1-1zM6 12h12l-1.2 7.1A3 3 0 0 1 13.8 22h-3.6a3 3 0 0 1-3-2.9L6 12zm3 3a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9z" },
-                      { name: "Hair Coloring", desc: "Professional hair coloring, highlights, and color correction services.", icon: "M12 2c2.4 3.6 5 7.2 5 10.3A5 5 0 0 1 12 17a5 5 0 0 1-5-4.7C7 9.2 9.6 5.6 12 2zm0 17c3.9 0 7 1.6 7 3H5c0-1.4 3.1-3 7-3zm-2-6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" },
-                      { name: "Bridal Packages", desc: "Complete bridal makeover packages for your special day.", icon: "M12 2l2.3 4.7 5.2.8-3.8 3.7.9 5.3L12 14.8 7.4 16.5l.9-5.3L4.5 7.5l5.2-.8L12 2zm-6 18a6 6 0 0 1 12 0H6z" }
-                    ].map((service, index) => (
+                    {(homepageServices.length ? homepageServices : fallbackHomepageServices).map((service, index) => (
                       <button type="button"
                         key={index}
                         className="w-full text-left bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200/50 transform hover:scale-105 hover:-translate-y-2 cursor-pointer group"
@@ -234,7 +254,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                           </svg>
                         </div>
                         <h3 className="font-serif text-xl font-medium text-stone-800 mb-3 group-hover:text-rose-600 transition-colors duration-300">{service.name}</h3>
-                        <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">{service.desc}</p>
+                        <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">{service.description}</p>
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <span className="text-rose-600 font-semibold text-sm">Click to explore -></span>
                         </div>
