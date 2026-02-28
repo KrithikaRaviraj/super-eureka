@@ -486,7 +486,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         <li><a href="/" className="text-stone-300 hover:text-rose-400 transition-colors text-left">Home</a></li>
                         <li><a href="/services" className="text-stone-300 hover:text-rose-400 transition-colors text-left">Services</a></li>
                         <li><a href="/about" className="text-stone-300 hover:text-rose-400 transition-colors text-left">About Us</a></li>
-                        <li><a href="#contact" className="text-stone-300 hover:text-rose-400 transition-colors">Contact</a></li>
+                        <li><a href="/contact" className="text-stone-300 hover:text-rose-400 transition-colors">Contact</a></li>
                         <li>
                           <button
                             type="button"
@@ -590,7 +590,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <a href="/" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Home</a>
                     <a href="/about" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">About</a>
                     <a href="/services" className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Our Services</a>
-                    <a href="#contact" onClick={() => setSidebarOpen(false)} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Contact</a>
+                    <a href="/contact" onClick={() => setSidebarOpen(false)} className="w-full text-left hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 px-8 py-4 font-sans text-sm font-medium uppercase tracking-wider text-stone-700 transform hover:translate-x-2 block">Contact</a>
                   </div>
                 </nav>
               </div>

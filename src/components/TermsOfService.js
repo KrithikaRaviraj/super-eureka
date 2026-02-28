@@ -172,7 +172,7 @@ const TermsOfService = ({ onClose }) => {
             <p className="mb-2">For questions about these Terms of Service, please contact us:</p>
             <div className="bg-stone-50 p-4 rounded-lg">
               <p><strong>Lavish Ladies Beauty Salon</strong></p>
-              <p>Email: <a href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="text-stone-700 hover:text-stone-900 underline decoration-stone-300 underline-offset-2 hover:decoration-stone-500">lavishladiessalonuchila@gmail.com</a></p>
+              <p>Email: <a href="https://mail.google.com/mail/?view=cm&fs=1&to=lavishladiessalonuchila@gmail.com&su=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="text-stone-700 hover:text-stone-900 underline decoration-stone-300 underline-offset-2 hover:decoration-stone-500">lavishladiessalonuchila@gmail.com</a></p>
               <p>Phone: <a href="tel:+918147627651" className="text-rose-600 hover:text-rose-700">+91 8147627651</a></p>
               <p>Address: Uchila, Udupi District, Karnataka, India</p>
             </div>
