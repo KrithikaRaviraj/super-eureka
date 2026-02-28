@@ -237,7 +237,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         <h3 className="font-serif text-xl font-medium text-stone-800 mb-3 group-hover:text-rose-600 transition-colors duration-300">{service.name}</h3>
                         <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">{service.desc}</p>
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <span className="text-rose-600 font-semibold text-sm">Click to explore -&gt;</span>
+                          <span className="text-rose-600 font-semibold text-sm">Click to explore -></span>
                         </div>
                       </button>
                     ))}
