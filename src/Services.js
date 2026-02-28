@@ -21,13 +21,6 @@ const staticServices = [
     icon: "M12 2C8.14 2 5 5.14 5 9v2c0 2.97 1.61 5.57 4 6.96V21h6v-3.04c2.39-1.39 4-3.99 4-6.96V9c0-3.86-3.14-7-7-7zm-3 8a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm6 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm-6.5 3h7a3.5 3.5 0 0 1-7 0z"
   },
   {
-    id: 3,
-    name: "Spa & Massage",
-    description: "Relaxing massages and spa treatments to rejuvenate your body and mind.",
-    duration: "60-120 mins",
-    icon: "M12 2c1.1 2.2 1.1 4.4 0 6.6C10.9 6.4 10.9 4.2 12 2zm-5 2.5c1.8 1.6 2.5 3.8 2.1 6-2-1-3.3-2.8-3.8-5 .5-.4 1.1-.7 1.7-1zm10 0c.6.3 1.2.6 1.7 1-.5 2.2-1.8 4-3.8 5-.4-2.2.3-4.4 2.1-6zM12 9c4.4 0 8 3.1 8 7 0 3.3-2.7 6-6 6h-4c-3.3 0-6-2.7-6-6 0-3.9 3.6-7 8-7zm-2 6a2 2 0 1 0 0 4h4a2 2 0 1 0 0-4h-4z"
-  },
-  {
     id: 4,
     name: "Manicure & Pedicure",
     description: "Complete nail care services including manicures, pedicures, and nail art.",

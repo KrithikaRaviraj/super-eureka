@@ -27,7 +27,6 @@ const TermsOfService = ({ onClose }) => {
             <ul className="list-disc pl-6 space-y-1 mb-4">
               <li>Hair styling, cutting, and coloring services</li>
               <li>Facial treatments and skincare services</li>
-              <li>Spa and massage therapy</li>
               <li>Manicure and pedicure services</li>
               <li>Bridal and special occasion packages</li>
               <li>Online appointment booking system</li>

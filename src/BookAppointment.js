@@ -32,7 +32,6 @@ export default function BookAppointment() {
   const services = [
     "Hair Styling & Cuts",
     "Facial Treatments", 
-    "Spa & Massage",
     "Manicure & Pedicure",
     "Hair Coloring",
     "Bridal Packages",
