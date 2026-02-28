@@ -283,7 +283,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         },
                         {
                           question: "Do you offer bridal packages?",
-                          answer: "Yes, we offer comprehensive bridal packages that include hair styling, makeup, facials, and nail services for your special day."
+                          answer: "Yes, we offer comprehensive bridal packages that include hair styling, makeup, and facials for your special day."
                         },
                         {
                           question: "What safety measures do you follow?",
@@ -313,7 +313,9 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         {/* Contact Options */}
                         <div className="space-y-4">
                           <a 
-                            href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services."
+                            href="https://mail.google.com/mail/?view=cm&fs=1&to=lavishladiessalonuchila@gmail.com&su=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services."
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="flex items-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md border border-rose-100 transition-all duration-300 group transform hover:-translate-y-1 text-stone-700 hover:text-stone-900"
                           >
                             <div className="w-9 h-9 bg-rose-600 rounded-full flex items-center justify-center mr-3 group-hover:bg-rose-700 transition-colors">
@@ -432,7 +434,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         Your premier destination for beauty and wellness in Uchila. Experience personalized care that makes you look and feel your best.
                       </p>
                       <div className="flex space-x-3">
-                        <a href="mailto:lavishladiessalonuchila@gmail.com?subject=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="w-7 h-7 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=lavishladiessalonuchila@gmail.com&su=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." target="_blank" rel="noopener noreferrer" className="w-7 h-7 bg-rose-600 rounded-full flex items-center justify-center hover:bg-rose-700 transition-colors cursor-pointer">
                           <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                           </svg>

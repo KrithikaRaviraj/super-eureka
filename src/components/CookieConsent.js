@@ -9,7 +9,6 @@ import {
 const CookieConsent = ({ onPrivacyClick }) => {
   const [showBanner, setShowBanner] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
-  const [hasSavedConsent, setHasSavedConsent] = useState(false);
   const [draftConsent, setDraftConsent] = useState(DEFAULT_CONSENT);
 
   useEffect(() => {
@@ -17,12 +16,10 @@ const CookieConsent = ({ onPrivacyClick }) => {
     if (storedConsent) {
       setDraftConsent(storedConsent);
       applyConsentPolicy(storedConsent);
-      setHasSavedConsent(true);
       setShowBanner(false);
       return;
     }
     setShowBanner(true);
-    setHasSavedConsent(false);
   }, []);
 
   const auditConsent = async (payload, action) => {
@@ -46,7 +43,6 @@ const CookieConsent = ({ onPrivacyClick }) => {
   const applyAndPersistConsent = (consent, action) => {
     const payload = persistConsent(consent);
     setDraftConsent(payload);
-    setHasSavedConsent(true);
     setShowBanner(false);
     setShowPreferences(false);
     auditConsent(payload, action);
@@ -115,16 +111,6 @@ const CookieConsent = ({ onPrivacyClick }) => {
             </div>
           </div>
         </div>
-      )}
-
-      {hasSavedConsent && !showBanner && (
-        <button
-          onClick={() => setShowPreferences(true)}
-          className="fixed bottom-4 left-4 z-40 bg-white border border-stone-300 text-stone-700 text-xs sm:text-sm px-3 py-2 rounded-lg shadow hover:bg-stone-50 transition-colors"
-          aria-label="Open cookie settings"
-        >
-          Cookie Settings
-        </button>
       )}
 
       {showPreferences && (
