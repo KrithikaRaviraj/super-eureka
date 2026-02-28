@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const { getEmailLogoHtml } = require('../utils/emailBranding');
 
 // Email configuration
 const transporter = nodemailer.createTransport({
@@ -106,6 +107,7 @@ router.post('/send-profile-update-email', async (req, res) => {
                   <!-- Header -->
                   <tr>
                     <td style="padding: 32px 32px 28px 32px; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); color: #ffffff; text-align: left;">
+                      ${getEmailLogoHtml(64, 14)}
                       <div style="font-size: 13px; letter-spacing: 1.2px; opacity: 0.9; text-transform: uppercase;">Lavish Ladies Beauty Salon</div>
                       <div style="font-size: 26px; font-weight: 700; margin-top: 6px;">Profile Updated Successfully</div>
                       <div style="font-size: 14px; opacity: 0.9; margin-top: 6px;">Your account information has been updated.</div>

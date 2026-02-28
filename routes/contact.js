@@ -3,6 +3,7 @@ const router = express.Router();
 const nodemailer = require('nodemailer');
 const ContactMessage = require('../models/ContactMessage');
 const { requireRole } = require('../middleware/auth');
+const { getEmailLogoHtml } = require('../utils/emailBranding');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -69,6 +70,7 @@ router.post('/submit', async (req, res) => {
                   <!-- Header -->
                   <tr>
                     <td style="padding: 40px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: white; text-align: center;">
+                      ${getEmailLogoHtml(66, 12)}
                       <h1 style="margin: 0; font-size: 28px; font-weight: 700; font-family: 'Cormorant Garamond', serif;">LAVISH LADIES</h1>
                       <p style="margin: 4px 0 0 0; font-size: 14px; opacity: 0.9;">Beauty Salon</p>
                     </td>
@@ -160,6 +162,7 @@ router.post('/submit', async (req, res) => {
                   <!-- Header -->
                   <tr>
                     <td style="padding: 24px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: white;">
+                      ${getEmailLogoHtml(56, 10)}
                       <h2 style="margin: 0; font-size: 20px; letter-spacing: 0.3px;">NEW CONTACT MESSAGE</h2>
                       <p style="margin: 6px 0 0 0; font-size: 12px; opacity: 0.9;">Lavish Ladies Beauty Salon</p>
                     </td>

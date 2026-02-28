@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const { createSession } = require('../middleware/auth');
+const { getEmailLogoHtml } = require('../utils/emailBranding');
 
 // HTTPS enforcement with strict validation
 router.use((req, res, next) => {
@@ -263,6 +264,7 @@ router.post('/send-email-otp', async (req, res) => {
                   <!-- Header -->
                   <tr>
                     <td style="padding: 32px 32px 28px 32px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: #ffffff; text-align: left;">
+                      ${getEmailLogoHtml(64, 14)}
                       <div style="font-size: 13px; letter-spacing: 1.2px; opacity: 0.9; text-transform: uppercase;">Lavish Ladies Beauty Salon</div>
                       <div style="font-size: 26px; font-weight: 700; margin-top: 6px;">Secure verification code</div>
                       <div style="font-size: 14px; opacity: 0.9; margin-top: 6px;">Use this one-time code to continue. Do not share it with anyone.</div>
