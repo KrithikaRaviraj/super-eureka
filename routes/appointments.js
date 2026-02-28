@@ -7,6 +7,7 @@ const Appointment = require('../models/Appointment');
 const Feedback = require('../models/Feedback');
 const servicePricing = require('../config/servicePricing');
 const { requireAuth, requireRole } = require('../middleware/auth');
+const { getEmailLogoHtml } = require('../utils/emailBranding');
 
 // Email configuration
 const transporter = nodemailer.createTransport({
@@ -239,11 +240,7 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
                     <tr>
                       <td style="padding: 0; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); text-align: center; position: relative;">
                         <div style="padding: 50px 40px; color: white;">
-                          <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
-                            <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
-                              <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.9 1 3 1.9 3 3V21C3 22.1 3.9 23 5 23H19C20.1 23 21 22.1 21 21V9H21ZM19 21H5V3H13V9H19V21Z"/>
-                            </svg>
-                          </div>
+                          ${getEmailLogoHtml(78, 20)}
                           <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">LAVISH LADIES</h1>
                           <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;">Beauty Salon</p>
                         </div>
@@ -400,11 +397,7 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
                     <tr>
                       <td style="padding: 0; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); text-align: center; position: relative;">
                         <div style="padding: 50px 40px; color: white;">
-                          <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
-                            <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
-                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                            </svg>
-                          </div>
+                          ${getEmailLogoHtml(78, 20)}
                           <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">LAVISH LADIES</h1>
                           <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;">Beauty Salon</p>
                         </div>
@@ -637,11 +630,7 @@ router.post('/feedback/:token', async (req, res) => {
                       <tr>
                         <td style="padding: 0; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); text-align: center; position: relative;">
                           <div style="padding: 50px 40px; color: white;">
-                            <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
-                              <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
-                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                              </svg>
-                            </div>
+                            ${getEmailLogoHtml(78, 20)}
                             <h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">TESTIMONIAL REVIEW</h1>
                             <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;">Lavish Ladies Beauty Salon</p>
                           </div>
