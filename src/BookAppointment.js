@@ -2,12 +2,52 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Toast from './components/Toast';
 
-const timeSlots = [
-  "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
-  "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM",
-  "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM",
-  "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM"
-];
+const SLOT_INTERVAL_MINUTES = 30;
+
+function to12HourLabel(hour, minute) {
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${String(minute).padStart(2, '0')} ${period}`;
+}
+
+function generateTimeSlots(startHour, startMinute, endHour, endMinute) {
+  const slots = [];
+  const startTotal = (startHour * 60) + startMinute;
+  const endTotal = (endHour * 60) + endMinute;
+
+  for (let total = startTotal; total <= endTotal; total += SLOT_INTERVAL_MINUTES) {
+    const hour = Math.floor(total / 60);
+    const minute = total % 60;
+    slots.push(to12HourLabel(hour, minute));
+  }
+
+  return slots;
+}
+
+function getSlotsForDate(dateString) {
+  const date = new Date(`${dateString}T00:00:00`);
+  const isSunday = date.getDay() === 0;
+
+  // Sunday hours: 9:00 AM - 1:00 PM
+  if (isSunday) {
+    return generateTimeSlots(9, 0, 13, 0);
+  }
+
+  // Monday-Saturday hours: 8:15 AM - 7:30 PM
+  return generateTimeSlots(8, 15, 19, 30);
+}
+
+function toMinutesFromSlot(slotLabel) {
+  const [time, period] = slotLabel.split(' ');
+  const [hoursStr, minutesStr] = time.split(':');
+  let hour = parseInt(hoursStr, 10);
+  const minute = parseInt(minutesStr, 10);
+
+  if (period === 'PM' && hour !== 12) hour += 12;
+  if (period === 'AM' && hour === 12) hour = 0;
+
+  return (hour * 60) + minute;
+}
 
 export default function BookAppointment() {
   const navigate = useNavigate();
@@ -50,6 +90,8 @@ export default function BookAppointment() {
   useEffect(() => {
     const fetchAvailability = async () => {
       if (!selectedDate) return;
+
+      const baseSlots = getSlotsForDate(selectedDate);
       
       try {
         // Fetch booked slots for the selected date
@@ -57,15 +99,28 @@ export default function BookAppointment() {
         if (response.ok) {
           const data = await response.json();
           const bookedSlots = data.bookedSlots || []; // Expecting array of time strings ["9:00 AM", "10:00 AM"]
-          const available = timeSlots.filter(slot => !bookedSlots.includes(slot));
+          let available = baseSlots.filter(slot => !bookedSlots.includes(slot));
+
+          // For same-day booking, hide past times.
+          const todayLocal = new Date();
+          const selectedLocal = new Date(`${selectedDate}T00:00:00`);
+          if (
+            selectedLocal.getFullYear() === todayLocal.getFullYear() &&
+            selectedLocal.getMonth() === todayLocal.getMonth() &&
+            selectedLocal.getDate() === todayLocal.getDate()
+          ) {
+            const nowMinutes = (todayLocal.getHours() * 60) + todayLocal.getMinutes();
+            available = available.filter((slot) => toMinutesFromSlot(slot) > nowMinutes);
+          }
+
           setAvailableSlots(available);
         } else {
           // Fallback: show all slots if API fails, or handle error appropriately
-          setAvailableSlots(timeSlots);
+          setAvailableSlots(baseSlots);
         }
       } catch (error) {
         console.error("Failed to fetch availability:", error);
-        setAvailableSlots(timeSlots);
+        setAvailableSlots(baseSlots);
       }
     };
 
@@ -298,6 +353,11 @@ export default function BookAppointment() {
                     {formData.date && (
                       <div>
                         <label className="block font-sans text-sm font-semibold text-stone-700 mb-3">Available Times</label>
+                        <p className="mb-3 font-sans text-xs text-stone-500">
+                          {new Date(`${formData.date}T00:00:00`).getDay() === 0
+                            ? 'Sunday hours: 9:00 AM - 1:00 PM'
+                            : 'Monday-Saturday hours: 8:15 AM - 7:30 PM'}
+                        </p>
                         <div className="grid grid-cols-3 gap-3">
                           {availableSlots.map(time => (
                             <button
