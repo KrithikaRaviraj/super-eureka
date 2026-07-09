@@ -4,6 +4,7 @@ const User = require('../models/User');
 const OTP = require('../models/OTP');
 const { createSession, destroySession, requireAuth } = require('../middleware/auth');
 const { PASSWORD_RULES, validatePassword, hashPassword, verifyPassword } = require('../utils/passwordAuth');
+const { sendLoginNotificationEmail } = require('../utils/accountEmails');
 
 const router = express.Router();
 
@@ -18,6 +19,12 @@ function validateEmail(email) {
 function createDisplayName(email) {
   const localPart = normalizeEmail(email).split('@')[0] || 'client';
   return localPart.charAt(0).toUpperCase() + localPart.slice(1);
+}
+
+function normalizeIP(req) {
+  const forwarded = req.get('x-forwarded-for') || req.get('x-real-ip');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '';
 }
 
 router.get('/me', (req, res) => {
@@ -41,6 +48,18 @@ router.post('/login', async (req, res) => {
       name: String(name || ''),
       role: 'customer'
     }, { rememberDevice: rememberDevice === true });
+
+    sendLoginNotificationEmail({
+      email: normalizedEmail,
+      name: String(name || ''),
+      method: 'Google Sign-In',
+      role: 'customer',
+      rememberDevice: rememberDevice === true,
+      userAgent: req.get('user-agent'),
+      ip: normalizeIP(req)
+    }).catch((error) => {
+      console.error('google login notification email error:', error);
+    });
 
     return res.json({ success: true, user: req.auth });
   } catch (error) {
@@ -152,6 +171,18 @@ router.post('/customer-register', async (req, res) => {
       role: 'customer'
     }, { rememberDevice });
 
+    sendLoginNotificationEmail({
+      email: user.email,
+      name: user.name || createDisplayName(normalizedEmail),
+      method: 'Email OTP and Password Setup',
+      role: 'customer',
+      rememberDevice,
+      userAgent: req.get('user-agent'),
+      ip: normalizeIP(req)
+    }).catch((error) => {
+      console.error('customer register notification email error:', error);
+    });
+
     return res.json({ success: true, user: req.auth, mode: 'registered' });
   } catch (error) {
     console.error('auth/customer-register error:', error);
@@ -210,6 +241,18 @@ router.post('/customer-password-login', async (req, res) => {
       user.uid = req.auth.uid;
       await user.save();
     }
+
+    sendLoginNotificationEmail({
+      email: user.email,
+      name: user.name || createDisplayName(normalizedEmail),
+      method: 'Email and Password',
+      role: 'customer',
+      rememberDevice,
+      userAgent: req.get('user-agent'),
+      ip: normalizeIP(req)
+    }).catch((error) => {
+      console.error('password login notification email error:', error);
+    });
 
     return res.json({ success: true, user: req.auth, mode: 'password' });
   } catch (error) {
@@ -285,6 +328,18 @@ router.post('/customer-reset-password', async (req, res) => {
       name: user.name || createDisplayName(normalizedEmail),
       role: 'customer'
     }, { rememberDevice });
+
+    sendLoginNotificationEmail({
+      email: user.email,
+      name: user.name || createDisplayName(normalizedEmail),
+      method: 'Password Reset and Sign-In',
+      role: 'customer',
+      rememberDevice,
+      userAgent: req.get('user-agent'),
+      ip: normalizeIP(req)
+    }).catch((error) => {
+      console.error('password reset notification email error:', error);
+    });
 
     return res.json({ success: true, user: req.auth, mode: 'reset' });
   } catch (error) {

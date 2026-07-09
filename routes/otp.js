@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const { createSession } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
 const OTP = require('../models/OTP');
+const { buildAuthUrl, buildPrimaryButton, buildSecondaryButton, sendLoginNotificationEmail } = require('../utils/accountEmails');
 
 // HTTPS enforcement with strict validation
 router.use((req, res, next) => {
@@ -138,12 +139,6 @@ function validateEmail(email) {
   return emailRegex.test(email);
 }
 
-function buildPrimaryButton(href, label, background = '#111827') {
-  return `
-    <a href="${href}" style="display:inline-block;background:${background};color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;">${label}</a>
-  `;
-}
-
 function isAuthorizedStaff(req) {
   const authHeader = req.headers['x-staff-authorization'];
   const currentKey = process.env.STAFF_SECRET_KEY;
@@ -262,8 +257,12 @@ router.post('/send-email-otp', async (req, res) => {
               <strong style="color:#111827;">Security reminder:</strong> never share this code with anyone. Our team will never ask for your OTP by phone, chat, or email.
             </div>
           </div>
-          <p style="margin:0 0 18px 0;font-size:14px;line-height:1.7;color:#6b7280;">If you did not request this sign-in, you can safely ignore this email and no further action is needed.</p>
-          ${process.env.FRONTEND_URL ? `<p style="margin:0;text-align:center;">${buildPrimaryButton(process.env.FRONTEND_URL, 'Open Lavish Ladies')}</p>` : ''}
+          <p style="margin:0 0 18px 0;font-size:14px;line-height:1.7;color:#6b7280;">If you did not request this sign-in, you can safely ignore this email. If you were trying to recover access, you can use the same email flow to reset your password.</p>
+          <p style="margin:0;text-align:center;">
+            ${buildPrimaryButton(buildAuthUrl('signin', normalizedEmail), 'Continue Sign-In')}
+            <span style="display:inline-block;width:10px;"></span>
+            ${buildSecondaryButton(buildAuthUrl('reset', normalizedEmail), 'Forgot Password?')}
+          </p>
         `
       })
     };
@@ -378,6 +377,18 @@ router.post('/verify-email-otp', async (req, res) => {
       email: normalizedEmail,
       name: safeName.charAt(0).toUpperCase() + safeName.slice(1),
       role
+    });
+
+    sendLoginNotificationEmail({
+      email: normalizedEmail,
+      name: safeName.charAt(0).toUpperCase() + safeName.slice(1),
+      method: 'Email OTP',
+      role,
+      rememberDevice: false,
+      userAgent: req.get('user-agent'),
+      ip: clientIP
+    }).catch((error) => {
+      console.error('otp login notification email error:', error);
     });
     
     res.json({ 
