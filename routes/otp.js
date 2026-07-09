@@ -145,9 +145,9 @@ function validateEmail(email) {
   return emailRegex.test(email);
 }
 
-function buildPrimaryButton(href, label, background = '#9f1239') {
+function buildPrimaryButton(href, label, background = '#111827') {
   return `
-    <a href="${href}" style="display:inline-block;background:${background};color:#ffffff;padding:14px 24px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;">${label}</a>
+    <a href="${href}" style="display:inline-block;background:${background};color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;">${label}</a>
   `;
 }
 
@@ -259,12 +259,12 @@ router.post('/send-email-otp', async (req, res) => {
         subtitle: 'Use this one-time verification code to continue your sign-in securely.',
         contentHtml: `
           <p style="margin:0 0 18px 0;font-size:16px;line-height:1.7;color:#374151;">We received a request to sign in with this email address. Please enter the verification code below to continue.</p>
-          <div style="margin:0 0 22px 0;padding:24px 20px;background:linear-gradient(135deg,#fff7f3 0%,#fff1f2 100%);border:1px solid #f1e4df;border-radius:24px;text-align:center;">
-            <div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#9f1239;text-transform:uppercase;margin-bottom:12px;">One-Time Passcode</div>
-            <div style="font-size:42px;line-height:1;font-weight:700;letter-spacing:12px;font-family:'Courier New',monospace;color:#7f1d1d;">${otp}</div>
+          <div style="margin:0 0 22px 0;padding:24px 20px;background:#ffffff;border:1px solid #e5e7eb;text-align:center;">
+            <div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#6b7280;text-transform:uppercase;margin-bottom:12px;">One-Time Passcode</div>
+            <div style="font-size:42px;line-height:1;font-weight:700;letter-spacing:12px;font-family:'Courier New',monospace;color:#111827;">${otp}</div>
             <p style="margin:16px 0 0 0;font-size:14px;color:#4b5563;">This code expires in <strong>10 minutes</strong>.</p>
           </div>
-          <div style="margin:0 0 22px 0;padding:18px 20px;background:#f9fafb;border-radius:18px;border:1px solid #ece7e3;">
+          <div style="margin:0 0 22px 0;padding:18px 20px;background:#f9fafb;border:1px solid #e5e7eb;">
             <div style="font-size:14px;line-height:1.8;color:#4b5563;">
               <strong style="color:#111827;">Security reminder:</strong> never share this code with anyone. Our team will never ask for your OTP by phone, chat, or email.
             </div>
