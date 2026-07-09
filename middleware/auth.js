@@ -3,6 +3,7 @@ const Session = require('../models/Session');
 
 const SESSION_COOKIE_NAME = 'll_sid';
 const SESSION_TTL_MS = Number(process.env.SESSION_TTL_MS || 24 * 60 * 60 * 1000); // 24h
+const REMEMBER_DEVICE_TTL_MS = Number(process.env.REMEMBER_DEVICE_TTL_MS || 30 * 24 * 60 * 60 * 1000); // 30d
 const SESSION_HASH_SALT = process.env.SESSION_HASH_SALT || 'default-session-salt';
 const SESSION_COOKIE_SAMESITE = (process.env.SESSION_COOKIE_SAMESITE || 'Lax').trim();
 
@@ -66,12 +67,13 @@ async function attachAuth(req, res, next) {
     };
 
     // Sliding expiration
-    const newExpiry = new Date(Date.now() + SESSION_TTL_MS);
+    const sessionMaxAge = Number(session.maxAgeMs) > 0 ? Number(session.maxAgeMs) : SESSION_TTL_MS;
+    const newExpiry = new Date(Date.now() + sessionMaxAge);
     session.lastSeenAt = new Date();
     session.expiresAt = newExpiry;
     await session.save();
 
-    res.setHeader('Set-Cookie', createSessionCookieHeader(req.sessionSid, SESSION_TTL_MS));
+    res.setHeader('Set-Cookie', createSessionCookieHeader(req.sessionSid, sessionMaxAge));
     return next();
   } catch (error) {
     console.error('attachAuth error:', error);
@@ -80,7 +82,7 @@ async function attachAuth(req, res, next) {
   }
 }
 
-async function createSession(req, res, user) {
+async function createSession(req, res, user, options = {}) {
   if (req.sessionSid) {
     const oldHash = hashSessionId(req.sessionSid);
     await Session.deleteOne({ sidHash: oldHash });
@@ -88,7 +90,9 @@ async function createSession(req, res, user) {
 
   const sid = crypto.randomBytes(32).toString('hex');
   const sidHash = hashSessionId(sid);
-  const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
+  const rememberDevice = options.rememberDevice === true;
+  const maxAgeMs = rememberDevice ? REMEMBER_DEVICE_TTL_MS : SESSION_TTL_MS;
+  const expiresAt = new Date(Date.now() + maxAgeMs);
 
   await Session.create({
     sidHash,
@@ -96,10 +100,12 @@ async function createSession(req, res, user) {
     email: String(user.email || '').toLowerCase(),
     name: String(user.name || ''),
     role: user.role === 'staff' ? 'staff' : 'customer',
+    rememberDevice,
+    maxAgeMs,
     expiresAt
   });
 
-  res.setHeader('Set-Cookie', createSessionCookieHeader(sid, SESSION_TTL_MS));
+  res.setHeader('Set-Cookie', createSessionCookieHeader(sid, maxAgeMs));
   req.sessionSid = sid;
   req.auth = {
     uid: String(user.uid || ''),
@@ -152,5 +158,7 @@ module.exports = {
   createSession,
   destroySession,
   requireAuth,
-  requireRole
+  requireRole,
+  SESSION_TTL_MS,
+  REMEMBER_DEVICE_TTL_MS
 };

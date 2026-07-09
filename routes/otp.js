@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const { createSession } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
+const OTP = require('../models/OTP');
 
 // HTTPS enforcement with strict validation
 router.use((req, res, next) => {
@@ -33,16 +34,8 @@ const emailRateLimitSchema = new mongoose.Schema({
 });
 emailRateLimitSchema.index({ email: 1 }, { unique: true });
 
-const otpSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  hashedOtp: { type: String, required: true },
-  attempts: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now, expires: 600 }
-});
-
 const IpRateLimit = mongoose.model('IpRateLimit', ipRateLimitSchema);
 const EmailRateLimit = mongoose.model('EmailRateLimit', emailRateLimitSchema);
-const OTP = mongoose.model('OTP', otpSchema);
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
