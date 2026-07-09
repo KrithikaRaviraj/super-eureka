@@ -145,6 +145,12 @@ function validateEmail(email) {
   return emailRegex.test(email);
 }
 
+function buildPrimaryButton(href, label, background = '#9f1239') {
+  return `
+    <a href="${href}" style="display:inline-block;background:${background};color:#ffffff;padding:14px 24px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;">${label}</a>
+  `;
+}
+
 function isAuthorizedStaff(req) {
   const authHeader = req.headers['x-staff-authorization'];
   const currentKey = process.env.STAFF_SECRET_KEY;
@@ -250,21 +256,21 @@ router.post('/send-email-otp', async (req, res) => {
       subject: 'Your Lavish Ladies Beauty Salon Verification Code',
       html: buildEmailTemplate({
         title: 'Security Code',
-        subtitle: 'Use this one-time code to continue. Please do not share it.',
+        subtitle: 'Use this one-time verification code to continue your sign-in securely.',
         contentHtml: `
-          <div style="text-align:center;margin-bottom:20px;">
-            <div style="font-size:44px;font-weight:700;letter-spacing:10px;font-family:'Courier New',monospace;color:#b91c1c;">${otp}</div>
-            <p style="margin:16px 0 6px 0;font-size:14px;color:#4b5563;">This code expires in 10 minutes.</p>
-            <p style="margin:0;font-size:13px;color:#6b7280;">If you did not request this, you can safely ignore this email.</p>
+          <p style="margin:0 0 18px 0;font-size:16px;line-height:1.7;color:#374151;">We received a request to sign in with this email address. Please enter the verification code below to continue.</p>
+          <div style="margin:0 0 22px 0;padding:24px 20px;background:linear-gradient(135deg,#fff7f3 0%,#fff1f2 100%);border:1px solid #f1e4df;border-radius:24px;text-align:center;">
+            <div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#9f1239;text-transform:uppercase;margin-bottom:12px;">One-Time Passcode</div>
+            <div style="font-size:42px;line-height:1;font-weight:700;letter-spacing:12px;font-family:'Courier New',monospace;color:#7f1d1d;">${otp}</div>
+            <p style="margin:16px 0 0 0;font-size:14px;color:#4b5563;">This code expires in <strong>10 minutes</strong>.</p>
           </div>
-          <div style="font-size:14px;color:#4b5563;line-height:1.7;">
-            <strong style="display:block;color:#111827;margin-bottom:8px;">How to use your code</strong>
-            <ul style="margin:0;padding-left:18px;">
-              <li>Enter this code on the verification screen within 10 minutes.</li>
-              <li>For your security, never share this code with anyone.</li>
-              <li>If you did not request this code, no action is required.</li>
-            </ul>
+          <div style="margin:0 0 22px 0;padding:18px 20px;background:#f9fafb;border-radius:18px;border:1px solid #ece7e3;">
+            <div style="font-size:14px;line-height:1.8;color:#4b5563;">
+              <strong style="color:#111827;">Security reminder:</strong> never share this code with anyone. Our team will never ask for your OTP by phone, chat, or email.
+            </div>
           </div>
+          <p style="margin:0 0 18px 0;font-size:14px;line-height:1.7;color:#6b7280;">If you did not request this sign-in, you can safely ignore this email and no further action is needed.</p>
+          ${process.env.FRONTEND_URL ? `<p style="margin:0;text-align:center;">${buildPrimaryButton(process.env.FRONTEND_URL, 'Open Lavish Ladies')}</p>` : ''}
         `
       })
     };

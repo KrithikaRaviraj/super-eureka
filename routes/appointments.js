@@ -9,6 +9,30 @@ const servicePricing = require('../config/servicePricing');
 const { requireAuth, requireRole } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
 
+function formatAppointmentDate(dateValue) {
+  return new Date(dateValue).toLocaleDateString('en-IN', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+function buildDetailRow(label, value, emphasize = false) {
+  return `
+    <tr>
+      <td style="padding:13px 0;border-bottom:1px solid #efe6e1;font-size:13px;font-weight:700;letter-spacing:0.4px;color:#7c2d12;text-transform:uppercase;width:140px;vertical-align:top;">${label}</td>
+      <td style="padding:13px 0;border-bottom:1px solid #efe6e1;font-size:15px;line-height:1.6;color:${emphasize ? '#111827' : '#374151'};font-weight:${emphasize ? '700' : '500'};">${value}</td>
+    </tr>
+  `;
+}
+
+function buildPrimaryButton(href, label, background = '#9f1239') {
+  return `
+    <a href="${href}" style="display:inline-block;background:${background};color:#ffffff;padding:14px 24px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;">${label}</a>
+  `;
+}
+
 // Email configuration
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -222,15 +246,21 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
         subject: 'Appointment Confirmed - Lavish Ladies Beauty Salon',
         html: buildEmailTemplate({
           title: 'Appointment Confirmed',
-          subtitle: 'Your booking has been confirmed.',
+          subtitle: 'Your appointment is reserved. Here is a polished summary of your visit with us.',
           contentHtml: `
-            <p style="margin:0 0 14px 0;font-size:15px;color:#4b5563;">Dear <strong>${appointment.userName}</strong>,</p>
-            <p style="margin:0 0 14px 0;font-size:14px;color:#4b5563;"><strong>Service:</strong> ${appointment.service}</p>
-            <p style="margin:0 0 14px 0;font-size:14px;color:#4b5563;"><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-            <p style="margin:0 0 14px 0;font-size:14px;color:#4b5563;"><strong>Time:</strong> ${appointment.time}</p>
-            ${appointment.price ? `<p style="margin:0 0 14px 0;font-size:14px;color:#4b5563;"><strong>Price:</strong> Rs. ${appointment.price}</p>` : ''}
-            ${appointment.notes ? `<p style="margin:0 0 14px 0;font-size:14px;color:#4b5563;"><strong>Notes:</strong> ${appointment.notes}</p>` : ''}
-            <p style="margin:0;font-size:14px;color:#6b7280;">Please arrive 10 minutes early. For changes, contact us at +91 81476 27651.</p>
+            <p style="margin:0 0 20px 0;font-size:16px;line-height:1.7;color:#374151;">Dear <strong>${appointment.userName}</strong>, your booking has been successfully confirmed. We look forward to welcoming you to the salon.</p>
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffaf7;border:1px solid #f1e4df;border-radius:20px;padding:0 20px;">
+              ${buildDetailRow('Service', appointment.service, true)}
+              ${buildDetailRow('Date', formatAppointmentDate(appointment.date))}
+              ${buildDetailRow('Time', appointment.time)}
+              ${appointment.price ? buildDetailRow('Price', `Rs. ${appointment.price}`, true) : ''}
+              ${appointment.notes ? buildDetailRow('Notes', appointment.notes) : ''}
+            </table>
+            <div style="margin-top:22px;padding:18px 20px;background:#f9fafb;border-radius:18px;border:1px solid #ece7e3;">
+              <div style="font-size:14px;line-height:1.7;color:#4b5563;">
+                Please arrive 10 minutes early for a smooth check-in. If you need to make any changes, contact us at <strong style="color:#111827;">+91 81476 27651</strong>.
+              </div>
+            </div>
           `
         })
       };
@@ -253,15 +283,18 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
         subject: 'Share Your Experience - Lavish Ladies Beauty Salon',
         html: buildEmailTemplate({
           title: 'Share Your Experience',
-          subtitle: 'Your feedback helps us improve.',
+          subtitle: 'Thank you for visiting us. A quick review helps us keep every salon experience thoughtful and consistent.',
           contentHtml: `
-            <p style="margin:0 0 14px 0;font-size:15px;color:#4b5563;">Dear <strong>${appointment.userName}</strong>,</p>
-            <p style="margin:0 0 14px 0;font-size:14px;color:#4b5563;">Thank you for visiting us for <strong>${appointment.service}</strong>.</p>
-            <p style="margin:0 0 16px 0;font-size:14px;color:#4b5563;">Please take 2 minutes to share your experience.</p>
-            <p style="margin:0 0 16px 0;text-align:center;">
-              <a href="${feedbackUrl}" style="display:inline-block;background:#9f1239;color:#ffffff;padding:12px 22px;text-decoration:none;font-weight:600;">Share Feedback</a>
+            <p style="margin:0 0 16px 0;font-size:16px;line-height:1.7;color:#374151;">Dear <strong>${appointment.userName}</strong>, thank you for choosing Lavish Ladies Beauty Salon for your <strong>${appointment.service}</strong>.</p>
+            <div style="margin:0 0 20px 0;padding:20px;background:#fffaf7;border:1px solid #f1e4df;border-radius:20px;">
+              <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#9f1239;text-transform:uppercase;margin-bottom:10px;">Visit Summary</div>
+              <div style="font-size:15px;line-height:1.7;color:#374151;">${formatAppointmentDate(appointment.date)} at ${appointment.time}</div>
+            </div>
+            <p style="margin:0 0 20px 0;font-size:15px;line-height:1.7;color:#4b5563;">If you have 2 minutes, we would love to hear how your visit went.</p>
+            <p style="margin:0 0 18px 0;text-align:center;">
+              ${buildPrimaryButton(feedbackUrl, 'Share Feedback')}
             </p>
-            <p style="margin:0;font-size:14px;color:#6b7280;">Visit date: ${new Date(appointment.date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} at ${appointment.time}</p>
+            <p style="margin:0;font-size:13px;line-height:1.7;color:#6b7280;text-align:center;">Your feedback is reviewed personally and helps us refine the experience for every guest.</p>
           `
         })
       };
@@ -360,13 +393,16 @@ router.post('/feedback/:token', async (req, res) => {
             title: 'Testimonial Review',
             subtitle: 'A new testimonial is awaiting your decision.',
             contentHtml: `
-              <p style="margin:0 0 10px 0;color:#374151;"><strong>Customer:</strong> ${feedback.userName}</p>
-              <p style="margin:0 0 10px 0;color:#374151;"><strong>Service:</strong> ${feedback.service}</p>
-              <p style="margin:0 0 10px 0;color:#374151;"><strong>Rating:</strong> ${feedback.overallRating}/5</p>
-              <p style="margin:0 0 14px 0;color:#374151;"><strong>Comment:</strong> "${comments}"</p>
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffaf7;border:1px solid #f1e4df;border-radius:20px;padding:0 20px;margin-bottom:20px;">
+                ${buildDetailRow('Customer', feedback.userName)}
+                ${buildDetailRow('Service', feedback.service)}
+                ${buildDetailRow('Rating', `${feedback.overallRating}/5`, true)}
+                ${buildDetailRow('Comment', `"${comments}"`)}
+              </table>
               <p style="margin:12px 0;text-align:center;">
-                <a href="${approveUrl}" style="display:inline-block;background:#166534;color:#ffffff;padding:10px 18px;text-decoration:none;font-weight:600;margin-right:8px;">Approve</a>
-                <a href="${rejectUrl}" style="display:inline-block;background:#b91c1c;color:#ffffff;padding:10px 18px;text-decoration:none;font-weight:600;">Reject</a>
+                ${buildPrimaryButton(approveUrl, 'Approve', '#166534')}
+                <span style="display:inline-block;width:10px;"></span>
+                ${buildPrimaryButton(rejectUrl, 'Reject', '#b91c1c')}
               </p>
             `
           })
