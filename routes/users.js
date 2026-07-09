@@ -14,6 +14,15 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+function buildDetailRow(label, value) {
+  return `
+    <tr>
+      <td style="padding:13px 0;border-bottom:1px solid #e5e7eb;font-size:13px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:150px;vertical-align:top;">${label}</td>
+      <td style="padding:13px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:#374151;">${value}</td>
+    </tr>
+  `;
+}
+
 // Save or update user
 router.post('/', async (req, res) => {
   try {
@@ -95,16 +104,13 @@ router.post('/send-profile-update-email', async (req, res) => {
         title: 'Profile Updated',
         subtitle: 'Your account details were updated successfully.',
         contentHtml: `
-          <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#374151;">Hi ${name || 'there'},</p>
-          <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#374151;">
-            This is a confirmation that your profile information was updated.
-          </p>
-          <p style="margin:0 0 14px 0;font-size:14px;color:#4b5563;">
-            Updated email: <strong>${email}</strong>
-          </p>
-          <p style="margin:0;font-size:14px;color:#6b7280;">
-            If this wasn't you, contact us immediately at lavishladiessalonuchila@gmail.com.
-          </p>
+          <p style="margin:0 0 18px 0;font-size:16px;line-height:1.7;color:#374151;">Hi ${name || 'there'}, this is a confirmation that your profile information was updated.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 20px;">
+            ${buildDetailRow('Updated Email', email)}
+          </table>
+          <div style="margin-top:20px;padding:18px 20px;background:#f9fafb;border:1px solid #e5e7eb;">
+            <div style="font-size:14px;line-height:1.7;color:#4b5563;">If this was not you, contact us immediately at <strong style="color:#111827;">lavishladiessalonuchila@gmail.com</strong>.</div>
+          </div>
         `
       })
     };

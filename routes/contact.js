@@ -13,6 +13,15 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+function buildDetailRow(label, value) {
+  return `
+    <tr>
+      <td style="padding:13px 0;border-bottom:1px solid #e5e7eb;font-size:13px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:120px;vertical-align:top;">${label}</td>
+      <td style="padding:13px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:#374151;">${value}</td>
+    </tr>
+  `;
+}
+
 // Submit contact form
 router.post('/submit', async (req, res) => {
   try {
@@ -55,13 +64,15 @@ router.post('/submit', async (req, res) => {
         title: 'Message Received',
         subtitle: 'Thank you for contacting us. Our team will respond within 24 hours.',
         contentHtml: `
-          <p style="margin:0 0 14px 0;font-size:15px;color:#4b5563;">Hi <strong>${name}</strong>,</p>
-          <p style="margin:0 0 14px 0;font-size:15px;color:#4b5563;">
-            We received your inquiry about <strong>${subject}</strong>.
-          </p>
-          <p style="margin:0 0 8px 0;font-size:14px;color:#4b5563;"><strong>Email:</strong> ${email}</p>
-          <p style="margin:0 0 8px 0;font-size:14px;color:#4b5563;"><strong>Phone:</strong> ${phone}</p>
-          <p style="margin:0;font-size:14px;color:#6b7280;">If urgent, call us at +91 8147627651.</p>
+          <p style="margin:0 0 18px 0;font-size:16px;line-height:1.7;color:#374151;">Hi <strong>${name}</strong>, we received your message and our team will review it shortly.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 20px;">
+            ${buildDetailRow('Subject', subject)}
+            ${buildDetailRow('Email', email)}
+            ${buildDetailRow('Phone', phone)}
+          </table>
+          <div style="margin-top:20px;padding:18px 20px;background:#f9fafb;border:1px solid #e5e7eb;">
+            <div style="font-size:14px;line-height:1.7;color:#4b5563;">If your request is urgent, please call us directly at <strong style="color:#111827;">+91 81476 27651</strong>.</div>
+          </div>
         `
       })
     };
@@ -75,12 +86,16 @@ router.post('/submit', async (req, res) => {
         title: 'New Contact Message',
         subtitle: 'A customer submitted a new inquiry.',
         contentHtml: `
-          <p style="margin:0 0 10px 0;color:#374151;"><strong>Name:</strong> ${name}</p>
-          <p style="margin:0 0 10px 0;color:#374151;"><strong>Email:</strong> ${email}</p>
-          <p style="margin:0 0 10px 0;color:#374151;"><strong>Phone:</strong> ${phone}</p>
-          <p style="margin:0 0 10px 0;color:#374151;"><strong>Subject:</strong> ${subject}</p>
-          <p style="margin:12px 0 6px 0;color:#374151;"><strong>Message:</strong></p>
-          <p style="margin:0;color:#4b5563;line-height:1.6;white-space:pre-wrap;">${message}</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 20px;margin-bottom:20px;">
+            ${buildDetailRow('Name', name)}
+            ${buildDetailRow('Email', email)}
+            ${buildDetailRow('Phone', phone)}
+            ${buildDetailRow('Subject', subject)}
+          </table>
+          <div style="padding:18px 20px;background:#f9fafb;border:1px solid #e5e7eb;">
+            <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#6b7280;text-transform:uppercase;margin-bottom:10px;">Message</div>
+            <div style="font-size:15px;line-height:1.7;color:#374151;white-space:pre-wrap;">${message}</div>
+          </div>
         `
       })
     };

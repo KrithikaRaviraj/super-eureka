@@ -159,6 +159,25 @@ router.post('/customer-register', async (req, res) => {
   }
 });
 
+router.post('/customer-forgot-password', async (req, res) => {
+  try {
+    const normalizedEmail = normalizeEmail(req.body?.email);
+    if (!validateEmail(normalizedEmail)) {
+      return res.status(400).json({ success: false, message: 'Valid email address required' });
+    }
+
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user || !user.passwordHash) {
+      return res.status(404).json({ success: false, message: 'No password-based account found for this email' });
+    }
+
+    return res.json({ success: true, message: 'OTP verification required to reset password' });
+  } catch (error) {
+    console.error('auth/customer-forgot-password error:', error);
+    return res.status(500).json({ success: false, message: 'Failed to start password reset' });
+  }
+});
+
 router.post('/customer-password-login', async (req, res) => {
   try {
     const normalizedEmail = normalizeEmail(req.body?.email);
@@ -196,6 +215,81 @@ router.post('/customer-password-login', async (req, res) => {
   } catch (error) {
     console.error('auth/customer-password-login error:', error);
     return res.status(500).json({ success: false, message: 'Failed to log in' });
+  }
+});
+
+router.post('/customer-reset-password', async (req, res) => {
+  try {
+    const normalizedEmail = normalizeEmail(req.body?.email);
+    const otp = String(req.body?.otp || '').trim();
+    const password = String(req.body?.password || '');
+    const confirmPassword = String(req.body?.confirmPassword || '');
+    const rememberDevice = req.body?.rememberDevice === true;
+
+    if (!validateEmail(normalizedEmail)) {
+      return res.status(400).json({ success: false, message: 'Valid email address required' });
+    }
+    if (!/^\d{4}$/.test(otp)) {
+      return res.status(400).json({ success: false, message: 'A valid 4-digit OTP is required' });
+    }
+    if (password !== confirmPassword) {
+      return res.status(400).json({ success: false, message: 'Passwords do not match' });
+    }
+
+    const passwordCheck = validatePassword(password, normalizedEmail);
+    if (!passwordCheck.valid) {
+      return res.status(400).json({ success: false, message: passwordCheck.message });
+    }
+
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'No account found for this email' });
+    }
+
+    const otpRecord = await OTP.findOne({ email: normalizedEmail });
+    if (!otpRecord) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+    }
+    if (otpRecord.attempts >= 3) {
+      await OTP.deleteOne({ email: normalizedEmail });
+      return res.status(429).json({ success: false, message: 'Too many failed attempts. Please request a new OTP.' });
+    }
+
+    const [salt, hash] = String(otpRecord.hashedOtp || '').split(':');
+    if (!salt || !hash) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+    }
+
+    const verifyHash = crypto.pbkdf2Sync(otp, salt, 10000, 64, 'sha512').toString('hex');
+    const left = Buffer.from(hash, 'hex');
+    const right = Buffer.from(verifyHash, 'hex');
+    const isValidOtp = left.length === right.length && crypto.timingSafeEqual(left, right);
+
+    if (!isValidOtp) {
+      await OTP.findOneAndUpdate({ email: normalizedEmail }, { $inc: { attempts: 1 } });
+      return res.status(400).json({ success: false, message: 'Invalid OTP' });
+    }
+
+    user.passwordHash = hashPassword(password);
+    user.passwordSetupAt = user.passwordSetupAt || new Date();
+    user.emailVerifiedAt = user.emailVerifiedAt || new Date();
+    if (!user.uid) user.uid = crypto.randomUUID();
+    if (!user.name) user.name = createDisplayName(normalizedEmail);
+    await user.save();
+
+    await OTP.deleteOne({ email: normalizedEmail });
+
+    await createSession(req, res, {
+      uid: user.uid,
+      email: user.email,
+      name: user.name || createDisplayName(normalizedEmail),
+      role: 'customer'
+    }, { rememberDevice });
+
+    return res.json({ success: true, user: req.auth, mode: 'reset' });
+  } catch (error) {
+    console.error('auth/customer-reset-password error:', error);
+    return res.status(500).json({ success: false, message: 'Failed to reset password' });
   }
 });
 
