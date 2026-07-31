@@ -4,7 +4,7 @@ const User = require('../models/User');
 const OTP = require('../models/OTP');
 const { createSession, destroySession, requireAuth } = require('../middleware/auth');
 const { PASSWORD_RULES, validatePassword, hashPassword, verifyPassword } = require('../utils/passwordAuth');
-const { extractClientIp, sendLoginNotificationEmail } = require('../utils/accountEmails');
+const { extractClientIp, sendLoginSuccessEmail } = require('../utils/accountEmails');
 
 const router = express.Router();
 
@@ -43,17 +43,14 @@ router.post('/login', async (req, res) => {
       role: 'customer'
     }, { rememberDevice: rememberDevice === true });
 
-    sendLoginNotificationEmail({
+    sendLoginSuccessEmail({
       email: normalizedEmail,
       name: String(name || ''),
-      method: 'Google Sign-In',
-      role: 'customer',
+      loginMethod: 'Google Sign-In',
+      authProvider: 'Google',
       rememberDevice: rememberDevice === true,
-      userAgent: req.get('user-agent'),
-      ip: extractClientIp(req),
-      clientIp: req.body?.clientIp,
-      clientLocation: req.body?.clientLocation
-    }).catch((error) => {
+      clientIp: req.body?.clientIp
+    }, req).catch((error) => {
       console.error('google login notification email error:', error);
     });
 
@@ -167,17 +164,14 @@ router.post('/customer-register', async (req, res) => {
       role: 'customer'
     }, { rememberDevice });
 
-    sendLoginNotificationEmail({
+    sendLoginSuccessEmail({
       email: user.email,
       name: user.name || createDisplayName(normalizedEmail),
-      method: 'Email OTP and Password Setup',
-      role: 'customer',
+      loginMethod: 'Email OTP',
+      authProvider: 'Email OTP',
       rememberDevice,
-      userAgent: req.get('user-agent'),
-      ip: extractClientIp(req),
-      clientIp: req.body?.clientIp,
-      clientLocation: req.body?.clientLocation
-    }).catch((error) => {
+      clientIp: req.body?.clientIp
+    }, req).catch((error) => {
       console.error('customer register notification email error:', error);
     });
 
@@ -240,17 +234,14 @@ router.post('/customer-password-login', async (req, res) => {
       await user.save();
     }
 
-    sendLoginNotificationEmail({
+    sendLoginSuccessEmail({
       email: user.email,
       name: user.name || createDisplayName(normalizedEmail),
-      method: 'Email and Password',
-      role: 'customer',
+      loginMethod: 'Email and Password',
+      authProvider: 'Email Password',
       rememberDevice,
-      userAgent: req.get('user-agent'),
-      ip: extractClientIp(req),
-      clientIp: req.body?.clientIp,
-      clientLocation: req.body?.clientLocation
-    }).catch((error) => {
+      clientIp: req.body?.clientIp
+    }, req).catch((error) => {
       console.error('password login notification email error:', error);
     });
 
@@ -329,17 +320,14 @@ router.post('/customer-reset-password', async (req, res) => {
       role: 'customer'
     }, { rememberDevice });
 
-    sendLoginNotificationEmail({
+    sendLoginSuccessEmail({
       email: user.email,
       name: user.name || createDisplayName(normalizedEmail),
-      method: 'Password Reset and Sign-In',
-      role: 'customer',
+      loginMethod: 'Password Reset and Sign-In',
+      authProvider: 'Email OTP',
       rememberDevice,
-      userAgent: req.get('user-agent'),
-      ip: extractClientIp(req),
-      clientIp: req.body?.clientIp,
-      clientLocation: req.body?.clientLocation
-    }).catch((error) => {
+      clientIp: req.body?.clientIp
+    }, req).catch((error) => {
       console.error('password reset notification email error:', error);
     });
 

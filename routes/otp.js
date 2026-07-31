@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const { createSession } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
 const OTP = require('../models/OTP');
-const { buildAuthUrl, buildPrimaryButton, extractClientIp, sendLoginNotificationEmail } = require('../utils/accountEmails');
+const { buildAuthUrl, buildPrimaryButton, extractClientIp, sendLoginSuccessEmail } = require('../utils/accountEmails');
 
 function buildDetailRow(label, value, emphasize = false) {
   return `
@@ -372,17 +372,14 @@ router.post('/verify-email-otp', async (req, res) => {
       role
     });
 
-    sendLoginNotificationEmail({
+    sendLoginSuccessEmail({
       email: normalizedEmail,
       name: safeName.charAt(0).toUpperCase() + safeName.slice(1),
-      method: 'Email OTP',
-      role,
+      loginMethod: 'Email OTP',
+      authProvider: 'Email OTP',
       rememberDevice: false,
-      userAgent: req.get('user-agent'),
-      ip: clientIP,
-      clientIp: req.body?.clientIp,
-      clientLocation: req.body?.clientLocation
-    }).catch((error) => {
+      clientIp: req.body?.clientIp || clientIP
+    }, req).catch((error) => {
       console.error('otp login notification email error:', error);
     });
     

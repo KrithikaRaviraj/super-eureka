@@ -98,9 +98,41 @@ function extractDeviceInfo(userAgent = '') {
   return `${browser} on ${device}`;
 }
 
+function extractBrowserName(userAgent = '') {
+  const ua = String(userAgent || '');
+  return /Edg\//.test(ua) ? 'Microsoft Edge'
+    : /Chrome\//.test(ua) ? 'Google Chrome'
+    : /Safari\//.test(ua) && !/Chrome\//.test(ua) ? 'Safari'
+    : /Firefox\//.test(ua) ? 'Firefox'
+    : /MSIE|Trident\//.test(ua) ? 'Internet Explorer'
+    : 'Unknown';
+}
+
+function extractOperatingSystem(userAgent = '') {
+  const ua = String(userAgent || '');
+  return /Windows NT/.test(ua) ? 'Windows'
+    : /Android/.test(ua) ? 'Android'
+    : /iPhone|iPad|iPod/.test(ua) ? 'iOS'
+    : /Macintosh|Mac OS X/.test(ua) ? 'macOS'
+    : /Linux/.test(ua) ? 'Linux'
+    : 'Unknown';
+}
+
+function extractDeviceType(userAgent = '') {
+  const ua = String(userAgent || '');
+  if (/iPhone|iPad|iPod|Android/.test(ua)) return 'Mobile';
+  if (/Windows|Macintosh|Mac OS X|Linux/.test(ua)) return 'Desktop';
+  return 'Unknown';
+}
+
 function formatIp(ip = '') {
   const value = normalizeIpAddress(ip);
   if (!value) return 'Unavailable';
+
+  if (value === '::1' || value === '127.0.0.1') {
+    return '::1';
+  }
+
   return value;
 }
 
@@ -123,27 +155,40 @@ function isPrivateOrLocalIp(ip = '') {
 async function resolveLocationFromIp(ip = '') {
   const normalizedIp = normalizeIpAddress(ip);
   if (!normalizedIp || isPrivateOrLocalIp(normalizedIp)) {
-    return normalizedIp ? 'Private or local network' : 'Unavailable';
+    return normalizedIp ? 'Private or Local Network' : 'Unknown';
   }
 
-  try {
-    const { data } = await axios.get(`https://ipwho.is/${encodeURIComponent(normalizedIp)}`, {
-      timeout: 2500,
-    });
-
-    if (!data || data.success !== true) {
-      return 'Unavailable';
+  const providers = [
+    async () => {
+      const { data } = await axios.get(`https://ipwho.is/${encodeURIComponent(normalizedIp)}`, { timeout: 3000 });
+      if (!data || data.success !== true) return null;
+      return [data.city, data.region, data.country].filter(Boolean).join(', ') || null;
+    },
+    async () => {
+      const { data } = await axios.get(`https://ipapi.co/${encodeURIComponent(normalizedIp)}/json/`, { timeout: 3000 });
+      if (!data || data.error === true) return null;
+      return [data.city, data.region, data.country_name].filter(Boolean).join(', ') || null;
+    },
+    async () => {
+      const { data } = await axios.get(`https://ip-api.com/json/${encodeURIComponent(normalizedIp)}`, {
+        timeout: 3000,
+        params: { fields: 'status,city,regionName,country' }
+      });
+      if (!data || data.status !== 'success') return null;
+      return [data.city, data.regionName, data.country].filter(Boolean).join(', ') || null;
     }
+  ];
 
-    const parts = [data.city, data.region, data.country].filter(Boolean);
-    const coordinates = data.latitude != null && data.longitude != null
-      ? `(${data.latitude}, ${data.longitude})`
-      : '';
-    const locationText = [parts.join(', '), coordinates].filter(Boolean).join(' ');
-    return locationText || 'Unavailable';
-  } catch (error) {
-    return 'Unavailable';
+  for (const provider of providers) {
+    try {
+      const location = await provider();
+      if (location) return location;
+    } catch (error) {
+      // try the next provider
+    }
   }
+
+  return 'Unable to determine';
 }
 
 function extractClientIp(req = {}) {
@@ -161,104 +206,52 @@ function extractClientIp(req = {}) {
   return normalizeIpAddress(req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '127.0.0.1') || '127.0.0.1';
 }
 
-function normalizeLocationValue(value = '') {
-  return String(value || '').trim();
+function formatTimeZone(timeZone = '') {
+  const rawZone = String(timeZone || '').trim();
+  if (!rawZone) return 'Asia/Kolkata (IST)';
+
+  if (rawZone === 'Asia/Calcutta' || rawZone === 'Asia/Kolkata') {
+    return 'Asia/Kolkata (IST)';
+  }
+
+  return `${rawZone} (${new Intl.DateTimeFormat('en-IN', { timeZone: rawZone, timeZoneName: 'short' }).formatToParts(new Date()).find((part) => part.type === 'timeZoneName')?.value || 'UTC'})`;
 }
 
-function formatClientLocation(clientLocation) {
-  if (!clientLocation) return '';
-
-  if (typeof clientLocation === 'string') {
-    return normalizeLocationValue(clientLocation);
-  }
-
-  const parts = [];
-  const address = normalizeLocationValue(clientLocation.address);
-  const city = normalizeLocationValue(clientLocation.city);
-  const region = normalizeLocationValue(clientLocation.region);
-  const country = normalizeLocationValue(clientLocation.country);
-  const latitude = Number(clientLocation.latitude);
-  const longitude = Number(clientLocation.longitude);
-
-  if (address) {
-    parts.push(address);
-  } else {
-    const placeParts = [city, region, country].filter(Boolean);
-    if (placeParts.length) parts.push(placeParts.join(', '));
-  }
-
-  if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
-    parts.push(`(${latitude.toFixed(5)}, ${longitude.toFixed(5)})`);
-  }
-
-  return parts.join(' ').trim();
+function formatDateTime(date = new Date(), timeZone) {
+  const zone = String(timeZone || '').trim() || 'Asia/Kolkata';
+  return new Intl.DateTimeFormat('en-IN', {
+    dateStyle: 'full',
+    timeStyle: 'short',
+    timeZone: zone
+  }).format(date);
 }
 
-async function resolveLocationFromCoordinates(latitude, longitude) {
-  const lat = Number(latitude);
-  const lon = Number(longitude);
+async function sendLoginSuccessEmail(user, req = {}) {
+  if (!user?.email) return;
 
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-    return 'Unavailable';
-  }
-
-  try {
-    const { data } = await axios.get('https://nominatim.openstreetmap.org/reverse', {
-      timeout: 4000,
-      params: {
-        format: 'jsonv2',
-        lat,
-        lon,
-        zoom: 18,
-        addressdetails: 1
-      },
-      headers: {
-        'User-Agent': 'LavishLadiesSalon/1.0 (+https://lavishladies.com)'
-      }
-    });
-
-    const address = data?.display_name || '';
-    if (address) return address;
-
-    const addressParts = [
-      data?.address?.house_number,
-      data?.address?.road,
-      data?.address?.suburb,
-      data?.address?.city || data?.address?.town || data?.address?.village,
-      data?.address?.state,
-      data?.address?.country
-    ].filter(Boolean);
-
-    return addressParts.length ? addressParts.join(', ') : 'Unavailable';
-  } catch (error) {
-    return 'Unavailable';
-  }
-}
-
-async function sendLoginNotificationEmail({
-  email,
-  name,
-  method,
-  role = 'customer',
-  rememberDevice = false,
-  userAgent,
-  ip,
-  clientIp,
-  clientLocation
-}) {
-  if (!email) return;
-
-  const homeUrl = buildAuthUrl('signin', email);
-  const displayName = String(name || '').trim() || 'there';
-  const resolvedIp = normalizeIpAddress(clientIp || ip);
-  const locationFromClient = formatClientLocation(clientLocation);
-  const location = locationFromClient || await resolveLocationFromCoordinates(clientLocation?.latitude, clientLocation?.longitude) || await resolveLocationFromIp(resolvedIp);
-  const safeDisplayName = escapeHtml(displayName);
-  const safeMethod = escapeHtml(method || 'Unavailable');
-  const safeDevice = escapeHtml(extractDeviceInfo(userAgent));
-  const safeIp = escapeHtml(formatIp(resolvedIp || ip));
-  const safeLocation = escapeHtml(location);
+  const email = String(user.email).trim().toLowerCase();
+  const name = String(user.name || '').trim() || 'there';
+  const homeUrl = normalizeBaseUrl(process.env.FRONTEND_URL) || 'http://localhost:3000';
+  const loginMethod = String(user.loginMethod || req.body?.loginMethod || 'Unavailable').trim();
+  const authProvider = String(user.authProvider || req.body?.authProvider || '').trim();
+  const rememberDevice = user.rememberDevice ?? req.body?.rememberDevice ?? false;
+  const clientIp = normalizeIpAddress(user.clientIp || req.body?.clientIp || extractClientIp(req));
+  const userAgent = req.get?.('user-agent') || req.headers?.['user-agent'] || '';
+  const timeZone = String(user.timeZone || req.body?.clientTimezone || '').trim();
+  const resolvedLocation = await resolveLocationFromIp(clientIp);
+  const displayIp = clientIp === '::1' || clientIp === '127.0.0.1' ? '::1' : (clientIp || 'Unknown');
+  const safeDisplayName = escapeHtml(name);
+  const safeMethod = escapeHtml(loginMethod || 'Unavailable');
+  const safeAuthProvider = escapeHtml(authProvider || 'Not applicable');
+  const safeBrowser = escapeHtml(extractBrowserName(userAgent));
+  const safeOperatingSystem = escapeHtml(extractOperatingSystem(userAgent));
+  const safeDeviceType = escapeHtml(extractDeviceType(userAgent));
+  const safeDevice = escapeHtml(`${extractBrowserName(userAgent)} on ${extractOperatingSystem(userAgent)} ${extractDeviceType(userAgent)}`.replace(/\s+/g, ' ').trim());
+  const safeIp = escapeHtml(displayIp);
+  const safeLocation = escapeHtml(resolvedLocation || 'Unknown');
   const safeRememberDevice = rememberDevice ? 'Enabled' : 'Not enabled';
+  const safeDateTime = escapeHtml(formatDateTime(new Date(), timeZone));
+  const safeTimeZone = escapeHtml(formatTimeZone(timeZone));
 
   const mailOptions = {
     from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
@@ -268,20 +261,25 @@ async function sendLoginNotificationEmail({
       title: 'Login Successful',
       subtitle: 'This is a confirmation that your account was just accessed.',
       contentHtml: `
-        <p style="margin:0 0 18px 0;font-size:16px;line-height:1.7;color:#374151;">Hi <strong>${safeDisplayName}</strong>, your ${escapeHtml(role)} account was signed in successfully. If this was you, no action is required.</p>
+        <p style="margin:0 0 18px 0;font-size:16px;line-height:1.7;color:#374151;">Hi <strong>${safeDisplayName}</strong>, your account was signed in successfully. If this was you, no action is required.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 20px;">
-          ${buildDetailRow('Sign-in Method', safeMethod)}
-          ${buildDetailRow('Time', formatSignInTime(new Date()))}
-          ${buildDetailRow('Device', safeDevice)}
+          ${buildDetailRow('User Name', safeDisplayName)}
+          ${buildDetailRow('Login Method', safeMethod)}
+          ${buildDetailRow('Date & Time', safeDateTime)}
+          ${buildDetailRow('Time Zone', safeTimeZone)}
+          ${buildDetailRow('Browser', safeBrowser)}
+          ${buildDetailRow('Operating System', safeOperatingSystem)}
+          ${buildDetailRow('Device Type', safeDevice)}
           ${buildDetailRow('IP Address', safeIp)}
-          ${buildDetailRow('Location', safeLocation)}
+          ${buildDetailRow('Location', safeIp === '::1' ? 'Private or Local Network' : safeLocation)}
           ${buildDetailRow('Remember Device', safeRememberDevice)}
+          ${authProvider ? buildDetailRow('Authentication Provider', safeAuthProvider) : ''}
         </table>
         <div style="margin-top:20px;padding:18px 20px;background:#f9fafb;border:1px solid #e5e7eb;">
-          <div style="font-size:14px;line-height:1.7;color:#4b5563;">If you do not recognize this activity, please contact us immediately so we can help secure your account.</div>
+          <div style="font-size:14px;line-height:1.7;color:#4b5563;">If this wasn't you, contact us immediately so we can help secure your account.</div>
         </div>
         <p style="margin:20px 0 0 0;text-align:center;">
-          ${buildSecondaryButton(homeUrl, 'Open Account')}
+          ${buildSecondaryButton(homeUrl, 'Open My Account')}
         </p>
       `
     })
@@ -297,6 +295,6 @@ module.exports = {
   buildSecondaryButton,
   buildDetailRow,
   extractClientIp,
-  formatClientLocation,
-  sendLoginNotificationEmail
+  sendLoginSuccessEmail,
+  sendLoginNotificationEmail: sendLoginSuccessEmail
 };

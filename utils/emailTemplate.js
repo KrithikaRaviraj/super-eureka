@@ -41,7 +41,7 @@ function buildEmailTemplate({ title, subtitle, contentHtml, accent = '#111827' }
                 <td style="padding:20px 32px 24px 32px;background:#fafafa;border-top:1px solid #e5e7eb;text-align:center;">
                   <div style="margin-bottom:12px;">
                     <a href="${frontendUrl}/privacy" style="color:#6b7280;text-decoration:none;font-size:12px;margin:0 10px;">Privacy Policy</a>
-                    <a href="${frontendUrl}/terms" style="color:#6b7280;text-decoration:none;font-size:12px;margin:0 10px;">Terms of Service</a>
+                    <a href="${frontendUrl}/terms" style="color:#6b7280;text-decoration:none;font-size:12px;margin:0 10px;">Terms</a>
                     <a href="${frontendUrl}/contact" style="color:#6b7280;text-decoration:none;font-size:12px;margin:0 10px;">Contact</a>
                   </div>
                   <p style="margin:6px 0 0 0;font-size:12px;color:#9ca3af;">&copy; ${currentYear} Lavish Ladies Beauty Salon. All rights reserved.</p>

@@ -7,45 +7,34 @@ import SalonHeader from './SalonHeader';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 async function fetchPublicIp() {
-  try {
-    const response = await fetch('https://api64.ipify.org?format=json');
-    if (!response.ok) return '';
-    const data = await response.json().catch(() => ({}));
-    return String(data.ip || '').trim();
-  } catch {
-    return '';
+  const endpoints = [
+    'https://api64.ipify.org?format=json',
+    'https://api.ipify.org?format=json'
+  ];
+
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) continue;
+      const data = await response.json().catch(() => ({}));
+      const ip = String(data.ip || '').trim();
+      if (ip) return ip;
+    } catch {
+      // try the next endpoint
+    }
   }
-}
 
-async function fetchBrowserLocation() {
-  if (!navigator.geolocation) return null;
-
-  const position = await new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject, {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0
-    });
-  }).catch(() => null);
-
-  if (!position) return null;
-
-  return {
-    latitude: position.coords.latitude,
-    longitude: position.coords.longitude,
-    accuracy: position.coords.accuracy
-  };
+  return '';
 }
 
 async function collectLoginContext() {
-  const [clientIp, clientLocation] = await Promise.all([
-    fetchPublicIp(),
-    fetchBrowserLocation().catch(() => null)
+  const [clientIp] = await Promise.all([
+    fetchPublicIp()
   ]);
 
   return {
     clientIp,
-    clientLocation
+    clientTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata'
   };
 }
 
@@ -121,7 +110,9 @@ export default function SignIn({ onSuccess, onClose }) {
           name: result.user.displayName || '',
           email: result.user.email || '',
           clientIp: loginContext.clientIp,
-          clientLocation: loginContext.clientLocation
+          clientTimezone: loginContext.clientTimezone,
+          loginMethod: 'Google Sign-In',
+          authProvider: 'Google'
         })
       });
       if (!sessionResponse.ok) {
@@ -193,7 +184,9 @@ export default function SignIn({ onSuccess, onClose }) {
           email: email.trim().toLowerCase(),
           otp,
           clientIp: loginContext.clientIp,
-          clientLocation: loginContext.clientLocation
+          clientTimezone: loginContext.clientTimezone,
+          loginMethod: 'Email OTP',
+          authProvider: 'Email OTP'
         }),
       });
 
@@ -265,7 +258,9 @@ export default function SignIn({ onSuccess, onClose }) {
           otp: staffOtp,
           asStaff: true,
           clientIp: loginContext.clientIp,
-          clientLocation: loginContext.clientLocation
+          clientTimezone: loginContext.clientTimezone,
+          loginMethod: 'Email OTP',
+          authProvider: 'Email OTP'
         })
       });
 
