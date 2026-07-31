@@ -7,7 +7,16 @@ const mongoose = require('mongoose');
 const { createSession } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
 const OTP = require('../models/OTP');
-const { buildAuthUrl, buildPrimaryButton, buildSecondaryButton, sendLoginNotificationEmail } = require('../utils/accountEmails');
+const { buildAuthUrl, buildPrimaryButton, sendLoginNotificationEmail } = require('../utils/accountEmails');
+
+function buildDetailRow(label, value, emphasize = false) {
+  return `
+    <tr>
+      <td style="padding:13px 0;border-bottom:1px solid #e5e7eb;font-size:13px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:170px;vertical-align:top;">${label}</td>
+      <td style="padding:13px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:${emphasize ? '#111827' : '#374151'};font-weight:${emphasize ? '700' : '500'};">${value}</td>
+    </tr>
+  `;
+}
 
 // HTTPS enforcement with strict validation
 router.use((req, res, next) => {
@@ -244,24 +253,22 @@ router.post('/send-email-otp', async (req, res) => {
       subject: 'Your Lavish Ladies Beauty Salon Verification Code',
       html: buildEmailTemplate({
         title: 'Security Code',
-        subtitle: 'Use this one-time verification code to continue your sign-in securely.',
+        subtitle: 'Your sign-in request is ready. Use the verification code below to continue securely.',
         contentHtml: `
-          <p style="margin:0 0 18px 0;font-size:16px;line-height:1.7;color:#374151;">We received a request to sign in with this email address. Please enter the verification code below to continue.</p>
-          <div style="margin:0 0 22px 0;padding:24px 20px;background:#ffffff;border:1px solid #e5e7eb;text-align:center;">
-            <div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#6b7280;text-transform:uppercase;margin-bottom:12px;">One-Time Passcode</div>
-            <div style="font-size:42px;line-height:1;font-weight:700;letter-spacing:12px;font-family:'Courier New',monospace;color:#111827;">${otp}</div>
-            <p style="margin:16px 0 0 0;font-size:14px;color:#4b5563;">This code expires in <strong>10 minutes</strong>.</p>
-          </div>
+          <p style="margin:0 0 20px 0;font-size:16px;line-height:1.7;color:#374151;">Dear Guest, we received a request to sign in to Lavish Ladies Beauty Salon using this email address.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 20px;margin-bottom:22px;">
+            ${buildDetailRow('Verification Code', `<span style="font-family:'Courier New',monospace;font-size:30px;letter-spacing:8px;">${otp}</span>`, true)}
+            ${buildDetailRow('Valid For', '10 minutes')}
+            ${buildDetailRow('Requested For', normalizedEmail)}
+          </table>
           <div style="margin:0 0 22px 0;padding:18px 20px;background:#f9fafb;border:1px solid #e5e7eb;">
             <div style="font-size:14px;line-height:1.8;color:#4b5563;">
               <strong style="color:#111827;">Security reminder:</strong> never share this code with anyone. Our team will never ask for your OTP by phone, chat, or email.
             </div>
           </div>
-          <p style="margin:0 0 18px 0;font-size:14px;line-height:1.7;color:#6b7280;">If you did not request this sign-in, you can safely ignore this email. If you were trying to recover access, you can use the same email flow to reset your password.</p>
+          <p style="margin:0 0 18px 0;font-size:14px;line-height:1.7;color:#6b7280;">If you did not request this sign-in, you can safely ignore this email and no changes will be made to your account.</p>
           <p style="margin:0;text-align:center;">
             ${buildPrimaryButton(buildAuthUrl('signin', normalizedEmail), 'Continue Sign-In')}
-            <span style="display:inline-block;width:10px;"></span>
-            ${buildSecondaryButton(buildAuthUrl('reset', normalizedEmail), 'Forgot Password?')}
           </p>
         `
       })
