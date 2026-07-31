@@ -38,15 +38,6 @@ async function collectLoginContext() {
   };
 }
 
-async function saveUserToBackend(user) {
-  await fetch(`${API_BASE_URL}/api/users`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify(user),
-  });
-}
-
 export default function SignIn({ onSuccess, onClose }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -57,13 +48,6 @@ export default function SignIn({ onSuccess, onClose }) {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [isStaffLogin, setIsStaffLogin] = useState(false);
   const [staffEmail, setStaffEmail] = useState('');
-  const [staffOtp, setStaffOtp] = useState('');
-  const [staffOtpSent, setStaffOtpSent] = useState(false);
-
-  const restoreUserLocation = () => {
-    const returnPath = sessionStorage.getItem('postLoginReturnPath') || '/';
-    const savedScrollY = Number(sessionStorage.getItem('postLoginScrollY') || '0');
-    sessionStorage.removeItem('postLoginReturnPath');
     sessionStorage.removeItem('postLoginScrollY');
 
     navigate(returnPath, { replace: true });
@@ -92,14 +76,6 @@ export default function SignIn({ onSuccess, onClose }) {
     try {
       const result = await signInWithPopup(auth, provider);
       const loginContext = await collectLoginContext();
-
-      await saveUserToBackend({
-        uid: result.user.uid,
-        name: result.user.displayName || '',
-        email: result.user.email || '',
-        phone: null,
-        photoURL: result.user.photoURL || '',
-      });
 
       const sessionResponse = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',

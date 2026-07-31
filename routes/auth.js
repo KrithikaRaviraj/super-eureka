@@ -5,6 +5,7 @@ const OTP = require('../models/OTP');
 const { createSession, destroySession, requireAuth } = require('../middleware/auth');
 const { PASSWORD_RULES, validatePassword, hashPassword, verifyPassword } = require('../utils/passwordAuth');
 const { extractClientIp, sendLoginSuccessEmail } = require('../utils/accountEmails');
+const { upsertUserProfile } = require('../utils/userPersistence');
 
 const router = express.Router();
 
@@ -42,6 +43,18 @@ router.post('/login', async (req, res) => {
       name: String(name || ''),
       role: 'customer'
     }, { rememberDevice: rememberDevice === true });
+
+    await upsertUserProfile({
+      uid,
+      email: normalizedEmail,
+      name: String(name || ''),
+      photoURL: req.body?.photoURL || '',
+      lastLoginAt: new Date(),
+      lastLoginMethod: 'Google Sign-In',
+      authProvider: 'Google',
+      lastLoginIp: extractClientIp(req),
+      lastLoginTimeZone: req.body?.clientTimezone
+    });
 
     sendLoginSuccessEmail({
       email: normalizedEmail,
@@ -164,6 +177,21 @@ router.post('/customer-register', async (req, res) => {
       role: 'customer'
     }, { rememberDevice });
 
+    await upsertUserProfile({
+      uid: user.uid,
+      email: user.email,
+      name: user.name || createDisplayName(normalizedEmail),
+      photoURL: user.photoURL || '',
+      passwordHash: user.passwordHash,
+      passwordSetupAt: user.passwordSetupAt,
+      emailVerifiedAt: user.emailVerifiedAt,
+      lastLoginAt: new Date(),
+      lastLoginMethod: 'Email OTP and Password Setup',
+      authProvider: 'Email OTP',
+      lastLoginIp: extractClientIp(req),
+      lastLoginTimeZone: req.body?.clientTimezone
+    });
+
     sendLoginSuccessEmail({
       email: user.email,
       name: user.name || createDisplayName(normalizedEmail),
@@ -228,6 +256,21 @@ router.post('/customer-password-login', async (req, res) => {
       name: user.name || createDisplayName(normalizedEmail),
       role: 'customer'
     }, { rememberDevice });
+
+    await upsertUserProfile({
+      uid: user.uid || req.auth.uid,
+      email: user.email,
+      name: user.name || createDisplayName(normalizedEmail),
+      photoURL: user.photoURL || '',
+      passwordHash: user.passwordHash,
+      passwordSetupAt: user.passwordSetupAt,
+      emailVerifiedAt: user.emailVerifiedAt,
+      lastLoginAt: new Date(),
+      lastLoginMethod: 'Email and Password',
+      authProvider: 'Email Password',
+      lastLoginIp: extractClientIp(req),
+      lastLoginTimeZone: req.body?.clientTimezone
+    });
 
     if (!user.uid) {
       user.uid = req.auth.uid;
@@ -319,6 +362,20 @@ router.post('/customer-reset-password', async (req, res) => {
       name: user.name || createDisplayName(normalizedEmail),
       role: 'customer'
     }, { rememberDevice });
+
+    await upsertUserProfile({
+      uid: user.uid,
+      email: user.email,
+      name: user.name || createDisplayName(normalizedEmail),
+      passwordHash: user.passwordHash,
+      passwordSetupAt: user.passwordSetupAt,
+      emailVerifiedAt: user.emailVerifiedAt,
+      lastLoginAt: new Date(),
+      lastLoginMethod: 'Password Reset and Sign-In',
+      authProvider: 'Email OTP',
+      lastLoginIp: extractClientIp(req),
+      lastLoginTimeZone: req.body?.clientTimezone
+    });
 
     sendLoginSuccessEmail({
       email: user.email,

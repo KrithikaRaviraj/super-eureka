@@ -88,9 +88,6 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(sanitizeRequest);
 app.use(attachAuth);
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/super-eureka');
-
 // API routes
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
@@ -138,6 +135,26 @@ app.use((err, req, res, next) => {
 
 const PORT = Number(process.env.PORT) || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
-});
+async function startServer() {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/super-eureka');
+
+    const server = app.listen(PORT, () => {
+      console.log(`Backend running on http://localhost:${PORT}`);
+    });
+
+    server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use. Stop the existing process or set a different PORT.`);
+      } else {
+        console.error('Server listen error:', error);
+      }
+      process.exit(1);
+    });
+  } catch (error) {
+    console.error('Failed to connect to MongoDB:', error);
+    process.exit(1);
+  }
+}
+
+startServer();

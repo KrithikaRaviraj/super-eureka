@@ -7,6 +7,7 @@ const { createSession } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
 const OTP = require('../models/OTP');
 const { buildAuthUrl, buildPrimaryButton, createMailTransport, extractClientIp, sendLoginSuccessEmail } = require('../utils/accountEmails');
+const { upsertUserProfile } = require('../utils/userPersistence');
 
 function buildDetailRow(label, value, emphasize = false) {
   return `
@@ -22,7 +23,7 @@ router.use((req, res, next) => {
   if (process.env.NODE_ENV === 'production') {
     // Only trust req.secure (requires proper trust proxy configuration)
     if (!req.secure) {
-      logSecurityEvent('https_required', { ip: normalizeIP(req) });
+      logSecurityEvent('https_required', { ip: extractClientIp(req) });
       return res.status(403).json({ success: false, message: "HTTPS required" });
     }
   }
@@ -365,6 +366,17 @@ router.post('/verify-email-otp', async (req, res) => {
       role
     });
 
+    await upsertUserProfile({
+      uid: generatedUid,
+      email: normalizedEmail,
+      name: safeName.charAt(0).toUpperCase() + safeName.slice(1),
+      lastLoginAt: new Date(),
+      lastLoginMethod: 'Email OTP',
+      authProvider: 'Email OTP',
+      lastLoginIp: clientIP,
+      lastLoginTimeZone: req.body?.clientTimezone
+    });
+
     sendLoginSuccessEmail({
       email: normalizedEmail,
       name: safeName.charAt(0).toUpperCase() + safeName.slice(1),
@@ -391,7 +403,7 @@ router.post('/verify-email-otp', async (req, res) => {
 
 router.get('/staff-data', (req, res) => {
   if (!isAuthorizedStaff(req)) {
-    logSecurityEvent('unauthorized_staff_access', { ip: normalizeIP(req) });
+    logSecurityEvent('unauthorized_staff_access', { ip: extractClientIp(req) });
     return res.status(403).json({ success: false, message: "Unauthorized" });
   }
   

@@ -4,6 +4,7 @@ const User = require('../models/User');
 require('dotenv').config();
 const { buildEmailTemplate } = require('../utils/emailTemplate');
 const { createMailTransport } = require('../utils/accountEmails');
+const { upsertUserProfile } = require('../utils/userPersistence');
 
 // Email configuration
 const transporter = createMailTransport();
@@ -21,41 +22,17 @@ function buildDetailRow(label, value) {
 router.post('/', async (req, res) => {
   try {
     const { uid, name, email, phone, photoURL } = req.body;
-    
-    // Check if user exists by uid
-    let user = await User.findOne({ uid });
-    
-    if (user) {
-      // Only update fields that are provided and not empty
-      const updateData = {};
-      if (name) updateData.name = name;
-      if (email) updateData.email = email;
-      if (phone) updateData.phone = phone;
-      if (photoURL && photoURL.trim() !== '') updateData.photoURL = photoURL;
-      
-      user = await User.findOneAndUpdate(
-        { uid },
-        updateData,
-        { new: true }
-      );
-    } else {
-      // Create new user - store phone OR email, not both
-      const userData = {
-        uid,
-        name: name || 'Client',
-        photoURL: photoURL || ''
-      };
-      
-      if (phone) {
-        userData.phone = phone;
-        userData.email = null;
-      } else if (email) {
-        userData.email = email;
-        userData.phone = null;
-      }
-      
-      user = await User.create(userData);
+    if (!email) {
+      return res.status(400).json({ success: false, error: 'Email is required' });
     }
+
+    const user = await upsertUserProfile({
+      uid,
+      name: name || 'Client',
+      email,
+      phone,
+      photoURL
+    });
     
     res.json({ success: true, user });
   } catch (err) {
