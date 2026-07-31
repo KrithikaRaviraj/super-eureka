@@ -4,7 +4,7 @@ const User = require('../models/User');
 const OTP = require('../models/OTP');
 const { createSession, destroySession, requireAuth } = require('../middleware/auth');
 const { PASSWORD_RULES, validatePassword, hashPassword, verifyPassword } = require('../utils/passwordAuth');
-const { sendLoginNotificationEmail } = require('../utils/accountEmails');
+const { extractClientIp, sendLoginNotificationEmail } = require('../utils/accountEmails');
 
 const router = express.Router();
 
@@ -19,12 +19,6 @@ function validateEmail(email) {
 function createDisplayName(email) {
   const localPart = normalizeEmail(email).split('@')[0] || 'client';
   return localPart.charAt(0).toUpperCase() + localPart.slice(1);
-}
-
-function normalizeIP(req) {
-  const forwarded = req.get('x-forwarded-for') || req.get('x-real-ip');
-  if (forwarded) return forwarded.split(',')[0].trim();
-  return req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '';
 }
 
 router.get('/me', (req, res) => {
@@ -56,7 +50,7 @@ router.post('/login', async (req, res) => {
       role: 'customer',
       rememberDevice: rememberDevice === true,
       userAgent: req.get('user-agent'),
-      ip: normalizeIP(req)
+      ip: extractClientIp(req)
     }).catch((error) => {
       console.error('google login notification email error:', error);
     });
@@ -178,7 +172,7 @@ router.post('/customer-register', async (req, res) => {
       role: 'customer',
       rememberDevice,
       userAgent: req.get('user-agent'),
-      ip: normalizeIP(req)
+      ip: extractClientIp(req)
     }).catch((error) => {
       console.error('customer register notification email error:', error);
     });
@@ -249,7 +243,7 @@ router.post('/customer-password-login', async (req, res) => {
       role: 'customer',
       rememberDevice,
       userAgent: req.get('user-agent'),
-      ip: normalizeIP(req)
+      ip: extractClientIp(req)
     }).catch((error) => {
       console.error('password login notification email error:', error);
     });
@@ -336,7 +330,7 @@ router.post('/customer-reset-password', async (req, res) => {
       role: 'customer',
       rememberDevice,
       userAgent: req.get('user-agent'),
-      ip: normalizeIP(req)
+      ip: extractClientIp(req)
     }).catch((error) => {
       console.error('password reset notification email error:', error);
     });

@@ -13,6 +13,7 @@ const contactRouter = require('./routes/contact');
 const securityRouter = require('./routes/security');
 const authRouter = require('./routes/auth');
 const SecurityLog = require('./models/SecurityLog');
+const { extractClientIp } = require('./utils/accountEmails');
 const { attachAuth } = require('./middleware/auth');
 const { sanitizeRequest } = require('./middleware/sanitize');
 
@@ -22,12 +23,6 @@ app.set('trust proxy', 1);
 const RATE_WINDOW_MS = 15 * 60 * 1000;
 const RATE_MAX_REQUESTS = 300;
 const requestBuckets = new Map();
-
-function normalizeIP(req) {
-  const forwarded = req.get('x-forwarded-for') || req.get('x-real-ip');
-  if (forwarded) return forwarded.split(',')[0].trim();
-  return req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '127.0.0.1';
-}
 
 function hashIdentifier(identifier) {
   const salt = process.env.LOG_SALT || 'default-log-salt';
@@ -52,7 +47,7 @@ app.use(cors({
 
 app.use((req, res, next) => {
   const now = Date.now();
-  const ip = req.ip || req.socket?.remoteAddress || 'unknown';
+  const ip = extractClientIp(req) || req.ip || req.socket?.remoteAddress || 'unknown';
   const entry = requestBuckets.get(ip) || { count: 0, resetAt: now + RATE_WINDOW_MS };
 
   if (now > entry.resetAt) {
@@ -116,7 +111,7 @@ app.use((err, req, res, next) => {
   if (res.headersSent) {
     return next(err);
   }
-  const ip = normalizeIP(req);
+  const ip = extractClientIp(req);
   SecurityLog.create({
     event: 'server_error',
     severity: 'critical',

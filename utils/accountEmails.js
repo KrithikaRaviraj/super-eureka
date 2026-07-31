@@ -1,5 +1,6 @@
 require('dotenv').config();
 const nodemailer = require('nodemailer');
+const axios = require('axios');
 const { buildEmailTemplate } = require('./emailTemplate');
 
 const transporter = nodemailer.createTransport({
@@ -42,6 +43,32 @@ function buildDetailRow(label, value) {
   `;
 }
 
+function escapeHtml(value = '') {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function normalizeIpAddress(ip = '') {
+  let value = String(ip || '').trim();
+  if (!value) return '';
+
+  value = value.replace(/^::ffff:/i, '');
+
+  if (value.startsWith('[') && value.endsWith(']')) {
+    value = value.slice(1, -1);
+  }
+
+  if (value.includes('%')) {
+    value = value.split('%')[0];
+  }
+
+  return value;
+}
+
 function formatSignInTime(date = new Date()) {
   return new Intl.DateTimeFormat('en-IN', {
     dateStyle: 'full',
@@ -71,18 +98,73 @@ function extractDeviceInfo(userAgent = '') {
   return `${browser} on ${device}`;
 }
 
-function maskIp(ip = '') {
-  const value = String(ip || '').trim();
+function formatIp(ip = '') {
+  const value = normalizeIpAddress(ip);
   if (!value) return 'Unavailable';
-  if (value.includes(':')) {
-    const parts = value.split(':').filter(Boolean);
-    return `${parts.slice(0, 3).join(':')}:*:*`;
+  if (isPrivateOrLocalIp(value)) {
+    return 'Private or local network';
   }
-  const parts = value.split('.');
-  if (parts.length === 4) {
-    return `${parts[0]}.${parts[1]}.x.x`;
+
+  if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(value)) {
+    const parts = value.split('.');
+    return `${parts[0]}.${parts[1]}.${parts[2]}.0/24`;
   }
-  return 'Unavailable';
+
+  const visiblePrefix = value.slice(0, 6);
+  return `${visiblePrefix}…`;
+}
+
+function isPrivateOrLocalIp(ip = '') {
+  const value = normalizeIpAddress(ip).toLowerCase();
+  if (!value) return true;
+
+  if (value === '::1' || value === 'localhost') return true;
+  if (value.startsWith('::ffff:127.')) return true;
+  if (value.startsWith('127.')) return true;
+  if (value.startsWith('10.')) return true;
+  if (value.startsWith('192.168.')) return true;
+  if (/^172\.(1[6-9]|2\d|3[0-1])\./.test(value)) return true;
+  if (value.startsWith('fc') || value.startsWith('fd')) return true;
+  if (value.startsWith('fe80:')) return true;
+
+  return false;
+}
+
+async function resolveLocationFromIp(ip = '') {
+  const normalizedIp = normalizeIpAddress(ip);
+  if (!normalizedIp || isPrivateOrLocalIp(normalizedIp)) {
+    return normalizedIp ? 'Private or local network' : 'Unavailable';
+  }
+
+  try {
+    const { data } = await axios.get(`https://ipwho.is/${encodeURIComponent(normalizedIp)}`, {
+      timeout: 2500,
+    });
+
+    if (!data || data.success !== true) {
+      return 'Unavailable';
+    }
+
+    const parts = [data.region, data.country].filter(Boolean);
+    return parts.length ? parts.join(', ') : 'Unavailable';
+  } catch (error) {
+    return 'Unavailable';
+  }
+}
+
+function extractClientIp(req = {}) {
+  const forwarded = String(req.get?.('x-forwarded-for') || req.headers?.['x-forwarded-for'] || '').trim();
+  if (forwarded) {
+    const forwardedIps = forwarded.split(',').map((ip) => normalizeIpAddress(ip)).filter(Boolean);
+    const publicIp = forwardedIps.find((ip) => !isPrivateOrLocalIp(ip));
+    if (publicIp) return publicIp;
+    if (forwardedIps[0]) return forwardedIps[0];
+  }
+
+  const realIp = normalizeIpAddress(req.get?.('x-real-ip') || req.headers?.['x-real-ip'] || '');
+  if (realIp) return realIp;
+
+  return normalizeIpAddress(req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '127.0.0.1') || '127.0.0.1';
 }
 
 async function sendLoginNotificationEmail({
@@ -96,9 +178,15 @@ async function sendLoginNotificationEmail({
 }) {
   if (!email) return;
 
-  const resetUrl = buildAuthUrl('reset', email);
   const homeUrl = buildAuthUrl('signin', email);
   const displayName = String(name || '').trim() || 'there';
+  const location = await resolveLocationFromIp(ip);
+  const safeDisplayName = escapeHtml(displayName);
+  const safeMethod = escapeHtml(method || 'Unavailable');
+  const safeDevice = escapeHtml(extractDeviceInfo(userAgent));
+  const safeIp = escapeHtml(formatIp(ip));
+  const safeLocation = escapeHtml(location);
+  const safeRememberDevice = rememberDevice ? 'Enabled' : 'Not enabled';
 
   const mailOptions = {
     from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
@@ -108,20 +196,19 @@ async function sendLoginNotificationEmail({
       title: 'Login Successful',
       subtitle: 'This is a confirmation that your account was just accessed.',
       contentHtml: `
-        <p style="margin:0 0 18px 0;font-size:16px;line-height:1.7;color:#374151;">Hi <strong>${displayName}</strong>, your ${role} account was signed in successfully. If this was you, no action is required.</p>
+        <p style="margin:0 0 18px 0;font-size:16px;line-height:1.7;color:#374151;">Hi <strong>${safeDisplayName}</strong>, your ${escapeHtml(role)} account was signed in successfully. If this was you, no action is required.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 20px;">
-          ${buildDetailRow('Sign-in Method', method)}
+          ${buildDetailRow('Sign-in Method', safeMethod)}
           ${buildDetailRow('Time', formatSignInTime(new Date()))}
-          ${buildDetailRow('Device', extractDeviceInfo(userAgent))}
-          ${buildDetailRow('IP Address', maskIp(ip))}
-          ${buildDetailRow('Remember Device', rememberDevice ? 'Enabled' : 'Not enabled')}
+          ${buildDetailRow('Device', safeDevice)}
+          ${buildDetailRow('Approximate IP', safeIp)}
+          ${buildDetailRow('Approximate Location', safeLocation)}
+          ${buildDetailRow('Remember Device', safeRememberDevice)}
         </table>
         <div style="margin-top:20px;padding:18px 20px;background:#f9fafb;border:1px solid #e5e7eb;">
-          <div style="font-size:14px;line-height:1.7;color:#4b5563;">If you do not recognize this activity, reset your password immediately and contact us so we can help secure your account.</div>
+          <div style="font-size:14px;line-height:1.7;color:#4b5563;">If you do not recognize this activity, please contact us immediately so we can help secure your account.</div>
         </div>
         <p style="margin:20px 0 0 0;text-align:center;">
-          ${buildPrimaryButton(resetUrl, 'Reset Password')}
-          <span style="display:inline-block;width:10px;"></span>
           ${buildSecondaryButton(homeUrl, 'Open Account')}
         </p>
       `
@@ -137,5 +224,6 @@ module.exports = {
   buildPrimaryButton,
   buildSecondaryButton,
   buildDetailRow,
+  extractClientIp,
   sendLoginNotificationEmail
 };

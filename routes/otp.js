@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const { createSession } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
 const OTP = require('../models/OTP');
-const { buildAuthUrl, buildPrimaryButton, sendLoginNotificationEmail } = require('../utils/accountEmails');
+const { buildAuthUrl, buildPrimaryButton, extractClientIp, sendLoginNotificationEmail } = require('../utils/accountEmails');
 
 function buildDetailRow(label, value, emphasize = false) {
   return `
@@ -165,20 +165,6 @@ function isAuthorizedStaffEmail(email) {
   return allowed.includes(String(email || '').toLowerCase());
 }
 
-function normalizeIP(req) {
-  const forwarded = req.get('x-forwarded-for') || req.get('x-real-ip');
-  if (forwarded) {
-    const ips = forwarded.split(',').map(ip => ip.trim());
-    for (const ip of ips) {
-      if (!ip.startsWith('10.') && !ip.startsWith('192.168.') && !ip.startsWith('172.')) {
-        return ip;
-      }
-    }
-    return ips[0];
-  }
-  return req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '127.0.0.1';
-}
-
 async function checkRateLimit(Model, query, limit, retries = 3) {
   for (let i = 0; i < retries; i++) {
     try {
@@ -201,7 +187,7 @@ async function checkRateLimit(Model, query, limit, retries = 3) {
 // Send Email OTP
 router.post('/send-email-otp', async (req, res) => {
   const startTime = Date.now();
-  const clientIP = normalizeIP(req);
+  const clientIP = extractClientIp(req);
   
   try {
     const { email } = req.body;
@@ -298,7 +284,7 @@ router.post('/send-email-otp', async (req, res) => {
 // Verify Email OTP
 router.post('/verify-email-otp', async (req, res) => {
   const startTime = Date.now();
-  const clientIP = normalizeIP(req);
+  const clientIP = extractClientIp(req);
   
   try {
     const { email, otp, asStaff } = req.body;
