@@ -48,6 +48,13 @@ export default function SignIn({ onSuccess, onClose }) {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [isStaffLogin, setIsStaffLogin] = useState(false);
   const [staffEmail, setStaffEmail] = useState('');
+  const [staffOtp, setStaffOtp] = useState('');
+  const [staffOtpSent, setStaffOtpSent] = useState(false);
+
+  const restoreUserLocation = () => {
+    const returnPath = sessionStorage.getItem('postLoginReturnPath') || '/';
+    const savedScrollY = Number(sessionStorage.getItem('postLoginScrollY') || '0');
+    sessionStorage.removeItem('postLoginReturnPath');
     sessionStorage.removeItem('postLoginScrollY');
 
     navigate(returnPath, { replace: true });
