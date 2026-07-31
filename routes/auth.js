@@ -50,7 +50,9 @@ router.post('/login', async (req, res) => {
       role: 'customer',
       rememberDevice: rememberDevice === true,
       userAgent: req.get('user-agent'),
-      ip: extractClientIp(req)
+      ip: extractClientIp(req),
+      clientIp: req.body?.clientIp,
+      clientLocation: req.body?.clientLocation
     }).catch((error) => {
       console.error('google login notification email error:', error);
     });
@@ -172,7 +174,9 @@ router.post('/customer-register', async (req, res) => {
       role: 'customer',
       rememberDevice,
       userAgent: req.get('user-agent'),
-      ip: extractClientIp(req)
+      ip: extractClientIp(req),
+      clientIp: req.body?.clientIp,
+      clientLocation: req.body?.clientLocation
     }).catch((error) => {
       console.error('customer register notification email error:', error);
     });
@@ -243,7 +247,9 @@ router.post('/customer-password-login', async (req, res) => {
       role: 'customer',
       rememberDevice,
       userAgent: req.get('user-agent'),
-      ip: extractClientIp(req)
+      ip: extractClientIp(req),
+      clientIp: req.body?.clientIp,
+      clientLocation: req.body?.clientLocation
     }).catch((error) => {
       console.error('password login notification email error:', error);
     });
@@ -330,7 +336,9 @@ router.post('/customer-reset-password', async (req, res) => {
       role: 'customer',
       rememberDevice,
       userAgent: req.get('user-agent'),
-      ip: extractClientIp(req)
+      ip: extractClientIp(req),
+      clientIp: req.body?.clientIp,
+      clientLocation: req.body?.clientLocation
     }).catch((error) => {
       console.error('password reset notification email error:', error);
     });

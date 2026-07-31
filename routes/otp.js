@@ -379,7 +379,9 @@ router.post('/verify-email-otp', async (req, res) => {
       role,
       rememberDevice: false,
       userAgent: req.get('user-agent'),
-      ip: clientIP
+      ip: clientIP,
+      clientIp: req.body?.clientIp,
+      clientLocation: req.body?.clientLocation
     }).catch((error) => {
       console.error('otp login notification email error:', error);
     });

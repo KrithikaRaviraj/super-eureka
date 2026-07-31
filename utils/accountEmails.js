@@ -101,17 +101,7 @@ function extractDeviceInfo(userAgent = '') {
 function formatIp(ip = '') {
   const value = normalizeIpAddress(ip);
   if (!value) return 'Unavailable';
-  if (isPrivateOrLocalIp(value)) {
-    return 'Private or local network';
-  }
-
-  if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(value)) {
-    const parts = value.split('.');
-    return `${parts[0]}.${parts[1]}.${parts[2]}.0/24`;
-  }
-
-  const visiblePrefix = value.slice(0, 6);
-  return `${visiblePrefix}…`;
+  return value;
 }
 
 function isPrivateOrLocalIp(ip = '') {
@@ -145,8 +135,12 @@ async function resolveLocationFromIp(ip = '') {
       return 'Unavailable';
     }
 
-    const parts = [data.region, data.country].filter(Boolean);
-    return parts.length ? parts.join(', ') : 'Unavailable';
+    const parts = [data.city, data.region, data.country].filter(Boolean);
+    const coordinates = data.latitude != null && data.longitude != null
+      ? `(${data.latitude}, ${data.longitude})`
+      : '';
+    const locationText = [parts.join(', '), coordinates].filter(Boolean).join(' ');
+    return locationText || 'Unavailable';
   } catch (error) {
     return 'Unavailable';
   }
@@ -167,6 +161,80 @@ function extractClientIp(req = {}) {
   return normalizeIpAddress(req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '127.0.0.1') || '127.0.0.1';
 }
 
+function normalizeLocationValue(value = '') {
+  return String(value || '').trim();
+}
+
+function formatClientLocation(clientLocation) {
+  if (!clientLocation) return '';
+
+  if (typeof clientLocation === 'string') {
+    return normalizeLocationValue(clientLocation);
+  }
+
+  const parts = [];
+  const address = normalizeLocationValue(clientLocation.address);
+  const city = normalizeLocationValue(clientLocation.city);
+  const region = normalizeLocationValue(clientLocation.region);
+  const country = normalizeLocationValue(clientLocation.country);
+  const latitude = Number(clientLocation.latitude);
+  const longitude = Number(clientLocation.longitude);
+
+  if (address) {
+    parts.push(address);
+  } else {
+    const placeParts = [city, region, country].filter(Boolean);
+    if (placeParts.length) parts.push(placeParts.join(', '));
+  }
+
+  if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+    parts.push(`(${latitude.toFixed(5)}, ${longitude.toFixed(5)})`);
+  }
+
+  return parts.join(' ').trim();
+}
+
+async function resolveLocationFromCoordinates(latitude, longitude) {
+  const lat = Number(latitude);
+  const lon = Number(longitude);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+    return 'Unavailable';
+  }
+
+  try {
+    const { data } = await axios.get('https://nominatim.openstreetmap.org/reverse', {
+      timeout: 4000,
+      params: {
+        format: 'jsonv2',
+        lat,
+        lon,
+        zoom: 18,
+        addressdetails: 1
+      },
+      headers: {
+        'User-Agent': 'LavishLadiesSalon/1.0 (+https://lavishladies.com)'
+      }
+    });
+
+    const address = data?.display_name || '';
+    if (address) return address;
+
+    const addressParts = [
+      data?.address?.house_number,
+      data?.address?.road,
+      data?.address?.suburb,
+      data?.address?.city || data?.address?.town || data?.address?.village,
+      data?.address?.state,
+      data?.address?.country
+    ].filter(Boolean);
+
+    return addressParts.length ? addressParts.join(', ') : 'Unavailable';
+  } catch (error) {
+    return 'Unavailable';
+  }
+}
+
 async function sendLoginNotificationEmail({
   email,
   name,
@@ -174,17 +242,21 @@ async function sendLoginNotificationEmail({
   role = 'customer',
   rememberDevice = false,
   userAgent,
-  ip
+  ip,
+  clientIp,
+  clientLocation
 }) {
   if (!email) return;
 
   const homeUrl = buildAuthUrl('signin', email);
   const displayName = String(name || '').trim() || 'there';
-  const location = await resolveLocationFromIp(ip);
+  const resolvedIp = normalizeIpAddress(clientIp || ip);
+  const locationFromClient = formatClientLocation(clientLocation);
+  const location = locationFromClient || await resolveLocationFromCoordinates(clientLocation?.latitude, clientLocation?.longitude) || await resolveLocationFromIp(resolvedIp);
   const safeDisplayName = escapeHtml(displayName);
   const safeMethod = escapeHtml(method || 'Unavailable');
   const safeDevice = escapeHtml(extractDeviceInfo(userAgent));
-  const safeIp = escapeHtml(formatIp(ip));
+  const safeIp = escapeHtml(formatIp(resolvedIp || ip));
   const safeLocation = escapeHtml(location);
   const safeRememberDevice = rememberDevice ? 'Enabled' : 'Not enabled';
 
@@ -201,8 +273,8 @@ async function sendLoginNotificationEmail({
           ${buildDetailRow('Sign-in Method', safeMethod)}
           ${buildDetailRow('Time', formatSignInTime(new Date()))}
           ${buildDetailRow('Device', safeDevice)}
-          ${buildDetailRow('Approximate IP', safeIp)}
-          ${buildDetailRow('Approximate Location', safeLocation)}
+          ${buildDetailRow('IP Address', safeIp)}
+          ${buildDetailRow('Location', safeLocation)}
           ${buildDetailRow('Remember Device', safeRememberDevice)}
         </table>
         <div style="margin-top:20px;padding:18px 20px;background:#f9fafb;border:1px solid #e5e7eb;">
@@ -225,5 +297,6 @@ module.exports = {
   buildSecondaryButton,
   buildDetailRow,
   extractClientIp,
+  formatClientLocation,
   sendLoginNotificationEmail
 };
