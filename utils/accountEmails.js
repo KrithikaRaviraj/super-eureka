@@ -3,13 +3,42 @@ const nodemailer = require('nodemailer');
 const axios = require('axios');
 const { buildEmailTemplate } = require('./emailTemplate');
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER || 'noreply@lavishladies.com',
-    pass: process.env.EMAIL_PASS || ''
+function createMailTransport() {
+  const emailUser = process.env.EMAIL_USER || 'noreply@lavishladies.com';
+  const emailPass = process.env.EMAIL_PASS || '';
+  const emailHost = String(process.env.EMAIL_HOST || process.env.EMAIL_SMTP_HOST || '').trim();
+  const emailPort = Number(process.env.EMAIL_PORT || process.env.EMAIL_SMTP_PORT || 587);
+  const emailSecure = String(process.env.EMAIL_SECURE || process.env.EMAIL_SMTP_SECURE || '').toLowerCase() === 'true' || emailPort === 465;
+
+  if (emailHost) {
+    return nodemailer.createTransport({
+      host: emailHost,
+      port: emailPort,
+      secure: emailSecure,
+      auth: emailPass ? { user: emailUser, pass: emailPass } : undefined,
+      connectionTimeout: Number(process.env.EMAIL_CONNECTION_TIMEOUT_MS || 10000),
+      greetingTimeout: Number(process.env.EMAIL_GREETING_TIMEOUT_MS || 10000),
+      socketTimeout: Number(process.env.EMAIL_SOCKET_TIMEOUT_MS || 10000),
+      tls: {
+        rejectUnauthorized: String(process.env.EMAIL_TLS_REJECT_UNAUTHORIZED || 'true').toLowerCase() === 'true'
+      }
+    });
   }
-});
+
+  const service = String(process.env.EMAIL_SERVICE || 'gmail').trim();
+  return nodemailer.createTransport({
+    service,
+    auth: emailPass ? {
+      user: emailUser,
+      pass: emailPass
+    } : undefined,
+    connectionTimeout: Number(process.env.EMAIL_CONNECTION_TIMEOUT_MS || 10000),
+    greetingTimeout: Number(process.env.EMAIL_GREETING_TIMEOUT_MS || 10000),
+    socketTimeout: Number(process.env.EMAIL_SOCKET_TIMEOUT_MS || 10000)
+  });
+}
+
+const transporter = createMailTransport();
 
 function normalizeBaseUrl(url) {
   return String(url || '').trim().replace(/\/+$/, '');
@@ -290,6 +319,7 @@ async function sendLoginSuccessEmail(user, req = {}) {
 
 module.exports = {
   transporter,
+  createMailTransport,
   buildAuthUrl,
   buildPrimaryButton,
   buildSecondaryButton,

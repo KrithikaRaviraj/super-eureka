@@ -1,13 +1,12 @@
 require('dotenv').config();
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const { createSession } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
 const OTP = require('../models/OTP');
-const { buildAuthUrl, buildPrimaryButton, extractClientIp, sendLoginSuccessEmail } = require('../utils/accountEmails');
+const { buildAuthUrl, buildPrimaryButton, createMailTransport, extractClientIp, sendLoginSuccessEmail } = require('../utils/accountEmails');
 
 function buildDetailRow(label, value, emphasize = false) {
   return `
@@ -47,13 +46,7 @@ emailRateLimitSchema.index({ email: 1 }, { unique: true });
 const IpRateLimit = mongoose.model('IpRateLimit', ipRateLimitSchema);
 const EmailRateLimit = mongoose.model('EmailRateLimit', emailRateLimitSchema);
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+const transporter = createMailTransport();
 
 // Hash function for user identifiers
 function hashIdentifier(identifier) {

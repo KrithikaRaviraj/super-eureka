@@ -1,13 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const Appointment = require('../models/Appointment');
 const Feedback = require('../models/Feedback');
 const servicePricing = require('../config/servicePricing');
 const { requireAuth, requireRole } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
+const { createMailTransport } = require('../utils/accountEmails');
 
 function formatAppointmentDate(dateValue) {
   return new Date(dateValue).toLocaleDateString('en-IN', {
@@ -34,13 +34,7 @@ function buildPrimaryButton(href, label, background = '#111827') {
 }
 
 // Email configuration
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER || 'your-email@gmail.com',
-    pass: process.env.EMAIL_PASS || 'your-app-password'
-  }
-});
+const transporter = createMailTransport();
 
 // Create appointment
 router.post('/', async (req, res) => {

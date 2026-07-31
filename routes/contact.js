@@ -1,17 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
 const ContactMessage = require('../models/ContactMessage');
 const { requireRole } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
+const { createMailTransport } = require('../utils/accountEmails');
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER || 'noreply@lavishladies.com',
-    pass: process.env.EMAIL_PASS || ''
-  }
-});
+const transporter = createMailTransport();
 
 function buildDetailRow(label, value) {
   return `

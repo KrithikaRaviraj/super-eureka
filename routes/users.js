@@ -1,18 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const nodemailer = require('nodemailer');
 require('dotenv').config();
 const { buildEmailTemplate } = require('../utils/emailTemplate');
+const { createMailTransport } = require('../utils/accountEmails');
 
 // Email configuration
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER || 'your-email@gmail.com',
-    pass: process.env.EMAIL_PASS || 'your-app-password'
-  }
-});
+const transporter = createMailTransport();
 
 function buildDetailRow(label, value) {
   return `
