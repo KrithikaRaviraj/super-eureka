@@ -53,21 +53,21 @@ function buildAuthUrl(mode, email) {
 
 function buildPrimaryButton(href, label, background = '#111827') {
   return `
-    <a href="${href}" style="display:inline-block;background:${background};color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;">${label}</a>
+    <a href="${href}" style="display:inline-block;background:${background};color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;max-width:100%;box-sizing:border-box;word-break:break-word;">${label}</a>
   `;
 }
 
 function buildSecondaryButton(href, label) {
   return `
-    <a href="${href}" style="display:inline-block;background:#ffffff;color:#111827;padding:12px 20px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;border:1px solid #d1d5db;">${label}</a>
+    <a href="${href}" style="display:inline-block;background:#ffffff;color:#111827;padding:12px 20px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;border:1px solid #d1d5db;max-width:100%;box-sizing:border-box;word-break:break-word;">${label}</a>
   `;
 }
 
 function buildDetailRow(label, value) {
   return `
     <tr>
-      <td style="padding:12px 8px 12px 0;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:35%;max-width:160px;vertical-align:top;box-sizing:border-box;">${label}</td>
-      <td style="padding:12px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:#374151;word-break:break-word;box-sizing:border-box;">${value}</td>
+      <td style="padding:12px 8px 12px 0;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:35%;max-width:160px;vertical-align:top;box-sizing:border-box;word-break:break-word;overflow-wrap:anywhere;">${label}</td>
+      <td style="padding:12px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:#374151;word-break:break-word;overflow-wrap:anywhere;box-sizing:border-box;">${value}</td>
     </tr>
   `;
 }

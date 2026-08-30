@@ -12,8 +12,8 @@ const { upsertUserProfile } = require('../utils/userPersistence');
 function buildDetailRow(label, value, emphasize = false) {
   return `
     <tr>
-      <td style="padding:12px 8px 12px 0;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:35%;max-width:160px;vertical-align:top;box-sizing:border-box;">${label}</td>
-      <td style="padding:12px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:${emphasize ? '#111827' : '#374151'};font-weight:${emphasize ? '700' : '500'};word-break:break-word;box-sizing:border-box;">${value}</td>
+      <td style="padding:12px 8px 12px 0;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:35%;max-width:160px;vertical-align:top;box-sizing:border-box;word-break:break-word;overflow-wrap:anywhere;">${label}</td>
+      <td style="padding:12px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:${emphasize ? '#111827' : '#374151'};font-weight:${emphasize ? '700' : '500'};word-break:break-word;overflow-wrap:anywhere;box-sizing:border-box;">${value}</td>
     </tr>
   `;
 }

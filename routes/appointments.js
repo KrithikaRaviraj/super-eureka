@@ -21,15 +21,15 @@ function formatAppointmentDate(dateValue) {
 function buildDetailRow(label, value, emphasize = false) {
   return `
     <tr>
-      <td style="padding:12px 8px 12px 0;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:35%;max-width:160px;vertical-align:top;box-sizing:border-box;">${label}</td>
-      <td style="padding:12px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:${emphasize ? '#111827' : '#374151'};font-weight:${emphasize ? '700' : '500'};word-break:break-word;box-sizing:border-box;">${value}</td>
+      <td style="padding:12px 8px 12px 0;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:35%;max-width:160px;vertical-align:top;box-sizing:border-box;word-break:break-word;overflow-wrap:anywhere;">${label}</td>
+      <td style="padding:12px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:${emphasize ? '#111827' : '#374151'};font-weight:${emphasize ? '700' : '500'};word-break:break-word;overflow-wrap:anywhere;box-sizing:border-box;">${value}</td>
     </tr>
   `;
 }
 
 function buildPrimaryButton(href, label, background = '#111827') {
   return `
-    <a href="${href}" style="display:inline-block;background:${background};color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;">${label}</a>
+    <a href="${href}" style="display:inline-block;background:${background};color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.2px;max-width:100%;box-sizing:border-box;word-break:break-word;">${label}</a>
   `;
 }
 
@@ -280,9 +280,9 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
           subtitle: 'Thank you for visiting us. Your feedback helps us improve the experience we provide.',
           contentHtml: `
             <p style="margin:0 0 16px 0;font-size:16px;line-height:1.7;color:#374151;">Dear <strong>${appointment.userName}</strong>, thank you for choosing Lavish Ladies Beauty Salon for your <strong>${appointment.service}</strong>.</p>
-            <div style="margin:0 0 20px 0;padding:16px;background:#ffffff;border:1px solid #e5e7eb;box-sizing:border-box;">
+            <div style="margin:0 0 20px 0;padding:16px;background:#ffffff;border:1px solid #e5e7eb;box-sizing:border-box;word-break:break-word;overflow-wrap:anywhere;">
               <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#6b7280;text-transform:uppercase;margin-bottom:8px;">Visit Summary</div>
-              <div style="font-size:15px;line-height:1.7;color:#374151;">${formatAppointmentDate(appointment.date)} at ${appointment.time}</div>
+              <div style="font-size:15px;line-height:1.7;color:#374151;word-break:break-word;overflow-wrap:anywhere;">${formatAppointmentDate(appointment.date)} at ${appointment.time}</div>
             </div>
             <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#4b5563;">If you have 2 minutes, we would love to hear how your visit went.</p>
             <p style="margin:0 0 18px 0;text-align:center;">
