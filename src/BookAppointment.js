@@ -196,10 +196,7 @@ export default function BookAppointment() {
       if (response.ok && result.success) {
         setSuccess(true);
         setGoogleCalendarUrl(result.googleCalendarUrl || '');
-        showToast('success', 'Appointment booked successfully.');
-        setTimeout(() => {
-          navigate('/welcome');
-        }, 3000);
+        showToast('success', 'Appointment request submitted successfully.');
       } else {
         showToast('error', result.message || 'Failed to book appointment');
       }
@@ -282,8 +279,10 @@ export default function BookAppointment() {
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                 </svg>
               </div>
-              <h2 className="font-serif text-2xl font-medium text-stone-800 mb-4">Appointment Booked!</h2>
-              <p className="font-sans text-stone-600 mb-6">Your appointment has been successfully scheduled. We'll contact you soon to confirm.</p>
+              <h2 className="font-serif text-2xl font-medium text-stone-800 mb-3">Appointment Request Received!</h2>
+              <p className="font-sans text-stone-600 mb-6 leading-relaxed">
+                We have received your request. Our staff will review your requested date and time and send a confirmation email shortly.
+              </p>
               
               {googleCalendarUrl && (
                 <div className="mb-6">
@@ -299,10 +298,10 @@ export default function BookAppointment() {
               )}
               
               <button 
-                onClick={() => navigate('/welcome')}
-                className="bg-gradient-to-r from-stone-800 to-stone-900 text-white font-sans font-semibold py-3 px-8 rounded-xl"
+                onClick={() => navigate('/welcome', { state: { email: formData.email, name: formData.name } })}
+                className="bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white font-sans font-semibold py-3 px-8 rounded-xl transition-all"
               >
-                Go to Dashboard
+                View My Appointments
               </button>
             </div>
           ) : (

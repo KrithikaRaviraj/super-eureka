@@ -9,6 +9,12 @@ const { requireAuth, requireRole } = require('../middleware/auth');
 const { buildEmailTemplate } = require('../utils/emailTemplate');
 const { createMailTransport } = require('../utils/accountEmails');
 
+const STAFF_APPOINTMENT_RECIPIENTS = [
+  'kavithasaliank@gmail.com',
+  'saliankrithika1@gmail.com',
+  'lavishladiessalonuchila@gmail.com'
+];
+
 function formatAppointmentDate(dateValue) {
   return new Date(dateValue).toLocaleDateString('en-IN', {
     weekday: 'long',
@@ -16,6 +22,15 @@ function formatAppointmentDate(dateValue) {
     month: 'long',
     day: 'numeric'
   });
+}
+
+function escapeHtml(value = '') {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function buildDetailRow(label, value, emphasize = false) {
@@ -35,6 +50,172 @@ function buildPrimaryButton(href, label, background = '#111827') {
 
 // Email configuration
 const transporter = createMailTransport();
+
+// Helper: Send Customer Appointment Request Email (Pending Review)
+async function sendCustomerRequestEmail(appointment) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
+    to: appointment.userEmail,
+    subject: 'Appointment Request Received - Lavish Ladies Beauty Salon',
+    html: buildEmailTemplate({
+      title: 'Appointment Request Received',
+      subtitle: 'Your appointment request has been received. Our staff will review your requested date and time.',
+      contentHtml: `
+        <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#374151;">Dear <strong>${appointment.userName}</strong>, thank you for choosing Lavish Ladies Beauty Salon.</p>
+        <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#374151;">Your appointment request has been received. Our staff will review your requested date and time. Once a staff member confirms your appointment, you will receive a separate confirmation email.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 16px;width:100%;box-sizing:border-box;">
+          ${buildDetailRow('Service', appointment.service, true)}
+          ${buildDetailRow('Requested Date', formatAppointmentDate(appointment.date))}
+          ${buildDetailRow('Requested Time', appointment.time)}
+          ${buildDetailRow('Status', '<span style="display:inline-block;padding:3px 8px;background:#fef3c7;color:#92400e;border-radius:4px;font-size:12px;font-weight:700;">Pending Review</span>')}
+          ${appointment.price ? buildDetailRow('Estimated Price', `Rs. ${appointment.price}`, true) : ''}
+          ${appointment.notes ? buildDetailRow('Notes', appointment.notes) : ''}
+        </table>
+        <div style="margin-top:20px;padding:16px;background:#f9fafb;border:1px solid #e5e7eb;box-sizing:border-box;word-break:break-word;overflow-wrap:anywhere;">
+          <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">Salon Location & Contact</div>
+          <div style="font-size:14px;line-height:1.7;color:#4b5563;">
+            Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117<br/>
+            Phone: <strong style="color:#111827;">+91 81476 27651</strong>
+          </div>
+        </div>
+      `
+    })
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log(`Customer request email sent to ${appointment.userEmail}`);
+}
+
+// Helper: Send Staff Appointment Approval/Review Email (To all 3 staff members)
+async function sendStaffAppointmentReviewEmails(appointment) {
+  const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/+$/, '');
+  const acceptUrl = `${frontendUrl}/appointment-decision/${appointment.approvalToken}?action=accept`;
+  const rejectUrl = `${frontendUrl}/appointment-decision/${appointment.approvalToken}?action=reject`;
+
+  const staffRecipients = process.env.APPROVAL_EMAILS
+    ? process.env.APPROVAL_EMAILS.split(',').map(e => e.trim()).filter(Boolean)
+    : STAFF_APPOINTMENT_RECIPIENTS;
+
+  for (const staffEmail of staffRecipients) {
+    try {
+      const mailOptions = {
+        from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
+        to: staffEmail,
+        subject: `New Appointment Request: ${appointment.service} - ${appointment.userName}`,
+        html: buildEmailTemplate({
+          title: 'New Appointment Request',
+          subtitle: 'A new customer appointment request requires staff review and confirmation.',
+          contentHtml: `
+            <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#374151;">A new appointment request has been submitted by <strong>${appointment.userName}</strong>. Please accept or reject below:</p>
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 16px;margin-bottom:20px;width:100%;box-sizing:border-box;">
+              ${buildDetailRow('Customer Name', appointment.userName)}
+              ${buildDetailRow('Customer Email', appointment.userEmail)}
+              ${buildDetailRow('Customer Phone', appointment.userPhone || 'Not provided')}
+              ${buildDetailRow('Service', appointment.service, true)}
+              ${buildDetailRow('Requested Date', formatAppointmentDate(appointment.date))}
+              ${buildDetailRow('Requested Time', appointment.time)}
+              ${buildDetailRow('Price', appointment.price ? `Rs. ${appointment.price}` : 'Rs. 0')}
+              ${buildDetailRow('Notes', appointment.notes || 'None')}
+              ${buildDetailRow('Reference ID', String(appointment._id))}
+            </table>
+            <div style="margin:20px 0;text-align:center;">
+              ${buildPrimaryButton(acceptUrl, 'Accept Appointment', '#059669')}
+              <span style="display:inline-block;width:12px;height:12px;"></span>
+              ${buildPrimaryButton(rejectUrl, 'Reject Appointment', '#dc2626')}
+            </div>
+            <p style="margin:16px 0 0 0;font-size:13px;line-height:1.6;color:#6b7280;text-align:center;">
+              Clicking Accept will immediately confirm the booking and send a confirmation email to the customer. Rejecting will prompt for a reason before notifying the customer.
+            </p>
+          `
+        })
+      };
+
+      await transporter.sendMail(mailOptions);
+      console.log(`Staff appointment review email sent to ${staffEmail}`);
+    } catch (err) {
+      console.error(`Failed to send staff appointment email to ${staffEmail}:`, err);
+    }
+  }
+}
+
+// Helper: Send Customer Confirmation Email (Confirmed by Staff)
+async function sendCustomerConfirmationEmail(appointment) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
+    to: appointment.userEmail,
+    subject: 'Appointment Confirmed - Lavish Ladies Beauty Salon',
+    html: buildEmailTemplate({
+      title: 'Appointment Confirmed',
+      subtitle: 'Your appointment has been confirmed by our staff. We look forward to seeing you.',
+      contentHtml: `
+        <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#374151;">Dear <strong>${appointment.userName}</strong>, your appointment has been confirmed by our staff. We look forward to welcoming you to the salon.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 16px;width:100%;box-sizing:border-box;">
+          ${buildDetailRow('Service', appointment.service, true)}
+          ${buildDetailRow('Confirmed Date', formatAppointmentDate(appointment.date))}
+          ${buildDetailRow('Confirmed Time', appointment.time)}
+          ${buildDetailRow('Status', '<span style="display:inline-block;padding:3px 8px;background:#d1fae5;color:#065f46;border-radius:4px;font-size:12px;font-weight:700;">Confirmed</span>')}
+          ${appointment.price ? buildDetailRow('Price', `Rs. ${appointment.price}`, true) : ''}
+          ${appointment.notes ? buildDetailRow('Notes', appointment.notes) : ''}
+        </table>
+        <div style="margin-top:20px;padding:16px;background:#f9fafb;border:1px solid #e5e7eb;box-sizing:border-box;word-break:break-word;overflow-wrap:anywhere;">
+          <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">Arrival & Check-in Details</div>
+          <div style="font-size:14px;line-height:1.7;color:#4b5563;">
+            Please arrive 10 minutes early for a smooth check-in. If you need to make any changes or reschedule, please contact us at <strong style="color:#111827;">+91 81476 27651</strong>.<br/>
+            Location: Krishna Prasad Complex, NH66, Uchila, Udupi District, Karnataka - 574117
+          </div>
+        </div>
+      `
+    })
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log(`Confirmation email sent to ${appointment.userEmail}`);
+}
+
+// Helper: Send Customer Rejection Email (Declined with Reason)
+async function sendCustomerRejectionEmail(appointment, reason) {
+  const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/+$/, '');
+  const bookAgainUrl = `${frontendUrl}/book-appointment`;
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
+    to: appointment.userEmail,
+    subject: 'Update on Your Appointment Request - Lavish Ladies Beauty Salon',
+    html: buildEmailTemplate({
+      title: 'Appointment Request Update',
+      subtitle: 'We are unable to confirm your requested appointment time.',
+      contentHtml: `
+        <p style="margin:0 0 16px 0;font-size:15px;line-height:1.7;color:#374151;">Dear <strong>${appointment.userName}</strong>,</p>
+        <p style="margin:0 0 16px 0;font-size:15px;line-height:1.7;color:#374151;">We're sorry, but we were unable to confirm your appointment for <strong>${formatAppointmentDate(appointment.date)}</strong> at <strong>${appointment.time}</strong>.</p>
+        
+        <div style="margin:18px 0;padding:16px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;box-sizing:border-box;word-break:break-word;overflow-wrap:anywhere;">
+          <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#991b1b;text-transform:uppercase;margin-bottom:6px;">Reason</div>
+          <div style="font-size:15px;line-height:1.6;color:#b91c1c;font-weight:600;">${escapeHtml(reason)}</div>
+        </div>
+
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 16px;margin-bottom:20px;width:100%;box-sizing:border-box;">
+          ${buildDetailRow('Service', appointment.service)}
+          ${buildDetailRow('Requested Date', formatAppointmentDate(appointment.date))}
+          ${buildDetailRow('Requested Time', appointment.time)}
+          ${buildDetailRow('Status', '<span style="display:inline-block;padding:3px 8px;background:#fee2e2;color:#991b1b;border-radius:4px;font-size:12px;font-weight:700;">Declined</span>')}
+        </table>
+
+        <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#4b5563;">
+          Please feel free to choose another available date or time that suits your schedule. We would love the opportunity to welcome you.
+        </p>
+        <div style="margin:20px 0;text-align:center;">
+          ${buildPrimaryButton(bookAgainUrl, 'Book Another Date / Time', '#111827')}
+        </div>
+        <p style="margin:16px 0 0 0;font-size:13px;line-height:1.6;color:#6b7280;text-align:center;">
+          If you have questions, please contact us at +91 81476 27651 or reply to this email.
+        </p>
+      `
+    })
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log(`Rejection email sent to ${appointment.userEmail}`);
+}
 
 // Create appointment
 router.post('/', async (req, res) => {
@@ -64,6 +245,8 @@ router.post('/', async (req, res) => {
       });
     }
 
+    const approvalToken = crypto.randomBytes(32).toString('hex');
+
     const appointment = new Appointment({
       service,
       date,
@@ -73,6 +256,7 @@ router.post('/', async (req, res) => {
       userName,
       userPhone: phone || userPhone,
       status: 'pending',
+      approvalToken,
       price: servicePricing[service] || 0,
       paymentStatus: 'pending'
     });
@@ -81,9 +265,15 @@ router.post('/', async (req, res) => {
     
     const googleCalendarUrl = generateGoogleCalendarUrl(appointment);
 
+    // Send customer request email and staff review emails in background
+    Promise.all([
+      sendCustomerRequestEmail(appointment).catch(err => console.error('Customer request email error:', err)),
+      sendStaffAppointmentReviewEmails(appointment).catch(err => console.error('Staff appointment review email error:', err))
+    ]).catch(err => console.error('Appointment email dispatch error:', err));
+
     res.json({
       success: true,
-      message: "Appointment booked successfully",
+      message: "Appointment request received successfully",
       appointment,
       ...(googleCalendarUrl && { googleCalendarUrl })
     });
@@ -215,6 +405,8 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
       return res.status(404).json({ success: false, message: "Appointment not found" });
     }
 
+    const previousStatus = appointment.status;
+
     // Update all provided fields
     if (status !== undefined) appointment.status = status;
     if (service !== undefined) appointment.service = service;
@@ -225,6 +417,7 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
     if (userPhone !== undefined) appointment.userPhone = userPhone;
     if (notes !== undefined) appointment.notes = notes;
     if (price !== undefined) appointment.price = price;
+    if (req.body.rejectionReason !== undefined) appointment.rejectionReason = req.body.rejectionReason;
     
     if (status === 'completed' && !appointment.feedbackToken) {
       appointment.feedbackToken = crypto.randomBytes(32).toString('hex');
@@ -232,38 +425,21 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
     
     await appointment.save();
 
-    // Send confirmation email when appointment is confirmed
-    if (status === 'confirmed') {
-      const mailOptions = {
-        from: process.env.EMAIL_USER || 'noreply@lavishladies.com',
-        to: appointment.userEmail,
-        subject: 'Appointment Confirmed - Lavish Ladies Beauty Salon',
-        html: buildEmailTemplate({
-          title: 'Appointment Confirmed',
-          subtitle: 'Your appointment is confirmed. Here is a summary of your booking.',
-          contentHtml: `
-            <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#374151;">Dear <strong>${appointment.userName}</strong>, your booking has been successfully confirmed. We look forward to welcoming you to the salon.</p>
-            <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 16px;width:100%;box-sizing:border-box;">
-              ${buildDetailRow('Service', appointment.service, true)}
-              ${buildDetailRow('Date', formatAppointmentDate(appointment.date))}
-              ${buildDetailRow('Time', appointment.time)}
-              ${appointment.price ? buildDetailRow('Price', `Rs. ${appointment.price}`, true) : ''}
-              ${appointment.notes ? buildDetailRow('Notes', appointment.notes) : ''}
-            </table>
-            <div style="margin-top:20px;padding:16px;background:#f9fafb;border:1px solid #e5e7eb;box-sizing:border-box;">
-              <div style="font-size:14px;line-height:1.7;color:#4b5563;">
-                Please arrive 10 minutes early for a smooth check-in. If you need to make any changes, contact us at <strong style="color:#111827;">+91 81476 27651</strong>.
-              </div>
-            </div>
-          `
-        })
-      };
-      
+    // Send confirmation email if newly confirmed
+    if (status === 'confirmed' && previousStatus !== 'confirmed') {
       try {
-        await transporter.sendMail(mailOptions);
-        console.log(`Confirmation email sent to ${appointment.userEmail}`);
+        await sendCustomerConfirmationEmail(appointment);
       } catch (emailError) {
-        console.error('Email sending error:', emailError);
+        console.error('Confirmation email sending error:', emailError);
+      }
+    }
+
+    // Send rejection email if newly cancelled/rejected
+    if (status === 'cancelled' && previousStatus !== 'cancelled') {
+      try {
+        await sendCustomerRejectionEmail(appointment, appointment.rejectionReason || 'Declined by salon staff');
+      } catch (emailError) {
+        console.error('Rejection email sending error:', emailError);
       }
     }
     
@@ -535,6 +711,175 @@ router.get('/revenue-analytics', requireRole('staff'), async (req, res) => {
   } catch (error) {
     console.error('Revenue analytics error:', error);
     res.status(500).json({ success: false, message: "Failed to get revenue analytics" });
+  }
+});
+
+// Get appointment details for decision link (Accept/Reject from staff email)
+router.get('/decision/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    if (!token || typeof token !== 'string') {
+      return res.status(400).json({ success: false, message: "Invalid appointment token" });
+    }
+
+    const appointment = await Appointment.findOne({ approvalToken: token });
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: "Appointment not found or link has expired" });
+    }
+
+    res.json({
+      success: true,
+      appointment: {
+        id: appointment._id,
+        service: appointment.service,
+        date: appointment.date,
+        time: appointment.time,
+        userName: appointment.userName,
+        userEmail: appointment.userEmail,
+        userPhone: appointment.userPhone,
+        notes: appointment.notes,
+        price: appointment.price,
+        status: appointment.status,
+        rejectionReason: appointment.rejectionReason,
+        actionProcessedAt: appointment.actionProcessedAt
+      }
+    });
+  } catch (error) {
+    console.error('Get appointment decision error:', error);
+    res.status(500).json({ success: false, message: "Failed to load appointment details" });
+  }
+});
+
+// Process staff appointment decision (Accept or Reject)
+router.post('/decision/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { action, reason } = req.body || {};
+
+    if (!token || typeof token !== 'string') {
+      return res.status(400).json({ success: false, message: "Invalid appointment token" });
+    }
+
+    if (action !== 'accept' && action !== 'reject') {
+      return res.status(400).json({ success: false, message: "Invalid decision action" });
+    }
+
+    const existing = await Appointment.findOne({ approvalToken: token });
+    if (!existing) {
+      return res.status(404).json({ success: false, message: "Appointment not found or link has expired" });
+    }
+
+    if (existing.status !== 'pending') {
+      const alreadyMessage = existing.status === 'confirmed'
+        ? 'This appointment has already been confirmed.'
+        : `This appointment has already been rejected${existing.rejectionReason ? `: "${existing.rejectionReason}"` : '.'}`;
+
+      return res.status(200).json({
+        success: true,
+        alreadyProcessed: true,
+        currentStatus: existing.status,
+        message: alreadyMessage,
+        appointment: {
+          id: existing._id,
+          service: existing.service,
+          date: existing.date,
+          time: existing.time,
+          userName: existing.userName,
+          userEmail: existing.userEmail,
+          status: existing.status,
+          rejectionReason: existing.rejectionReason,
+          actionProcessedAt: existing.actionProcessedAt
+        }
+      });
+    }
+
+    if (action === 'accept') {
+      const updated = await Appointment.findOneAndUpdate(
+        { approvalToken: token, status: 'pending' },
+        { status: 'confirmed', actionProcessedAt: new Date() },
+        { new: true }
+      );
+
+      if (!updated) {
+        const current = await Appointment.findOne({ approvalToken: token });
+        return res.status(200).json({
+          success: true,
+          alreadyProcessed: true,
+          currentStatus: current?.status,
+          message: current?.status === 'confirmed'
+            ? 'This appointment has already been confirmed.'
+            : 'This appointment has already been processed.'
+        });
+      }
+
+      try {
+        await sendCustomerConfirmationEmail(updated);
+      } catch (mailErr) {
+        console.error('Customer confirmation email error:', mailErr);
+      }
+
+      return res.json({
+        success: true,
+        message: "Appointment confirmed successfully",
+        appointment: {
+          id: updated._id,
+          service: updated.service,
+          date: updated.date,
+          time: updated.time,
+          userName: updated.userName,
+          userEmail: updated.userEmail,
+          status: updated.status,
+          actionProcessedAt: updated.actionProcessedAt
+        }
+      });
+    }
+
+    if (action === 'reject') {
+      const rejectionReasonText = String(reason || '').trim() || 'Not available at the requested time';
+
+      const updated = await Appointment.findOneAndUpdate(
+        { approvalToken: token, status: 'pending' },
+        { status: 'cancelled', rejectionReason: rejectionReasonText, actionProcessedAt: new Date() },
+        { new: true }
+      );
+
+      if (!updated) {
+        const current = await Appointment.findOne({ approvalToken: token });
+        return res.status(200).json({
+          success: true,
+          alreadyProcessed: true,
+          currentStatus: current?.status,
+          message: current?.status === 'confirmed'
+            ? 'This appointment has already been confirmed.'
+            : 'This appointment has already been processed.'
+        });
+      }
+
+      try {
+        await sendCustomerRejectionEmail(updated, rejectionReasonText);
+      } catch (mailErr) {
+        console.error('Customer rejection email error:', mailErr);
+      }
+
+      return res.json({
+        success: true,
+        message: "Appointment rejected successfully",
+        appointment: {
+          id: updated._id,
+          service: updated.service,
+          date: updated.date,
+          time: updated.time,
+          userName: updated.userName,
+          userEmail: updated.userEmail,
+          status: updated.status,
+          rejectionReason: updated.rejectionReason,
+          actionProcessedAt: updated.actionProcessedAt
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Process appointment decision error:', error);
+    res.status(500).json({ success: false, message: "Failed to process appointment decision" });
   }
 });
 

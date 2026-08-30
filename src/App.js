@@ -6,6 +6,7 @@ import StaffLogin from "./StaffLogin";
 import StaffDashboard from "./StaffDashboard";
 import FeedbackForm from "./FeedbackForm";
 import TestimonialApproval from "./TestimonialApproval";
+import AppointmentDecision from "./AppointmentDecision";
 import RevenueAnalytics from "./RevenueAnalytics";
 import SignIn from "./components/SignIn";
 import Testimonials from "./components/Testimonials";
@@ -634,6 +635,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
         <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
         <Route path="/feedback/:token" element={<FeedbackForm />} />
         <Route path="/approve-testimonial/:token" element={<TestimonialApproval />} />
+        <Route path="/appointment-decision/:token" element={<AppointmentDecision />} />
         <Route path="/contact" element={<ContactForm />} />
         <Route path="/privacy" element={<PrivacyPolicy onClose={() => navigate('/')} />} />
         <Route path="/terms" element={<TermsOfService onClose={() => navigate('/')} />} />

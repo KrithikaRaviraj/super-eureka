@@ -25,7 +25,7 @@ const PrivacyPolicy = ({ onClose }) => {
             <div className="bg-stone-50 p-4 rounded-lg mb-4">
               <p><strong>Data Controller:</strong> Lavish Ladies Beauty Salon</p>
               <p><strong>Business Type:</strong> Proprietorship</p>
-              <p><strong>Address:</strong> Uchila, Udupi District, Karnataka 576101, India</p>
+              <p><strong>Address:</strong> Uchila, Udupi District, Karnataka 574117, India</p>
               <p><strong>Email:</strong> <a href="https://mail.google.com/mail/?view=cm&fs=1&to=lavishladiessalonuchila@gmail.com&su=Inquiry%20from%20Website&body=Hello%2C%0A%0AI%20would%20like%20to%20know%20more%20about%20your%20services." className="text-stone-700 hover:text-stone-900 underline decoration-stone-300 underline-offset-2 hover:decoration-stone-500">lavishladiessalonuchila@gmail.com</a></p>
               <p><strong>Phone:</strong> <a href="tel:+918147627651" className="text-rose-600 hover:text-rose-700">+91 8147627651</a></p>
               <p><strong>Privacy Officer:</strong> Available upon request (as per DPDP Act, 2023)</p>

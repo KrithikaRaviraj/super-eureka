@@ -46,11 +46,14 @@ export default function Welcome() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const fetchAppointments = useCallback(async () => {
+  const [loadingAppointments, setLoadingAppointments] = useState(false);
+
+  const fetchAppointments = useCallback(async (targetEmail) => {
     // Get email from multiple sources
-    let currentEmail = email || location.state?.email;
+    let currentEmail = targetEmail || email || location.state?.email;
     
     if (currentEmail) {
+      setLoadingAppointments(true);
       try {
         const response = await fetch(`${API_URL}/api/appointments/user/${encodeURIComponent(currentEmail)}`, {
           credentials: 'include'
@@ -61,6 +64,8 @@ export default function Welcome() {
         }
       } catch (error) {
         console.error('Error fetching appointments:', error);
+      } finally {
+        setLoadingAppointments(false);
       }
     }
   }, [email, location.state]);
@@ -83,7 +88,10 @@ export default function Welcome() {
         const data = await response.json();
         if (data?.authenticated && data?.user) {
           if (data.user.name) setName(data.user.name);
-          if (data.user.email) setEmail(data.user.email);
+          if (data.user.email) {
+            setEmail(data.user.email);
+            fetchAppointments(data.user.email);
+          }
         }
       } catch (error) {
         console.error('Failed to load auth profile:', error);
@@ -93,9 +101,10 @@ export default function Welcome() {
     
     async function fetchUser() {
       try {
+        const currentEmail = email || location.state?.email;
         let queryParam = '';
-        if (email) {
-          queryParam = `email=${encodeURIComponent(email)}`;
+        if (currentEmail) {
+          queryParam = `email=${encodeURIComponent(currentEmail)}`;
         } else if (userPhone) {
           queryParam = `phone=${encodeURIComponent(userPhone)}`;
         }
@@ -110,6 +119,9 @@ export default function Welcome() {
               setOriginalEmail(data.user.email || email);
               setPhone(data.user.phone || userPhone || "");
               setUid(data.user.uid || "");
+              if (data.user.email) {
+                fetchAppointments(data.user.email);
+              }
             }
           }
         }
@@ -121,6 +133,13 @@ export default function Welcome() {
     fetchAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Fetch appointments whenever email becomes available
+  useEffect(() => {
+    if (email) {
+      fetchAppointments(email);
+    }
+  }, [email, fetchAppointments]);
   
   // Refresh appointments when component becomes visible (user returns from booking)
   useEffect(() => {
@@ -135,7 +154,7 @@ export default function Welcome() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [email, fetchAppointments]);
+  }, [fetchAppointments]);
   
 
   // Save profile data to backend
@@ -413,11 +432,19 @@ export default function Welcome() {
                 </div>
               </div>
               <div className="p-6 sm:p-10">
-                {appointments.length === 0 ? (
+                {loadingAppointments && appointments.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="w-10 h-10 border-3 border-rose-200 border-t-rose-600 rounded-full animate-spin mx-auto mb-3"></div>
+                    <p className="font-sans text-stone-500 text-sm">Loading your appointments...</p>
+                  </div>
+                ) : appointments.filter(app => {
+                  const isUpcoming = app.status === 'pending' || app.status === 'confirmed';
+                  return activeTab === 'upcoming' ? isUpcoming : !isUpcoming;
+                }).length === 0 ? (
                   <div className="text-center text-stone-600 bg-gradient-to-br from-stone-50 to-rose-50 rounded-2xl p-8 sm:p-12 border border-stone-200 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-rose-100/20 to-pink-100/20 animate-pulse"></div>
                     <div className="relative z-10">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-rose-200 to-pink-200 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-rose-200 to-pink-200 rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg className="w-8 h-8 sm:w-10 sm:h-10 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
@@ -426,14 +453,14 @@ export default function Welcome() {
                       {activeTab === 'upcoming' && (
                         <>
                           <p className="font-sans text-xs sm:text-sm text-stone-500 mb-8 uppercase tracking-wider">Schedule your next visit with us</p>
-                      <button 
-                        onClick={() => {
-                          window.location.href = '/services';
-                        }}
-                        className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-xl font-sans font-semibold text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                      >
-                        Book Appointment
-                      </button>
+                          <button 
+                            onClick={() => {
+                              window.location.href = '/services';
+                            }}
+                            className="bg-stone-800 hover:bg-stone-900 text-white px-8 py-4 rounded-xl font-sans font-semibold text-sm uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                          >
+                            Book Appointment
+                          </button>
                         </>
                       )}
                     </div>
@@ -441,42 +468,54 @@ export default function Welcome() {
                 ) : (
                   <div className="space-y-3">
                     {appointments.filter(app => {
-                      const appDate = new Date(app.date);
-                      const today = new Date();
-                      today.setHours(0,0,0,0);
-                      return activeTab === 'upcoming' ? appDate >= today : appDate < today;
+                      const isUpcoming = app.status === 'pending' || app.status === 'confirmed';
+                      return activeTab === 'upcoming' ? isUpcoming : !isUpcoming;
                     }).map((appointment, index) => (
                       <div 
                         key={appointment._id} 
-                        className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-stone-200/50 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                        className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-stone-200/70 shadow-sm hover:shadow-md transition-all duration-300 group"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-serif text-base font-medium text-stone-800 group-hover:text-gray-600 transition-colors duration-300">{appointment.service}</h4>
-                          <span className={`px-2 py-1 rounded-full text-xs font-semibold transition-all duration-300 ${
-                            appointment.status === 'confirmed' ? 'bg-gray-100 text-gray-800' :
-                            appointment.status === 'completed' ? 'bg-green-100 text-green-800' :
-                            appointment.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {appointment.status.toUpperCase()}
-                          </span>
-                          {(appointment.status === 'pending' || appointment.status === 'confirmed') && (
-                            <button
-                              onClick={() => handleCancelAppointment(appointment._id)}
-                              className="ml-2 text-xs text-red-500 hover:text-red-700 underline transition-colors"
-                            >
-                              Cancel
-                            </button>
-                          )}
+                          <div>
+                            <h4 className="font-serif text-lg font-medium text-stone-800 group-hover:text-rose-600 transition-colors duration-300">{appointment.service}</h4>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                              appointment.status === 'confirmed' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
+                              appointment.status === 'completed' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                              appointment.status === 'cancelled' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
+                              'bg-amber-100 text-amber-800 border border-amber-200'
+                            }`}>
+                              {appointment.status === 'pending' ? 'Pending Review' : appointment.status.toUpperCase()}
+                            </span>
+                            {(appointment.status === 'pending' || appointment.status === 'confirmed') && (
+                              <button
+                                onClick={() => handleCancelAppointment(appointment._id)}
+                                className="text-xs text-rose-600 hover:text-rose-800 underline font-medium transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            )}
+                          </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-3 text-sm text-stone-600">
-                          <p><span className="font-semibold">Date:</span> {new Date(appointment.date).toLocaleDateString()}</p>
-                          <p><span className="font-semibold">Time:</span> {appointment.time}</p>
+                        <div className="grid grid-cols-2 gap-3 text-sm text-stone-600 mt-2">
+                          <p><span className="font-semibold text-stone-700">Date:</span> {new Date(appointment.date).toLocaleDateString('en-IN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</p>
+                          <p><span className="font-semibold text-stone-700">Time:</span> {appointment.time}</p>
                         </div>
+                        {appointment.price > 0 && (
+                          <p className="text-xs text-stone-500 mt-1">
+                            <span className="font-semibold">Price:</span> Rs. {appointment.price}
+                          </p>
+                        )}
                         {appointment.notes && (
-                          <p className="mt-2 text-sm text-stone-600 bg-stone-50 p-2 rounded-lg group-hover:bg-gray-50 transition-colors duration-300">
-                            <span className="font-semibold">Notes:</span> {appointment.notes}
+                          <p className="mt-2 text-xs text-stone-600 bg-stone-50 p-2.5 rounded-lg border border-stone-200 italic">
+                            <span className="font-semibold not-italic text-stone-700">Notes:</span> "{appointment.notes}"
+                          </p>
+                        )}
+                        {appointment.rejectionReason && (
+                          <p className="mt-2 text-xs text-rose-700 bg-rose-50 p-2.5 rounded-lg border border-rose-200">
+                            <span className="font-semibold">Reason:</span> {appointment.rejectionReason}
                           </p>
                         )}
                       </div>
