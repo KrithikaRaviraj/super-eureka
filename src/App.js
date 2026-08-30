@@ -175,7 +175,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                     <div className="space-y-6">
                       <div className="flex items-center space-x-4 mb-6">
                         <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center">
-                          <span className="font-serif text-xl font-bold text-stone-800">7+</span>
+                          <span className="font-serif text-xl font-bold text-stone-800">8+</span>
                         </div>
                         <div>
                           <h3 className="font-serif text-2xl font-medium text-stone-800">Years in Business</h3>
