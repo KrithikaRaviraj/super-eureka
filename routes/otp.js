@@ -12,8 +12,8 @@ const { upsertUserProfile } = require('../utils/userPersistence');
 function buildDetailRow(label, value, emphasize = false) {
   return `
     <tr>
-      <td style="padding:13px 0;border-bottom:1px solid #e5e7eb;font-size:13px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:170px;vertical-align:top;">${label}</td>
-      <td style="padding:13px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:${emphasize ? '#111827' : '#374151'};font-weight:${emphasize ? '700' : '500'};">${value}</td>
+      <td style="padding:12px 8px 12px 0;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:35%;max-width:160px;vertical-align:top;box-sizing:border-box;">${label}</td>
+      <td style="padding:12px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:${emphasize ? '#111827' : '#374151'};font-weight:${emphasize ? '700' : '500'};word-break:break-word;box-sizing:border-box;">${value}</td>
     </tr>
   `;
 }
@@ -235,14 +235,14 @@ router.post('/send-email-otp', async (req, res) => {
         title: 'Security Code',
         subtitle: 'Your sign-in request is ready. Use the verification code below to continue securely.',
         contentHtml: `
-          <p style="margin:0 0 20px 0;font-size:16px;line-height:1.7;color:#374151;">Dear Guest, we received a request to sign in to Lavish Ladies Beauty Salon using this email address.</p>
-          <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 20px;margin-bottom:22px;">
-            ${buildDetailRow('Verification Code', `<span style="font-family:'Courier New',monospace;font-size:30px;letter-spacing:8px;">${otp}</span>`, true)}
+          <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#374151;">Dear Guest, we received a request to sign in to Lavish Ladies Beauty Salon using this email address.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 16px;margin-bottom:20px;width:100%;box-sizing:border-box;">
+            ${buildDetailRow('Verification Code', `<span style="font-family:'Courier New',monospace;font-size:28px;letter-spacing:6px;font-weight:700;">${otp}</span>`, true)}
             ${buildDetailRow('Valid For', '10 minutes')}
             ${buildDetailRow('Requested For', normalizedEmail)}
           </table>
-          <div style="margin:0 0 22px 0;padding:18px 20px;background:#f9fafb;border:1px solid #e5e7eb;">
-            <div style="font-size:14px;line-height:1.8;color:#4b5563;">
+          <div style="margin:0 0 20px 0;padding:16px;background:#f9fafb;border:1px solid #e5e7eb;box-sizing:border-box;">
+            <div style="font-size:14px;line-height:1.7;color:#4b5563;">
               <strong style="color:#111827;">Security reminder:</strong> never share this code with anyone. Our team will never ask for your OTP by phone, chat, or email.
             </div>
           </div>

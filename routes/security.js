@@ -3,14 +3,9 @@ const router = express.Router();
 const crypto = require('crypto');
 const SecurityLog = require('../models/SecurityLog');
 const { requireRole } = require('../middleware/auth');
+const { extractClientIp } = require('../utils/accountEmails');
 
-function normalizeIP(req) {
-  const forwarded = req.get('x-forwarded-for') || req.get('x-real-ip');
-  if (forwarded) {
-    return forwarded.split(',')[0].trim();
-  }
-  return req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || '127.0.0.1';
-}
+// Removed normalizeIP function as we are using extractClientIp instead
 
 function hashIdentifier(identifier) {
   const salt = process.env.LOG_SALT || 'default-log-salt';
@@ -182,7 +177,7 @@ router.post('/consent', async (req, res) => {
       });
     }
 
-    const ip = normalizeIP(req);
+    const ip = extractClientIp(req);
     const userAgent = req.get('user-agent') || null;
 
     const log = new SecurityLog({
@@ -219,7 +214,7 @@ router.post('/consent', async (req, res) => {
 router.post('/client-error', async (req, res) => {
   try {
     const { message, source, stack, type, status = 'failed', severity = 'warning', details = {} } = req.body || {};
-    const ip = normalizeIP(req);
+    const ip = extractClientIp(req);
     const userAgent = req.get('user-agent') || null;
 
     if (!message || typeof message !== 'string') {

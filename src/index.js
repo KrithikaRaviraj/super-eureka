@@ -2,12 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+import { API_URL } from './config';
 
 const reportClientError = (payload) => {
   if (process.env.NODE_ENV !== 'production') return;
-  fetch(`${API_BASE_URL}/api/security/client-error`, {
+  fetch(`${API_URL}/api/security/client-error`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

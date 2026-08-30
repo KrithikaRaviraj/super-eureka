@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SalonHeader from './components/SalonHeader';
+import { API_URL } from './config';
 
 const DEFAULT_ALLOWED_STAFF_EMAILS = [
   '[redacted-email]',
@@ -37,7 +38,7 @@ export default function StaffLogin() {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/send-email-otp`, {
+      const response = await fetch(`${API_URL}/api/send-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -70,7 +71,7 @@ export default function StaffLogin() {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/verify-email-otp`, {
+      const response = await fetch(`${API_URL}/api/verify-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

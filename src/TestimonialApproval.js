@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { API_URL } from './config';
 
 export default function TestimonialApproval() {
   const { token } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const action = searchParams.ge('action');
+  const action = searchParams.get('action');
   
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState(null);
@@ -14,7 +15,7 @@ export default function TestimonialApproval() {
   useEffect(() => {
     const processApproval = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/testimonial/${token}?action=${action}`);
+        const response = await fetch(`${API_URL}/api/appointments/testimonial/${token}?action=${action}`);
         const data = await response.json();
         
         if (data.success) {

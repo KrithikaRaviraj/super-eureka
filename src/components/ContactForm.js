@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Toast from './Toast';
+import { API_URL } from '../config';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -34,7 +35,7 @@ const ContactForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/contact/submit`, {
+      const response = await fetch(`${API_URL}/api/contact/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

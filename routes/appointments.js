@@ -21,8 +21,8 @@ function formatAppointmentDate(dateValue) {
 function buildDetailRow(label, value, emphasize = false) {
   return `
     <tr>
-      <td style="padding:13px 0;border-bottom:1px solid #e5e7eb;font-size:13px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:140px;vertical-align:top;">${label}</td>
-      <td style="padding:13px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:${emphasize ? '#111827' : '#374151'};font-weight:${emphasize ? '700' : '500'};">${value}</td>
+      <td style="padding:12px 8px 12px 0;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:700;letter-spacing:0.4px;color:#6b7280;text-transform:uppercase;width:35%;max-width:160px;vertical-align:top;box-sizing:border-box;">${label}</td>
+      <td style="padding:12px 0;border-bottom:1px solid #e5e7eb;font-size:15px;line-height:1.6;color:${emphasize ? '#111827' : '#374151'};font-weight:${emphasize ? '700' : '500'};word-break:break-word;box-sizing:border-box;">${value}</td>
     </tr>
   `;
 }
@@ -242,15 +242,15 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
           title: 'Appointment Confirmed',
           subtitle: 'Your appointment is confirmed. Here is a summary of your booking.',
           contentHtml: `
-            <p style="margin:0 0 20px 0;font-size:16px;line-height:1.7;color:#374151;">Dear <strong>${appointment.userName}</strong>, your booking has been successfully confirmed. We look forward to welcoming you to the salon.</p>
-            <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 20px;">
+            <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#374151;">Dear <strong>${appointment.userName}</strong>, your booking has been successfully confirmed. We look forward to welcoming you to the salon.</p>
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 16px;width:100%;box-sizing:border-box;">
               ${buildDetailRow('Service', appointment.service, true)}
               ${buildDetailRow('Date', formatAppointmentDate(appointment.date))}
               ${buildDetailRow('Time', appointment.time)}
               ${appointment.price ? buildDetailRow('Price', `Rs. ${appointment.price}`, true) : ''}
               ${appointment.notes ? buildDetailRow('Notes', appointment.notes) : ''}
             </table>
-            <div style="margin-top:22px;padding:18px 20px;background:#f9fafb;border:1px solid #e5e7eb;">
+            <div style="margin-top:20px;padding:16px;background:#f9fafb;border:1px solid #e5e7eb;box-sizing:border-box;">
               <div style="font-size:14px;line-height:1.7;color:#4b5563;">
                 Please arrive 10 minutes early for a smooth check-in. If you need to make any changes, contact us at <strong style="color:#111827;">+91 81476 27651</strong>.
               </div>
@@ -280,11 +280,11 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
           subtitle: 'Thank you for visiting us. Your feedback helps us improve the experience we provide.',
           contentHtml: `
             <p style="margin:0 0 16px 0;font-size:16px;line-height:1.7;color:#374151;">Dear <strong>${appointment.userName}</strong>, thank you for choosing Lavish Ladies Beauty Salon for your <strong>${appointment.service}</strong>.</p>
-            <div style="margin:0 0 20px 0;padding:20px;background:#ffffff;border:1px solid #e5e7eb;">
-              <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#6b7280;text-transform:uppercase;margin-bottom:10px;">Visit Summary</div>
+            <div style="margin:0 0 20px 0;padding:16px;background:#ffffff;border:1px solid #e5e7eb;box-sizing:border-box;">
+              <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:#6b7280;text-transform:uppercase;margin-bottom:8px;">Visit Summary</div>
               <div style="font-size:15px;line-height:1.7;color:#374151;">${formatAppointmentDate(appointment.date)} at ${appointment.time}</div>
             </div>
-            <p style="margin:0 0 20px 0;font-size:15px;line-height:1.7;color:#4b5563;">If you have 2 minutes, we would love to hear how your visit went.</p>
+            <p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#4b5563;">If you have 2 minutes, we would love to hear how your visit went.</p>
             <p style="margin:0 0 18px 0;text-align:center;">
               ${buildPrimaryButton(feedbackUrl, 'Share Feedback')}
             </p>
@@ -292,7 +292,6 @@ router.put('/:id', requireRole('staff'), async (req, res) => {
           `
         })
       };
-      
       try {
         await transporter.sendMail(feedbackMailOptions);
         console.log(`Feedback form sent to ${appointment.userEmail}`);
@@ -387,7 +386,7 @@ router.post('/feedback/:token', async (req, res) => {
             title: 'Testimonial Review',
             subtitle: 'A new testimonial is awaiting your decision.',
             contentHtml: `
-              <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 20px;margin-bottom:20px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;padding:0 16px;margin-bottom:20px;width:100%;box-sizing:border-box;">
                 ${buildDetailRow('Customer', feedback.userName)}
                 ${buildDetailRow('Service', feedback.service)}
                 ${buildDetailRow('Rating', `${feedback.overallRating}/5`, true)}

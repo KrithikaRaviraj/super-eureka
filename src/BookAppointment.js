@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Toast from './components/Toast';
+import { API_URL } from './config';
 
 const SLOT_INTERVAL_MINUTES = 30;
 
@@ -28,7 +29,6 @@ function getSlotsForDate(dateString) {
   const date = new Date(`${dateString}T00:00:00`);
   const isSunday = date.getDay() === 0;
 
-  // Sunday hours: 9:00 AM - 1:00 PM
   if (isSunday) {
     return generateTimeSlots(9, 0, 13, 0);
   }
@@ -95,7 +95,7 @@ export default function BookAppointment() {
       
       try {
         // Fetch booked slots for the selected date
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/booked-slots?date=${selectedDate}`);
+        const response = await fetch(`${API_URL}/api/appointments/booked-slots?date=${selectedDate}`);
         if (response.ok) {
           const data = await response.json();
           const bookedSlots = data.bookedSlots || []; // Expecting array of time strings ["9:00 AM", "10:00 AM"]
@@ -155,7 +155,7 @@ export default function BookAppointment() {
 
     let authUser = null;
     try {
-      const authResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+      const authResponse = await fetch(`${API_URL}/api/auth/me`, {
         credentials: 'include'
       });
       const authData = await authResponse.json();
@@ -185,7 +185,7 @@ export default function BookAppointment() {
     };
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments`, {
+      const response = await fetch(`${API_URL}/api/appointments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(appointmentData)

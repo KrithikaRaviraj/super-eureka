@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import SalonLogo from "./components/SalonLogo";
 import Toast from "./components/Toast";
+import { API_URL } from './config';
 
 const link = document.createElement('link');
 link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap';
@@ -51,7 +52,7 @@ export default function Welcome() {
     
     if (currentEmail) {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/user/${encodeURIComponent(currentEmail)}`, {
+        const response = await fetch(`${API_URL}/api/appointments/user/${encodeURIComponent(currentEmail)}`, {
           credentials: 'include'
         });
         if (response.ok) {
@@ -76,7 +77,7 @@ export default function Welcome() {
   useEffect(() => {
     const hydrateFromAuth = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+        const response = await fetch(`${API_URL}/api/auth/me`, {
           credentials: 'include'
         });
         const data = await response.json();
@@ -100,7 +101,7 @@ export default function Welcome() {
         }
         
         if (queryParam) {
-          const res = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/users?${queryParam}`);
+          const res = await fetch(`${API_URL}/api/users?${queryParam}`);
           if (res.ok) {
             const data = await res.json();
             if (data.user) {
@@ -142,7 +143,7 @@ export default function Welcome() {
     e.preventDefault();
     setSaved(false);
     try {
-      await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/users`, {
+      await fetch(`${API_URL}/api/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -156,7 +157,7 @@ export default function Welcome() {
       
       // Send email confirmation if email was changed
       if (email && email !== originalEmail) {
-        await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/users/send-profile-update-email`, {
+        await fetch(`${API_URL}/api/users/send-profile-update-email`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, name }),
@@ -178,7 +179,7 @@ export default function Welcome() {
     if (!window.confirm("Are you sure you want to cancel this appointment?")) return;
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/${appointmentId}`, {
+      const response = await fetch(`${API_URL}/api/appointments/${appointmentId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'cancelled' })
@@ -196,7 +197,7 @@ export default function Welcome() {
   };
 
   const handleLogout = () => {
-    fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/logout-any`, {
+    fetch(`${API_URL}/api/auth/logout-any`, {
       method: 'POST',
       credentials: 'include'
     }).catch(() => {});

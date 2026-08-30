@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 export const useAuth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -8,7 +9,7 @@ export const useAuth = () => {
     let mounted = true;
     const loadAuth = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+        const response = await fetch(`${API_URL}/api/auth/me`, {
           credentials: 'include'
         });
         const data = await response.json();
@@ -37,7 +38,7 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
-      await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/logout-any`, {
+      await fetch(`${API_URL}/api/auth/logout-any`, {
         method: 'POST',
         credentials: 'include'
       });

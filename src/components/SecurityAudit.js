@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { API_URL } from '../config';
 
 const SecurityAudit = () => {
   const [events, setEvents] = useState([]);
@@ -14,8 +15,8 @@ const SecurityAudit = () => {
   const fetchSecurityData = useCallback(async () => {
     try {
       const [summaryRes, suspiciousRes] = await Promise.all([
-        fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/summary`, { credentials: 'include' }),
-        fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/suspicious`, { credentials: 'include' })
+        fetch(`${API_URL}/api/security/summary`, { credentials: 'include' }),
+        fetch(`${API_URL}/api/security/suspicious`, { credentials: 'include' })
       ]);
 
       if (summaryRes.ok) {
@@ -35,7 +36,7 @@ const SecurityAudit = () => {
   const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
-      let url = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/events?limit=${limit}&skip=${(page - 1) * limit}`;
+      let url = `${API_URL}/api/security/events?limit=${limit}&skip=${(page - 1) * limit}`;
 
       if (filter !== 'all') url += `&event=${filter}`;
       if (severity !== 'all') url += `&severity=${severity}`;

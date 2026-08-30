@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SecurityAudit from './components/SecurityAudit';
+import { API_URL } from './config';
 
 export default function StaffDashboard() {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export default function StaffDashboard() {
   useEffect(() => {
     const init = async () => {
       try {
-        const authResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+        const authResponse = await fetch(`${API_URL}/api/auth/me`, {
           credentials: 'include'
         });
         const authData = await authResponse.json();
@@ -52,7 +53,7 @@ export default function StaffDashboard() {
 
   const fetchAppointments = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/all`, {
+      const response = await fetch(`${API_URL}/api/appointments/all`, {
         credentials: 'include'
       });
       if (response.ok) {
@@ -67,7 +68,7 @@ export default function StaffDashboard() {
 
   const updateAppointmentStatus = async (id, status) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/${id}`, {
+      const response = await fetch(`${API_URL}/api/appointments/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -84,7 +85,7 @@ export default function StaffDashboard() {
 
   const updateAppointment = async (id, data) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/${id}`, {
+      const response = await fetch(`${API_URL}/api/appointments/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -103,7 +104,7 @@ export default function StaffDashboard() {
 
   const addAppointment = async (data) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments`, {
+      const response = await fetch(`${API_URL}/api/appointments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -166,7 +167,7 @@ export default function StaffDashboard() {
   };
 
   const handleLogout = () => {
-    fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/logout-any`, {
+    fetch(`${API_URL}/api/auth/logout-any`, {
       method: 'POST',
       credentials: 'include'
     }).catch(() => {});

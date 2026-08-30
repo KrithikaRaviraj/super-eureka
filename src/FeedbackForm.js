@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_URL } from './config';
 
 export default function FeedbackForm() {
   const { token } = useParams();
@@ -24,7 +25,7 @@ export default function FeedbackForm() {
   useEffect(() => {
     const fetchAppointment = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/feedback/${token}`);
+        const response = await fetch(`${API_URL}/api/appointments/feedback/${token}`);
         const data = await response.json();
         
         if (data.success) {
@@ -56,7 +57,7 @@ export default function FeedbackForm() {
     setSubmitting(true);
     
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/feedback/${token}`, {
+      const response = await fetch(`${API_URL}/api/appointments/feedback/${token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(feedback)

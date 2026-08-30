@@ -5,6 +5,7 @@ import {
   getSavedConsent,
   persistConsent
 } from '../utils/cookieConsent';
+import { API_URL } from '../config';
 
 const CookieConsent = ({ onPrivacyClick }) => {
   const [showBanner, setShowBanner] = useState(false);
@@ -24,7 +25,7 @@ const CookieConsent = ({ onPrivacyClick }) => {
 
   const auditConsent = async (payload, action) => {
     try {
-      await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/security/consent`, {
+      await fetch(`${API_URL}/api/security/consent`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

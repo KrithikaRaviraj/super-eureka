@@ -13,32 +13,71 @@ function buildEmailTemplate({ title, subtitle, contentHtml, accent = '#111827' }
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>${title}</title>
+      <style>
+        * {
+          box-sizing: border-box;
+        }
+        body, table, td, p, a, div {
+          -webkit-text-size-adjust: 100%;
+          -ms-text-size-adjust: 100%;
+        }
+        table, td {
+          mso-table-lspace: 0pt;
+          mso-table-rspace: 0pt;
+        }
+        img {
+          -ms-interpolation-mode: bicubic;
+          border: 0;
+          height: auto;
+          max-width: 100%;
+          outline: none;
+          text-decoration: none;
+        }
+        body {
+          margin: 0 !important;
+          padding: 0 !important;
+          width: 100% !important;
+          min-width: 100% !important;
+          background: #ffffff !important;
+        }
+        @media only screen and (max-width: 600px) {
+          .email-header-cell {
+            padding: 20px 16px 16px 16px !important;
+          }
+          .email-title {
+            font-size: 24px !important;
+          }
+          .email-subtitle {
+            font-size: 14px !important;
+          }
+          .email-content-cell {
+            padding: 20px 16px !important;
+          }
+          .email-footer-cell {
+            padding: 20px 16px !important;
+          }
+        }
+      </style>
     </head>
-    <body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;color:#111827;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;">
+    <body style="margin:0;padding:0;background:#ffffff;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;color:#111827;width:100%;min-height:100%;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="width:100%;margin:0;padding:0;background:#ffffff;border-collapse:collapse;">
         <tr>
-          <td style="padding:24px 16px;">
-            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;">
+          <td align="left" style="padding:0;margin:0;background:#ffffff;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="width:100%;margin:0;background:#ffffff;border:none;border-collapse:collapse;">
               <tr>
-                <td style="padding:0;background:#ffffff;color:#111827;text-align:left;border-bottom:1px solid #e5e7eb;">
-                  <table width="100%" cellpadding="0" cellspacing="0">
-                    <tr>
-                      <td style="padding:28px 32px 24px 32px;">
-                        <div style="font-size:12px;letter-spacing:1.4px;color:#6b7280;text-transform:uppercase;font-weight:700;">Lavish Ladies Beauty Salon</div>
-                        <div style="font-size:28px;line-height:1.25;font-weight:700;margin-top:8px;color:#111827;">${title}</div>
-                        ${subtitle ? `<div style="font-size:15px;line-height:1.6;color:#4b5563;margin-top:8px;max-width:520px;">${subtitle}</div>` : ''}
-                      </td>
-                    </tr>
-                  </table>
+                <td class="email-header-cell" style="padding:24px 20px 20px 20px;background:#ffffff;color:#111827;text-align:left;border-bottom:1px solid #e5e7eb;">
+                  <div style="font-size:12px;letter-spacing:1.4px;color:#6b7280;text-transform:uppercase;font-weight:700;">Lavish Ladies Beauty Salon</div>
+                  <div class="email-title" style="font-size:28px;line-height:1.25;font-weight:700;margin-top:8px;color:#111827;">${title}</div>
+                  ${subtitle ? `<div class="email-subtitle" style="font-size:15px;line-height:1.6;color:#4b5563;margin-top:8px;">${subtitle}</div>` : ''}
                 </td>
               </tr>
               <tr>
-                <td style="padding:32px;">
+                <td class="email-content-cell" style="padding:24px 20px;background:#ffffff;">
                   ${contentHtml}
                 </td>
               </tr>
               <tr>
-                <td style="padding:20px 32px 24px 32px;background:#fafafa;border-top:1px solid #e5e7eb;text-align:center;">
+                <td class="email-footer-cell" style="padding:20px 20px 24px 20px;background:#fafafa;border-top:1px solid #e5e7eb;text-align:center;">
                   <div style="margin-bottom:12px;">
                     <a href="${frontendUrl}/privacy" style="color:#6b7280;text-decoration:none;font-size:12px;margin:0 10px;">Privacy Policy</a>
                     <a href="${frontendUrl}/terms" style="color:#6b7280;text-decoration:none;font-size:12px;margin:0 10px;">Terms</a>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import Toast from './components/Toast';
 import { hasConsent } from './utils/cookieConsent';
+import { API_URL } from './config';
 import './styles.css';
 
 const staticServices = [
@@ -103,7 +104,7 @@ export default function Services() {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/services`);
+        const response = await fetch(`${API_URL}/api/services`);
         if (!response.ok) throw new Error('Failed to fetch services');
         const data = await response.json();
         setServices(data.services || staticServices);

@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../firebase';
 import SalonHeader from './SalonHeader';
-
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+import { API_URL } from '../config';
 
 async function fetchPublicIp() {
   const endpoints = [
@@ -84,7 +83,7 @@ export default function SignIn({ onSuccess, onClose }) {
       const result = await signInWithPopup(auth, provider);
       const loginContext = await collectLoginContext();
 
-      const sessionResponse = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      const sessionResponse = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -123,7 +122,7 @@ export default function SignIn({ onSuccess, onClose }) {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/send-email-otp`, {
+      const response = await fetch(`${API_URL}/api/send-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: normalizedEmail }),
@@ -159,7 +158,7 @@ export default function SignIn({ onSuccess, onClose }) {
 
     try {
       const loginContext = await collectLoginContext();
-      const response = await fetch(`${API_BASE_URL}/api/verify-email-otp`, {
+      const response = await fetch(`${API_URL}/api/verify-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -203,7 +202,7 @@ export default function SignIn({ onSuccess, onClose }) {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/send-email-otp`, {
+      const response = await fetch(`${API_URL}/api/send-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: staffEmail })
@@ -232,7 +231,7 @@ export default function SignIn({ onSuccess, onClose }) {
 
     try {
       const loginContext = await collectLoginContext();
-      const response = await fetch(`${API_BASE_URL}/api/verify-email-otp`, {
+      const response = await fetch(`${API_URL}/api/verify-email-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

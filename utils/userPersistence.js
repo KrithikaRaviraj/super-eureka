@@ -24,36 +24,72 @@ async function upsertUserProfile({
     throw new Error('email is required');
   }
 
-  const update = {
-    $set: {
-      email: normalizedEmail,
-      updatedAt: new Date()
-    },
-    $setOnInsert: {
-      uid: String(uid || ''),
-      name: String(name || '').trim() || normalizedEmail.split('@')[0] || 'Client',
-      phone: phone || null,
-      photoURL: photoURL || '',
-      passwordHash: passwordHash || '',
-      passwordSetupAt: passwordSetupAt || null,
-      emailVerifiedAt: emailVerifiedAt || null
-    }
+  const $set = {
+    email: normalizedEmail,
+    updatedAt: new Date()
   };
 
-  if (uid !== undefined) update.$set.uid = String(uid || '');
-  if (name !== undefined) update.$set.name = String(name || '').trim() || normalizedEmail.split('@')[0] || 'Client';
-  if (phone !== undefined) update.$set.phone = phone || null;
-  if (photoURL !== undefined) update.$set.photoURL = photoURL || '';
-  if (passwordHash !== undefined) update.$set.passwordHash = passwordHash || '';
-  if (passwordSetupAt !== undefined) update.$set.passwordSetupAt = passwordSetupAt || null;
-  if (emailVerifiedAt !== undefined) update.$set.emailVerifiedAt = emailVerifiedAt || null;
+  const $setOnInsert = {};
 
-  if (lastLoginAt || lastLoginMethod || authProvider || lastLoginIp || lastLoginTimeZone) {
-    update.$set.lastLoginAt = lastLoginAt || new Date();
-    if (lastLoginMethod !== undefined) update.$set.lastLoginMethod = String(lastLoginMethod || '');
-    if (authProvider !== undefined) update.$set.authProvider = String(authProvider || '');
-    if (lastLoginIp !== undefined) update.$set.lastLoginIp = String(lastLoginIp || '');
-    if (lastLoginTimeZone !== undefined) update.$set.lastLoginTimeZone = String(lastLoginTimeZone || '');
+  if (uid !== undefined) {
+    $set.uid = String(uid || '');
+  } else {
+    $setOnInsert.uid = '';
+  }
+
+  if (name !== undefined) {
+    $set.name = String(name || '').trim() || normalizedEmail.split('@')[0] || 'Client';
+  } else {
+    $setOnInsert.name = normalizedEmail.split('@')[0] || 'Client';
+  }
+
+  if (phone !== undefined) {
+    $set.phone = phone || null;
+  } else {
+    $setOnInsert.phone = null;
+  }
+
+  if (photoURL !== undefined) {
+    $set.photoURL = photoURL || '';
+  } else {
+    $setOnInsert.photoURL = '';
+  }
+
+  if (passwordHash !== undefined) {
+    $set.passwordHash = passwordHash || '';
+  } else {
+    $setOnInsert.passwordHash = '';
+  }
+
+  if (passwordSetupAt !== undefined) {
+    $set.passwordSetupAt = passwordSetupAt || null;
+  } else {
+    $setOnInsert.passwordSetupAt = null;
+  }
+
+  if (emailVerifiedAt !== undefined) {
+    $set.emailVerifiedAt = emailVerifiedAt || null;
+  } else {
+    $setOnInsert.emailVerifiedAt = null;
+  }
+
+  if (
+    lastLoginAt !== undefined ||
+    lastLoginMethod !== undefined ||
+    authProvider !== undefined ||
+    lastLoginIp !== undefined ||
+    lastLoginTimeZone !== undefined
+  ) {
+    $set.lastLoginAt = lastLoginAt || new Date();
+    if (lastLoginMethod !== undefined) $set.lastLoginMethod = String(lastLoginMethod || '');
+    if (authProvider !== undefined) $set.authProvider = String(authProvider || '');
+    if (lastLoginIp !== undefined) $set.lastLoginIp = String(lastLoginIp || '');
+    if (lastLoginTimeZone !== undefined) $set.lastLoginTimeZone = String(lastLoginTimeZone || '');
+  }
+
+  const update = { $set };
+  if (Object.keys($setOnInsert).length > 0) {
+    update.$setOnInsert = $setOnInsert;
   }
 
   return User.findOneAndUpdate(

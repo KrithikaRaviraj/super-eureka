@@ -20,6 +20,7 @@ import Navigation from "./components/Navigation";
 import { useAuth } from "./hooks/useAuth";
 import React, { useState } from "react";
 import './styles.css';
+import { API_URL } from './config';
 
 const fallbackHomepageServices = [
   { name: "Hair Styling & Cuts", description: "Professional haircuts, styling, and treatments for all hair types. From classic cuts to modern trends.", icon: "M9.64 7.64a2.5 2.5 0 1 1-3.54 3.54 2.5 2.5 0 0 1 3.54-3.54zm0 5.72L12 15.72l2.36-2.36a2.5 2.5 0 1 1 1.41 1.41L13.41 17.13l2.36 2.36a1 1 0 0 1-1.41 1.41L12 18.54l-2.36 2.36a1 1 0 0 1-1.41-1.41l2.36-2.36-2.36-2.36a2.5 2.5 0 1 1 1.41-1.41zM7.87 9.41a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm8.26 4.18a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z" },
@@ -37,7 +38,6 @@ function App() {
   React.useEffect(() => {
     document.title = "Lavish Ladies Beauty Salon";
     
-    // Update favicon to remove React logo
     let link = document.querySelector("link[rel~='icon']");
     if (!link) {
       link = document.createElement('link');
@@ -100,7 +100,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
   
   const fetchTestimonials = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/appointments/testimonials`);
+      const response = await fetch(`${API_URL}/api/appointments/testimonials`);
       const data = await response.json();
       if (data.success) {
         setTestimonials(data.testimonials);
@@ -117,7 +117,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
 
   const fetchHomepageServices = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/services`);
+      const response = await fetch(`${API_URL}/api/services`);
       const data = await response.json();
       if (data?.success && Array.isArray(data.services) && data.services.length > 0) {
         setHomepageServices(data.services.slice(0, 6));
@@ -257,7 +257,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
                         <h3 className="font-serif text-xl font-medium text-stone-800 mb-3 group-hover:text-rose-600 transition-colors duration-300">{service.name}</h3>
                         <p className="font-sans text-stone-600 text-sm leading-relaxed mb-4">{service.description}</p>
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <span className="text-rose-600 font-semibold text-sm">Click to explore -></span>
+                          <span className="text-rose-600 font-semibold text-sm">Click to explore -&gt;</span>
                         </div>
                       </button>
                     ))}
@@ -600,7 +600,7 @@ function AppContent({ modal, setModal, sidebarOpen, setSidebarOpen }) {
               <SignIn onSuccess={async () => {
                 setModal(null);
                 try {
-                  const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+                  const response = await fetch(`${API_URL}/api/auth/me`, {
                     credentials: 'include'
                   });
                   const data = await response.json();

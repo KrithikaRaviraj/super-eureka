@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Toast from './components/Toast';
+import { API_URL } from './config';
 
 export default function RevenueAnalytics() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function RevenueAnalytics() {
   useEffect(() => {
     const init = async () => {
       try {
-        const authResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+        const authResponse = await fetch(`${API_URL}/api/auth/me`, {
           credentials: 'include'
         });
         const authData = await authResponse.json();
@@ -38,7 +39,7 @@ export default function RevenueAnalytics() {
 
   const fetchRevenueData = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/revenue/analytics`, {
+      const response = await fetch(`${API_URL}/api/revenue/analytics`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -62,11 +63,11 @@ export default function RevenueAnalytics() {
   const saveRevenue = async () => {
     setSaving(true);
     try {
-      const authResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/api/auth/me`, {
+      const authResponse = await fetch(`${API_URL}/api/auth/me`, {
         credentials: 'include'
       });
       const authData = await authResponse.json();
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/revenue/daily`, {
+      const response = await fetch(`${API_URL}/api/revenue/daily`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
